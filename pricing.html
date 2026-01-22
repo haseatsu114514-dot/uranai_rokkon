@@ -92,36 +92,6 @@
             align-items: center;
         }
 
-        .shop-btn {
-            color: var(--color-text-light);
-            font-size: 0.92rem;
-            letter-spacing: 0.05em;
-            transition: all 0.3s;
-            font-weight: 600;
-            position: relative;
-            padding-bottom: 5px;
-        }
-
-        .shop-btn::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            width: 0;
-            height: 1px;
-            background: var(--color-gold);
-            transition: all 0.3s;
-            transform: translateX(-50%);
-        }
-
-        .shop-btn:hover::after {
-            width: 100%;
-        }
-
-        .shop-btn:hover {
-            color: var(--color-gold);
-        }
-
         .nav a {
             color: var(--color-text-light);
             font-size: 0.92rem;
@@ -461,9 +431,6 @@
                 padding: 10px 18px;
                 font-size: 0.8rem;
             }
-            .shop-btn {
-                font-size: 0.8rem;
-            }
         }
 
         @media (max-width: 900px) {
@@ -481,9 +448,6 @@
             }
             .contact-btn {
                 padding: 8px 14px;
-                font-size: 0.75rem;
-            }
-            .shop-btn {
                 font-size: 0.75rem;
             }
             .main-content {
@@ -603,17 +567,6 @@
             .nav a::after {
                 display: none;
             }
-            .shop-btn {
-                margin-top: 0;
-                padding: 15px 0;
-                font-size: 1rem;
-                text-align: center;
-                border-bottom: 1px solid rgba(255,255,255,0.1);
-                width: 100%;
-            }
-            .shop-btn::after {
-                display: none;
-            }
             .contact-btn {
                 margin-top: 10px;
                 padding: 12px 30px;
@@ -730,8 +683,8 @@
                     <a href="pricing.html">料金案内</a>
                     <a href="testimonials.html">お客様の声</a>
                     <a href="faq.html">よくある質問</a>
+                    <a href="https://uranairokkon.base.shop" target="_blank">SHOP</a>
                 </nav>
-                <a href="https://uranairokkon.base.shop" class="shop-btn" target="_blank">SHOP</a>
                 <a href="https://docs.google.com/forms/d/e/1FAIpQLSdG_cRsdXN-z8HUmzwUdAv7exsxFM41qp-WLr6hGORGmQI28w/viewform?usp=header" class="contact-btn" target="_blank">お問い合わせ</a>
             </div>
             <div class="menu-toggle" onclick="toggleMenu()">
