@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>よくある質問 - 占い処 六根清浄</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Shippori Mincho', serif;
+            color: #333;
+            line-height: 1.8;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        :root {
+            --color-primary: #2d3d38;
+            --color-primary-dark: #232d2a;
+            --color-gold: #c4a35a;
+            --color-text-white: #ffffff;
+            --color-text-light: rgba(255,255,255,0.9);
+            --color-cream: #f8f6f2;
+        }
+
+        /* ========== ヘッダー ========== */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: var(--color-primary);
+            z-index: 1000;
+            padding: 0 40px;
+        }
+
+        .header-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 75px;
+        }
+
+        .logo {
+            color: var(--color-text-white);
+            text-align: center;
+        }
+
+        .logo-main {
+            font-size: 1.4rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            display: block;
+            line-height: 1;
+        }
+
+        .logo-sub {
+            display: block;
+            font-size: 0.65rem;
+            color: var(--color-text-white);
+            letter-spacing: 0.02em;
+            margin-top: 3px;
+            font-weight: 400;
+        }
+
+        .nav-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .nav {
+            display: flex;
+            gap: 35px;
+            align-items: center;
+        }
+
+        .nav a {
+            color: var(--color-text-light);
+            font-size: 0.92rem;
+            letter-spacing: 0.05em;
+            transition: all 0.3s;
+            font-weight: 600;
+            position: relative;
+            padding-bottom: 5px;
+        }
+
+        .nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 1px;
+            background: var(--color-gold);
+            transition: all 0.3s;
+            transform: translateX(-50%);
+        }
+
+        .nav a:hover::after {
+            width: 100%;
+        }
+
+        .nav a:hover {
+            color: var(--color-gold);
+        }
+
+        .contact-btn {
+            background: transparent;
+            color: var(--color-text-white);
+            padding: 10px 35px;
+            border-radius: 4px;
+            font-size: 0.88rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            transition: all 0.3s;
+            border: 1px solid rgba(255,255,255,0.6);
+        }
+
+        .contact-btn:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: var(--color-text-white);
+        }
+
+        /* ========== メインコンテンツ ========== */
+        .main-content {
+            padding-top: 75px;
+            background: var(--color-cream);
+            min-height: 100vh;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, #3a4a45 0%, #4a5a55 100%);
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .page-title {
+            font-size: 2.2rem;
+            color: var(--color-text-white);
+            letter-spacing: 0.15em;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .page-subtitle {
+            font-size: 1rem;
+            color: var(--color-text-light);
+            letter-spacing: 0.05em;
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        .faq-item {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 8px;
+            padding: 25px 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            border-left: 3px solid var(--color-gold);
+        }
+
+        .question {
+            font-size: 1.1rem;
+            color: var(--color-primary-dark);
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            line-height: 1.7;
+        }
+
+        .question::before {
+            content: 'Q';
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 28px;
+            height: 28px;
+            background: var(--color-gold);
+            color: white;
+            border-radius: 50%;
+            font-size: 0.85rem;
+            font-weight: 700;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .answer {
+            color: #555;
+            font-size: 1rem;
+            line-height: 1.9;
+            padding-left: 40px;
+        }
+
+        .answer-label {
+            display: inline-block;
+            color: var(--color-primary);
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .answer ul {
+            margin: 12px 0;
+            padding-left: 20px;
+        }
+
+        .answer li {
+            margin-bottom: 8px;
+            line-height: 1.8;
+        }
+
+        .note-box {
+            background: rgba(196, 163, 90, 0.1);
+            border-left: 3px solid var(--color-gold);
+            padding: 15px 18px;
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+            font-size: 0.95rem;
+            line-height: 1.8;
+        }
+
+        .link-text {
+            color: var(--color-gold);
+            text-decoration: underline;
+            font-weight: 500;
+        }
+
+        /* ========== フッター ========== */
+        .footer {
+            background: var(--color-primary);
+            color: rgba(255,255,255,0.7);
+            text-align: center;
+            padding: 25px 20px;
+            height: 75px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .footer-content {
+            font-size: 0.85rem;
+        }
+
+        .footer-content a {
+            color: rgba(255,255,255,0.7);
+            margin-right: 20px;
+            transition: color 0.3s;
+        }
+
+        .footer-content a:hover {
+            color: var(--color-gold);
+        }
+
+        /* ========== レスポンシブ ========== */
+        @media (max-width: 1100px) {
+            .header {
+                padding: 0 20px;
+            }
+            .nav {
+                gap: 20px;
+            }
+            .nav a {
+                font-size: 0.8rem;
+            }
+            .contact-btn {
+                padding: 10px 18px;
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .header-inner {
+                height: 60px;
+            }
+            .logo-main {
+                font-size: 1.1rem;
+            }
+            .nav {
+                gap: 15px;
+            }
+            .nav a {
+                font-size: 0.75rem;
+            }
+            .contact-btn {
+                padding: 8px 14px;
+                font-size: 0.75rem;
+            }
+            .main-content {
+                padding-top: 60px;
+            }
+            .page-header {
+                padding: 40px 20px;
+            }
+            .page-title {
+                font-size: 1.6rem;
+            }
+            .container {
+                padding: 40px 15px;
+            }
+            .faq-item {
+                padding: 20px;
+            }
+            .question {
+                font-size: 1rem;
+            }
+            .answer {
+                font-size: 0.95rem;
+                padding-left: 35px;
+            }
+            .footer {
+                height: auto;
+                padding: 20px;
+            }
+            .footer-content {
+                font-size: 0.75rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .nav {
+                gap: 8px;
+            }
+            .nav a {
+                font-size: 0.65rem;
+            }
+            .contact-btn {
+                padding: 6px 10px;
+                font-size: 0.65rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-wrapper {
+                display: none;
+                position: fixed;
+                top: 60px;
+                left: 0;
+                width: 100%;
+                background: var(--color-primary);
+                flex-direction: column;
+                padding: 20px;
+                gap: 0;
+                z-index: 999;
+            }
+            .nav-wrapper.active {
+                display: flex;
+            }
+            .nav {
+                flex-direction: column;
+                gap: 0;
+                width: 100%;
+            }
+            .nav a {
+                padding: 15px 0;
+                font-size: 1rem;
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+                width: 100%;
+                text-align: center;
+            }
+            .nav a::after {
+                display: none;
+            }
+            .contact-btn {
+                margin-top: 15px;
+                padding: 12px 30px;
+                font-size: 1rem;
+                text-align: center;
+            }
+            .menu-toggle {
+                display: flex !important;
+            }
+        }
+
+        /* ハンバーガーメニュー */
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            gap: 5px;
+            width: 28px;
+            height: 28px;
+            cursor: pointer;
+        }
+        .menu-toggle span {
+            display: block;
+            width: 100%;
+            height: 2px;
+            background: #fff;
+            transition: 0.3s;
+        }
+
+        /* ページ導線 */
+        .page-links-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 48px;
+        }
+        .page-link-card {
+            background: #fff;
+            padding: 24px 16px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            transition: all 0.3s;
+            display: block;
+            border: 1px solid #eee;
+        }
+        .page-link-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        .page-link-title {
+            display: block;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--color-primary);
+            margin-bottom: 6px;
+        }
+        .page-link-desc {
+            display: block;
+            font-size: 0.75rem;
+            color: #888;
+        }
+        @media (max-width: 768px) {
+            .page-links-container {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+                margin-top: 36px;
+            }
+            .page-link-card {
+                padding: 18px 10px;
+            }
+            .page-link-title {
+                font-size: 0.82rem;
+            }
+            .page-link-desc {
+                font-size: 0.68rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ヘッダー -->
+    <header class="header">
+        <div class="header-inner">
+            <a href="index.html" class="logo">
+                <span class="logo-main">六根清浄</span>
+                <span class="logo-sub">(Rokkon shojo)</span>
+            </a>
+            <div class="nav-wrapper">
+                <nav class="nav">
+                    <a href="index.html">ホーム</a>
+                    <a href="about.html">占い師紹介</a>
+                    <a href="pricing.html">料金案内</a>
+                    <a href="testimonials.html">お客様の声</a>
+                    <a href="faq.html">よくある質問</a>
+                </nav>
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSdG_cRsdXN-z8HUmzwUdAv7exsxFM41qp-WLr6hGORGmQI28w/viewform?usp=header" class="contact-btn" target="_blank">お問い合わせ</a>
+            </div>
+            <div class="menu-toggle" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <main class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">よくある質問</h1>
+            <p class="page-subtitle">鑑定についてよくいただくご質問をまとめました。<br>その他のご質問は、お気軽にお問い合わせください。</p>
+        </div>
+
+        <div class="container">
+            <div class="faq-item">
+                <div class="question">占いは初めてですが、大丈夫ですか？</div>
+                <div class="answer">
+                    <span class="answer-label">A.</span>はい、大丈夫です。占いが初めての方でも、<br>
+                    こちらからお話を整理しながら進めますので、安心してご相談ください。<br><br>
+                    お悩みをお聞きしながら、必要な鑑定を提案いたします。
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="question">生年月日で何がわかりますか？</div>
+                <div class="answer">
+                    <span class="answer-label">A.</span>四柱推命では、生年月日から以下のことがわかります：
+                    <ul>
+                        <li>本質的な性格や才能</li>
+                        <li>向いている仕事や分野</li>
+                        <li>人との相性</li>
+                        <li>運勢の流れ（良い時期・悪い時期）</li>
+                        <li>今、取るべき行動 など</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="question">悪い結果が出たら怖いです。</div>
+                <div class="answer">
+                    <span class="answer-label">A.</span>必ず対処法をお伝えします。<br>
+                    また常に伝え方に注意を払って答えます。<br><br>
+                    悪い時期であれば、どう過ごせばいいか。<br>
+                    相性が悪い相手であれば、どう接すればうまくいくか。<br><br>
+                    具体的な対処法まで一緒に考えますので、ご安心ください。
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="question">当日は何を準備すればいいですか？</div>
+                <div class="answer">
+                    <span class="answer-label">A.</span>特に準備は必要ありません。ただし、以下があるとスムーズです。
+                    <ul>
+                        <li>聞きたいことのメモ（任意）</li>
+                        <li>相性を見たり占いたい相手の生年月日</li>
+                    </ul>
+                    オンライン鑑定の場合は、静かな環境でご参加ください。
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="question">録音・録画はできますか？</div>
+                <div class="answer">
+                    <span class="answer-label">A.</span>はい、可能です。鑑定内容を後で見返したい方は、<br>
+                    その用途に限りご自由に録音・録画していただいて構いません。
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="question">キャンセルはできますか？</div>
+                <div class="answer">
+                    <span class="answer-label">A.</span>前日までのキャンセル・日程変更は無料です。<br><br>
+                    当日キャンセル・当日の日程変更につきましては、他のお客様のご予約をお断りしている関係上、<br>
+                    原則として鑑定料金の50％をご請求させていただく場合があります。<br><br>
+                    無断キャンセルの場合は、鑑定料金の全額をご請求いたします。
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="question">対面鑑定はどこで受けられますか？</div>
+                <div class="answer">
+                    <span class="answer-label">A.</span>こちらで指定する愛知県内のカフェや、ご指定の場所があればそちらで行います。<br><br>
+                    詳細な場所は、フォーム内でご案内致します。
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="question">オンライン鑑定はどうやって受けられますか？</div>
+                <div class="answer">
+                    <span class="answer-label">A.</span>ScreenAppというサービスで行います。<br>
+                    こちらが発行したURLをクリックしていただくと<br>
+                    会員登録やアプリなどインストールせず<br>
+                    無料で通話ができるサービスです。
+                    <div class="note-box">
+                        【手順】<br>
+                        1. <span class="link-text">LINE公式アカウント</span>からお申し込み<br>
+                        2. 日時が決定し、お支払いを確認<br>
+                        3. 鑑定日時に通話<br><br>
+                        使い方がわからない方には、事前にサポートいたします。
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="question">相談内容は誰にも知られませんか？</div>
+                <div class="answer">
+                    <span class="answer-label">A.</span>はい、守秘義務を厳守しております。<br>
+                    ご相談内容や個人情報を、<br>
+                    ご本人の許可なく第三者へ開示することはありません。<br><br>
+                    なお、第三者の発言やご本人の推測・憶測による事柄については、<br>
+                    当方では責任を負いかねますので、ご了承ください。
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="question">複数の悩みを相談できますか？</div>
+                <div class="answer">
+                    <span class="answer-label">A.</span>はい、可能です。時間内であれば、何個でもご相談いただけます。<br><br>
+                    ただし、1つの悩みを深く掘り下げる方が、具体的な解決策が見つかりやすく<br>
+                    1テーマにつき15〜20分程は見積もって頂けると幸いです。
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="question">当日延長はできますか？</div>
+                <div class="answer">
+                    <span class="answer-label">A.</span>後ろの時間に空きがある場合に限り、当日延長が可能です。<br>
+                    当日の延長はコース料金と比べると少し割増料金となり、<br>
+                    10分ごとに1,500円を頂戴しております。勝手に延長はしません。<br><br>
+                    ただしあらかじめ延長をご希望の場合は、<br>
+                    前日までであればコース変更が可能ですので、<br>
+                    長めのコースを予約していただく方がお得です。
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="question">友達や恋人,夫婦で一緒に受けられますか？</div>
+                <div class="answer">
+                    <span class="answer-label">A.</span>はい、可能です。<br>
+                    また同席も特に費用はかかりません。<br>
+                    同時鑑定をご希望の場合は、事前にご相談ください。
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="question">支払い方法は何がありますか？</div>
+                <div class="answer">
+                    <span class="answer-label">A.</span>以下の方法がご利用いただけます：
+                    <ul>
+                        <li>銀行振込</li>
+                        <li>PayPay</li>
+                        <li>(対面のみ) 現金・現地払い</li>
+                    </ul>
+                    領収書は、電子発行（PDF・メール）で原則、対応しております。<br>
+                    なお、紙での領収書が必要な場合は、事前にその旨をご共有いただけますと幸いです。<br><br>
+                    ※現在インボイス非対応になります。
+                </div>
+            </div>
+
+            <!-- ページ導線 -->
+            <div class="page-links-container">
+                <a href="about.html" class="page-link-card">
+                    <span class="page-link-title">占い師紹介</span>
+                    <span class="page-link-desc">鑑定スタイルについて</span>
+                </a>
+                <a href="pricing.html" class="page-link-card">
+                    <span class="page-link-title">料金案内</span>
+                    <span class="page-link-desc">コース・料金について</span>
+                </a>
+                <a href="testimonials.html" class="page-link-card">
+                    <span class="page-link-title">お客様の声</span>
+                    <span class="page-link-desc">実際のご感想</span>
+                </a>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- フッター -->
+    <footer class="footer">
+        <div class="footer-content">
+            <a href="#">プライバシーポリシー</a>© 2026 六根清浄 All Rights Reserved.
+        </div>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            document.querySelector('.nav-wrapper').classList.toggle('active');
+        }
+    </script>
+
+</body>
+</html>
