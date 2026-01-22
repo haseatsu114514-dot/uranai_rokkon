@@ -83,13 +83,30 @@
         .nav-wrapper {
             display: flex;
             align-items: center;
-            gap: 25px;
+            gap: 15px;
         }
 
         .nav {
             display: flex;
             gap: 35px;
             align-items: center;
+        }
+
+        .shop-btn {
+            background: transparent;
+            color: var(--color-text-white);
+            padding: 10px 35px;
+            border-radius: 4px;
+            font-size: 0.88rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            transition: all 0.3s;
+            border: 1px solid rgba(255,255,255,0.6);
+        }
+
+        .shop-btn:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: var(--color-text-white);
         }
 
         .nav a {
@@ -209,6 +226,9 @@
         .course-card.recommended {
             border: 2px solid #c44569;
             border-left: 4px solid #c44569;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .course-badge {
@@ -271,8 +291,9 @@
             font-size: 1.2rem;
         }
 
+        /* 金額を大きく強調 - ひと目で分かるように */
         .discount-price {
-            font-size: 1.8rem;
+            font-size: 2.8rem;
             font-weight: 700;
             color: #c44569;
         }
@@ -430,6 +451,10 @@
                 padding: 10px 18px;
                 font-size: 0.8rem;
             }
+            .shop-btn {
+                padding: 10px 18px;
+                font-size: 0.8rem;
+            }
         }
 
         @media (max-width: 900px) {
@@ -446,6 +471,10 @@
                 font-size: 0.75rem;
             }
             .contact-btn {
+                padding: 8px 14px;
+                font-size: 0.75rem;
+            }
+            .shop-btn {
                 padding: 8px 14px;
                 font-size: 0.75rem;
             }
@@ -467,8 +496,9 @@
             .course-duration {
                 font-size: 1.6rem;
             }
+            /* タブレットでも金額を大きく */
             .discount-price {
-                font-size: 1.5rem;
+                font-size: 2.4rem;
             }
             .footer {
                 height: auto;
@@ -479,7 +509,62 @@
             }
         }
 
+        /* タブレット向け調整（ハンバーガーメニューは表示しない） */
         @media (max-width: 768px) {
+            .page-header {
+                padding: 35px 15px;
+            }
+            .page-title {
+                font-size: 1.4rem;
+            }
+            .advance-notice {
+                font-size: 0.85rem;
+                padding: 8px 20px;
+            }
+            .container {
+                padding: 30px 15px;
+            }
+            .course-card {
+                padding: 20px 15px;
+                margin-bottom: 25px;
+            }
+            .course-duration {
+                font-size: 1.4rem;
+            }
+            .course-prices {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            .original-price {
+                font-size: 1rem;
+            }
+            /* スマホでも金額を大きく見やすく */
+            .discount-price {
+                font-size: 2.2rem;
+            }
+            .course-examples li {
+                font-size: 0.9rem;
+            }
+            .course-note {
+                font-size: 0.85rem;
+                padding: 12px 15px;
+            }
+            .course-cta img {
+                max-width: 220px;
+            }
+            .info-section {
+                padding: 20px 15px;
+            }
+            .info-title {
+                font-size: 1rem;
+            }
+            .info-list li {
+                font-size: 0.9rem;
+            }
+        }
+
+        /* スマホ専用 - ハンバーガーメニューを表示（index.htmlと同じ480px） */
+        @media (max-width: 480px) {
             .nav-wrapper {
                 display: none;
                 position: fixed;
@@ -510,63 +595,20 @@
             .nav a::after {
                 display: none;
             }
-            .contact-btn {
+            .shop-btn {
                 margin-top: 15px;
+                padding: 12px 30px;
+                font-size: 1rem;
+                text-align: center;
+            }
+            .contact-btn {
+                margin-top: 10px;
                 padding: 12px 30px;
                 font-size: 1rem;
                 text-align: center;
             }
             .menu-toggle {
                 display: flex !important;
-            }
-            .page-header {
-                padding: 35px 15px;
-            }
-            .page-title {
-                font-size: 1.4rem;
-            }
-            .advance-notice {
-                font-size: 0.85rem;
-                padding: 8px 20px;
-            }
-            .container {
-                padding: 30px 15px;
-            }
-            .course-card {
-                padding: 20px 15px;
-                margin-bottom: 25px;
-            }
-            .course-duration {
-                font-size: 1.4rem;
-            }
-            .course-prices {
-                flex-wrap: wrap;
-                gap: 10px;
-            }
-            .original-price {
-                font-size: 1rem;
-            }
-            .discount-price {
-                font-size: 1.4rem;
-            }
-            .course-examples li {
-                font-size: 0.9rem;
-            }
-            .course-note {
-                font-size: 0.85rem;
-                padding: 12px 15px;
-            }
-            .course-cta img {
-                max-width: 220px;
-            }
-            .info-section {
-                padding: 20px 15px;
-            }
-            .info-title {
-                font-size: 1rem;
-            }
-            .info-list li {
-                font-size: 0.9rem;
             }
         }
 
@@ -591,7 +633,7 @@
         /* ページ導線 */
         .page-links-container {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 16px;
             margin-top: 48px;
         }
@@ -603,11 +645,28 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.06);
             transition: all 0.3s;
             display: block;
-            border: 1px solid #eee;
+            border: 2px solid transparent;
+            position: relative;
+        }
+        .page-link-card::after {
+            content: '→';
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--color-gold);
+            font-size: 1rem;
+            opacity: 0;
+            transition: all 0.3s;
         }
         .page-link-card:hover {
             transform: translateY(-4px);
             box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border-color: var(--color-gold);
+        }
+        .page-link-card:hover::after {
+            opacity: 1;
+            right: 8px;
         }
         .page-link-title {
             display: block;
@@ -623,12 +682,15 @@
         }
         @media (max-width: 768px) {
             .page-links-container {
-                grid-template-columns: repeat(3, 1fr);
+                grid-template-columns: repeat(2, 1fr);
                 gap: 10px;
                 margin-top: 36px;
             }
             .page-link-card {
                 padding: 18px 10px;
+            }
+            .page-link-card::after {
+                display: none;
             }
             .page-link-title {
                 font-size: 0.82rem;
@@ -656,6 +718,7 @@
                     <a href="testimonials.html">お客様の声</a>
                     <a href="faq.html">よくある質問</a>
                 </nav>
+                <a href="https://uranairokkon.base.shop" class="shop-btn" target="_blank">SHOP</a>
                 <a href="https://docs.google.com/forms/d/e/1FAIpQLSdG_cRsdXN-z8HUmzwUdAv7exsxFM41qp-WLr6hGORGmQI28w/viewform?usp=header" class="contact-btn" target="_blank">お問い合わせ</a>
             </div>
             <div class="menu-toggle" onclick="toggleMenu()">
@@ -671,7 +734,6 @@
         <div class="page-header">
             <h1 class="page-title">料金案内</h1>
             <p class="page-subtitle">あなたのお悩みに合わせたコースをお選びください</p>
-            <div class="advance-notice">事前予約で500円OFF</div>
         </div>
 
         <div class="container">
@@ -680,20 +742,17 @@
             <div class="course-card">
                 <div class="course-header">
                     <div class="course-duration">30分コース</div>
-                    <div class="price-label">事前予約</div>
                     <div class="course-prices">
-                        <span class="original-price">4,000円</span>
-                        <span class="arrow">→</span>
-                        <span class="discount-price">3,500円</span>
+                        <span class="discount-price">3,300円</span>
                     </div>
-                    <div class="tax-note">(税込) 当日鑑定 4,000円</div>
+                    <div class="tax-note">(税込)</div>
                 </div>
 
                 <div class="course-description">
                     <div class="description-title">こんな方におすすめ</div>
                     <ul class="course-examples">
                         <li><strong>「まずは気軽に相談してみたい」</strong></li>
-                        <li><strong>1つのテーマ（恋愛・仕事など）に絞って相談したい</strong></li>
+                        <li><strong>1つのテーマ(恋愛・仕事など)に絞って相談したい</strong></li>
                         <li><strong>占いを初めて受ける方</strong></li>
                         <li>運勢の流れをサクッと知りたい</li>
                     </ul>
@@ -715,13 +774,10 @@
                 <span class="course-badge recommended">一番人気</span>
                 <div class="course-header">
                     <div class="course-duration">45分コース</div>
-                    <div class="price-label">事前予約</div>
                     <div class="course-prices">
-                        <span class="original-price">5,300円</span>
-                        <span class="arrow">→</span>
                         <span class="discount-price">4,800円</span>
                     </div>
-                    <div class="tax-note">(税込) 当日鑑定 5,300円</div>
+                    <div class="tax-note">(税込)</div>
                 </div>
 
                 <div class="course-description">
@@ -750,22 +806,18 @@
 
             <!-- 60分コース -->
             <div class="course-card popular">
-                <span class="course-badge popular">最高峰・悩みの鑑定</span>
                 <div class="course-header">
                     <div class="course-duration">60分コース</div>
-                    <div class="price-label">事前予約</div>
                     <div class="course-prices">
-                        <span class="original-price">6,500円</span>
-                        <span class="arrow">→</span>
                         <span class="discount-price">6,000円</span>
                     </div>
-                    <div class="tax-note">(税込) 当日鑑定 6,500円</div>
+                    <div class="tax-note">(税込)</div>
                 </div>
 
                 <div class="course-description">
                     <div class="description-title">こんな方におすすめ</div>
                     <ul class="course-examples">
-                        <li><strong>人生を賭けた決断をする時が来た</strong>（結婚・転職・起業）</li>
+                        <li><strong>人生を賭けた決断をする時が来た</strong>(結婚・転職・起業)</li>
                         <li><strong>恋愛・結婚の相性と最適なタイミングを完全に見極めたい</strong></li>
                         <li><strong>5年後、10年後の運気の流れを知って戦略的に生きたい</strong></li>
                         <li><strong>自分の才能・適職を徹底的に掘り下げたい</strong></li>
@@ -786,20 +838,36 @@
                 </div>
             </div>
 
+            <!-- 料金体系について：60分コースと視覚的に距離を取る -->
+            <div style="margin-top: 70px; margin-bottom: 30px; text-align: center; color: #888; font-size: 0.85rem; letter-spacing: 0.15em;">
+                ── その他のご案内 ──
+            </div>
+
+            <!-- 料金体系のご案内 -->
+            <div class="info-section">
+                <h3 class="info-title">料金体系について</h3>
+                <ul class="info-list">
+                    <li>30分・45分・60分コースは、時間が長くなるほど1分あたりの料金がお得になっております</li>
+                    <li>じっくり鑑定をご希望の方は、延長をご利用いただくより、<span class="highlight">最初から長めのコースをお選びいただく方がお得</span>です</li>
+                    <li>※ 延長料金は10分 1,500円（税込）となります</li>
+                </ul>
+            </div>
+
+            <!-- 75分以上のコース：補足的に配置 -->
+            <div class="info-section" style="background: rgba(196, 163, 90, 0.05);">
+                <h3 class="info-title">75分以上のコースについて</h3>
+                <p style="font-size: 0.95rem; line-height: 1.9; padding-left: 20px; position: relative;">
+                    <span style="position: absolute; left: 0; color: var(--color-gold);">・</span>
+                    75分以上のコースも承っております。詳しくはLINEまたはお問い合わせフォームよりご相談ください。
+                </p>
+            </div>
+
             <!-- 対面鑑定について -->
             <div class="info-section">
                 <h3 class="info-title">対面鑑定について</h3>
                 <ul class="info-list">
                     <li>愛知県内での対面鑑定も承っております</li>
                     <li>上記料金 + <span class="highlight">同席料 500円 (税込)</span></li>
-                </ul>
-            </div>
-
-            <!-- 延長について -->
-            <div class="info-section">
-                <h3 class="info-title">延長について</h3>
-                <ul class="info-list">
-                    <li>鑑定時間の延長は <span class="highlight">10分 1,500円 (税込)</span> で対応可能</li>
                 </ul>
             </div>
 
@@ -816,7 +884,11 @@
             <div class="page-links-container">
                 <a href="about.html" class="page-link-card">
                     <span class="page-link-title">占い師紹介</span>
-                    <span class="page-link-desc">鑑定スタイルについて</span>
+                    <span class="page-link-desc">鑑定スタイル</span>
+                </a>
+                <a href="index.html" class="page-link-card">
+                    <span class="page-link-title">ホーム</span>
+                    <span class="page-link-desc">トップページ</span>
                 </a>
                 <a href="testimonials.html" class="page-link-card">
                     <span class="page-link-title">お客様の声</span>
