@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>占い師紹介 - 占い処 六根清浄</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Shippori Mincho', serif;
+            color: #333;
+            line-height: 1.8;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        :root {
+            --color-primary: #2d3d38;
+            --color-primary-dark: #232d2a;
+            --color-gold: #c4a35a;
+            --color-text-white: #ffffff;
+            --color-text-light: rgba(255,255,255,0.9);
+            --color-cream: #f8f6f2;
+        }
+
+        /* ========== ヘッダー ========== */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: var(--color-primary);
+            z-index: 1000;
+            padding: 0 40px;
+        }
+
+        .header-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 75px;
+        }
+
+        .logo {
+            color: var(--color-text-white);
+            text-align: center;
+        }
+
+        .logo-main {
+            font-size: 1.4rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            display: block;
+            line-height: 1;
+        }
+
+        .logo-sub {
+            display: block;
+            font-size: 0.65rem;
+            color: var(--color-text-white);
+            letter-spacing: 0.02em;
+            margin-top: 3px;
+            font-weight: 400;
+        }
+
+        .nav-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .nav {
+            display: flex;
+            gap: 35px;
+            align-items: center;
+        }
+
+        .nav a {
+            color: var(--color-text-light);
+            font-size: 0.92rem;
+            letter-spacing: 0.05em;
+            transition: all 0.3s;
+            font-weight: 600;
+            position: relative;
+            padding-bottom: 5px;
+        }
+
+        .nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 1px;
+            background: var(--color-gold);
+            transition: all 0.3s;
+            transform: translateX(-50%);
+        }
+
+        .nav a:hover::after {
+            width: 100%;
+        }
+
+        .nav a:hover {
+            color: var(--color-gold);
+        }
+
+        .contact-btn {
+            background: transparent;
+            color: var(--color-text-white);
+            padding: 10px 35px;
+            border-radius: 4px;
+            font-size: 0.88rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            transition: all 0.3s;
+            border: 1px solid rgba(255,255,255,0.6);
+        }
+
+        .contact-btn:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: var(--color-text-white);
+        }
+
+        /* ========== メインコンテンツ ========== */
+        .main-content {
+            padding-top: 75px;
+        }
+
+        /* ========== プロフィールヒーロー ========== */
+        .profile-hero {
+            background: linear-gradient(135deg, #3a4a45 0%, #4a5a55 100%);
+            position: relative;
+        }
+
+        .profile-hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L30 60M0 30L60 30' stroke='%23ffffff' stroke-opacity='0.03' stroke-width='1'/%3E%3C/svg%3E");
+            pointer-events: none;
+        }
+
+        .profile-hero-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 450px 1fr;
+            min-height: 560px;
+        }
+
+        .profile-hero-photo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center 15%;
+            display: block;
+        }
+
+        .profile-hero-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 40px 40px 40px 48px;
+            text-align: left;
+        }
+
+        .profile-hero-title {
+            color: var(--color-gold);
+            font-size: 0.75rem;
+            letter-spacing: 0.2em;
+            margin-bottom: 6px;
+        }
+
+        .profile-hero-name {
+            color: #fff;
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 2px;
+            letter-spacing: 0.05em;
+        }
+
+        .profile-hero-name-en {
+            color: rgba(255,255,255,0.5);
+            font-size: 0.65rem;
+            letter-spacing: 0.15em;
+            margin-bottom: 20px;
+        }
+
+        .profile-hero-tagline {
+            color: var(--color-gold);
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            letter-spacing: 0.03em;
+        }
+
+        .profile-hero-catch {
+            color: #fff;
+            font-size: 0.9rem;
+            line-height: 2;
+            margin-bottom: 24px;
+        }
+
+        .profile-hero-catch strong {
+            color: var(--color-gold);
+        }
+
+        .profile-hero-methods {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            list-style: none;
+            padding: 0;
+            margin: 0 0 16px 0;
+            max-width: 300px;
+        }
+
+        .profile-hero-methods li {
+            color: rgba(255,255,255,0.9);
+            font-size: 0.8rem;
+            padding: 8px 12px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.15);
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .profile-hero-methods-note {
+            color: rgba(255,255,255,0.85);
+            font-size: 0.85rem;
+            margin: 0 0 20px 0;
+        }
+
+        .profile-hero-methods-note strong {
+            color: var(--color-gold);
+        }
+
+        .profile-hero-greeting {
+            color: rgba(255,255,255,0.85);
+            font-size: 0.85rem;
+            line-height: 2;
+            padding-top: 20px;
+            margin-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.15);
+            max-width: 90%;
+        }
+
+        .profile-hero-greeting p {
+            margin: 0 0 8px 0;
+        }
+
+        .profile-hero-greeting p:last-child {
+            margin-bottom: 0;
+        }
+
+        .hero-cta-btn {
+            display: inline-block;
+            margin-top: 24px;
+            transition: transform 0.3s;
+        }
+
+        .hero-cta-btn:hover {
+            transform: scale(1.03);
+        }
+
+        .hero-cta-btn img {
+            max-width: 300px;
+            height: auto;
+        }
+
+        /* ========== セクション共通 ========== */
+        .profile-section {
+            padding: 60px 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            color: #5a8a7a;
+            text-align: center;
+            margin-bottom: 32px;
+            letter-spacing: 0.08em;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 36px;
+            height: 2px;
+            background: var(--color-gold);
+            margin: 10px auto 0;
+        }
+
+        /* ========== 鑑定スタイル ========== */
+        .style-section {
+            background: #fff;
+        }
+
+        .style-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .style-item {
+            background: var(--color-cream);
+            padding: 24px;
+            border-radius: 8px;
+            border-left: 3px solid #5a8a7a;
+        }
+
+        .style-lead {
+            display: block;
+            color: #5a8a7a;
+            font-weight: 600;
+            margin-bottom: 12px;
+            font-size: 1rem;
+            text-align: center;
+        }
+
+        .style-item p {
+            font-size: 0.92rem;
+            line-height: 2;
+            color: #444;
+            text-align: center;
+        }
+
+        .style-item p strong {
+            font-weight: 600;
+        }
+
+        .style-highlight {
+            background: linear-gradient(135deg, #5a8a7a 0%, #7eb3a0 100%);
+            color: #fff;
+            padding: 32px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .style-highlight strong {
+            display: block;
+            color: #fff;
+            font-size: 1.15rem;
+            margin-bottom: 14px;
+            line-height: 1.8;
+        }
+
+        .style-highlight p {
+            font-size: 0.95rem;
+            line-height: 1.9;
+            color: rgba(255,255,255,0.95);
+        }
+
+        /* ========== 実績 ========== */
+        .achievement-section {
+            background: var(--color-cream);
+            padding: 60px 20px;
+        }
+
+        .achievement-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 36px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .achievement-item {
+            background: #fff;
+            padding: 36px 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        }
+
+        .achievement-number {
+            font-size: 2.4rem;
+            font-weight: 700;
+            color: var(--color-gold);
+            margin-bottom: 10px;
+        }
+
+        .achievement-number span {
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .achievement-label {
+            font-size: 0.9rem;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .achievement-list {
+            list-style: none;
+            background: #fff;
+            padding: 24px 28px;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .achievement-list li {
+            padding: 12px 0;
+            padding-left: 24px;
+            position: relative;
+            font-size: 0.92rem;
+            border-bottom: 1px solid #f0ede8;
+            line-height: 1.8;
+        }
+
+        .achievement-list li strong {
+            font-weight: 600;
+        }
+
+        .achievement-list li:last-child {
+            border-bottom: none;
+        }
+
+        .achievement-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--color-gold);
+            font-weight: bold;
+        }
+
+        /* ========== 得意な鑑定 ========== */
+        .specialty-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        .specialty-item {
+            background: #fff;
+            padding: 24px 16px;
+            border-radius: 10px;
+            border-top: 3px solid var(--color-gold);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+
+        .specialty-icon {
+            font-size: 1.6rem;
+            margin-bottom: 10px;
+        }
+
+        .specialty-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .specialty-desc {
+            font-size: 0.78rem;
+            color: #666;
+            line-height: 1.7;
+        }
+
+        /* ========== 占いへの想い ========== */
+        .belief-section {
+            background: var(--color-cream);
+        }
+
+        .belief-content {
+            text-align: center;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .belief-lead {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #5a8a7a;
+            margin-bottom: 28px;
+            line-height: 2;
+        }
+
+        .belief-text {
+            font-size: 0.92rem;
+            line-height: 2.1;
+            color: #555;
+            margin-bottom: 24px;
+        }
+
+        .belief-text strong {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: #333;
+        }
+
+        .belief-spacer {
+            height: 20px;
+        }
+
+        /* ========== CTA ========== */
+        .cta-section {
+            background: linear-gradient(135deg, #4a5a55 0%, #5a6a65 100%);
+            position: relative;
+            padding: 64px 20px;
+            text-align: center;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L30 60M0 30L60 30' stroke='%23ffffff' stroke-opacity='0.05' stroke-width='1'/%3E%3C/svg%3E");
+            pointer-events: none;
+        }
+
+        .cta-text {
+            color: rgba(255,255,255,0.9);
+            font-size: 0.95rem;
+            line-height: 2;
+            margin-bottom: 18px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-text strong {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .cta-strong {
+            color: var(--color-gold);
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 28px;
+        }
+
+        .cta-strong strong {
+            font-weight: 700;
+        }
+
+        .cta-guide {
+            background: rgba(255,255,255,0.1);
+            padding: 24px;
+            border-radius: 10px;
+            margin: 24px auto;
+            max-width: 380px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-guide-title {
+            color: #fff;
+            font-size: 0.95rem;
+            margin-bottom: 10px;
+        }
+
+        .cta-guide-title strong {
+            color: var(--color-gold);
+        }
+
+        .cta-guide-text {
+            color: rgba(255,255,255,0.85);
+            font-size: 0.88rem;
+            line-height: 1.7;
+        }
+
+        .cta-btn {
+            display: inline-block;
+            margin-top: 24px;
+            transition: transform 0.3s;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-btn:hover {
+            transform: scale(1.03);
+        }
+
+        .cta-btn img {
+            max-width: 320px;
+            height: auto;
+        }
+
+        .cta-sub {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.8rem;
+            margin-top: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ========== フッター ========== */
+        .footer {
+            background: var(--color-primary);
+            color: rgba(255,255,255,0.7);
+            text-align: center;
+            padding: 25px 20px;
+            height: 75px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .footer-content {
+            font-size: 0.85rem;
+        }
+
+        .footer-content a {
+            color: rgba(255,255,255,0.7);
+            margin-right: 20px;
+            transition: color 0.3s;
+        }
+
+        .footer-content a:hover {
+            color: var(--color-gold);
+        }
+
+        /* ========== レスポンシブ ========== */
+        @media (max-width: 1100px) {
+            .header {
+                padding: 0 20px;
+            }
+            .nav {
+                gap: 20px;
+            }
+            .nav a {
+                font-size: 0.8rem;
+            }
+            .contact-btn {
+                padding: 10px 18px;
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .header-inner {
+                height: 60px;
+            }
+            .logo-main {
+                font-size: 1.1rem;
+            }
+            .nav {
+                gap: 15px;
+            }
+            .nav a {
+                font-size: 0.75rem;
+            }
+            .contact-btn {
+                padding: 8px 14px;
+                font-size: 0.75rem;
+            }
+            .main-content {
+                padding-top: 60px;
+            }
+            .achievement-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .footer {
+                height: auto;
+                padding: 20px;
+            }
+            .footer-content {
+                font-size: 0.75rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-wrapper {
+                display: none;
+                position: fixed;
+                top: 60px;
+                left: 0;
+                width: 100%;
+                background: var(--color-primary);
+                flex-direction: column;
+                padding: 20px;
+                gap: 0;
+                z-index: 999;
+            }
+            .nav-wrapper.active {
+                display: flex;
+            }
+            .nav {
+                flex-direction: column;
+                gap: 0;
+                width: 100%;
+            }
+            .nav a {
+                padding: 15px 0;
+                font-size: 1rem;
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+                width: 100%;
+                text-align: center;
+            }
+            .nav a::after {
+                display: none;
+            }
+            .contact-btn {
+                margin-top: 15px;
+                padding: 12px 30px;
+                font-size: 1rem;
+                text-align: center;
+            }
+            .menu-toggle {
+                display: flex !important;
+            }
+            .profile-hero-inner {
+                grid-template-columns: 1fr;
+                min-height: auto;
+            }
+            .profile-hero-photo {
+                height: 320px;
+                object-position: center top;
+            }
+            .profile-hero-content {
+                padding: 32px 24px 40px;
+                text-align: center;
+                align-items: center;
+            }
+            .profile-hero-name {
+                font-size: 1.5rem;
+            }
+            .profile-hero-tagline {
+                font-size: 0.95rem;
+            }
+            .profile-hero-catch {
+                font-size: 0.88rem;
+            }
+            .profile-hero-methods {
+                max-width: 280px;
+                margin: 0 auto 16px;
+            }
+            .profile-hero-methods li {
+                font-size: 0.75rem;
+                padding: 6px 10px;
+            }
+            .profile-hero-greeting {
+                text-align: center;
+                max-width: 100%;
+            }
+            .hero-cta-btn img {
+                max-width: 200px;
+            }
+            .profile-section {
+                padding: 48px 20px;
+            }
+            .section-title {
+                font-size: 1.15rem;
+                margin-bottom: 28px;
+            }
+            .style-item {
+                padding: 20px;
+            }
+            .style-lead {
+                font-size: 0.95rem;
+            }
+            .style-item p {
+                font-size: 0.88rem;
+            }
+            .style-highlight {
+                padding: 24px 20px;
+            }
+            .style-highlight strong {
+                font-size: 1.05rem;
+            }
+            .achievement-section {
+                padding: 48px 20px;
+            }
+            .achievement-grid {
+                gap: 16px;
+                max-width: 400px;
+            }
+            .achievement-item {
+                padding: 28px 16px;
+            }
+            .achievement-number {
+                font-size: 2rem;
+            }
+            .achievement-label {
+                font-size: 0.8rem;
+            }
+            .achievement-list {
+                padding: 20px;
+            }
+            .achievement-list li {
+                font-size: 0.85rem;
+                padding-left: 20px;
+            }
+            .specialty-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+            .specialty-item {
+                padding: 20px 12px;
+            }
+            .specialty-icon {
+                font-size: 1.4rem;
+            }
+            .specialty-title {
+                font-size: 0.88rem;
+            }
+            .specialty-desc {
+                font-size: 0.72rem;
+            }
+            .belief-lead {
+                font-size: 0.98rem;
+            }
+            .belief-text {
+                font-size: 0.88rem;
+            }
+            .cta-section {
+                padding: 48px 20px;
+            }
+            .cta-text {
+                font-size: 0.88rem;
+            }
+            .cta-strong {
+                font-size: 0.98rem;
+            }
+            .cta-guide {
+                padding: 20px;
+                max-width: 300px;
+            }
+            .cta-guide-title {
+                font-size: 0.9rem;
+            }
+            .cta-guide-text {
+                font-size: 0.82rem;
+            }
+            .cta-btn img {
+                max-width: 280px;
+            }
+            .hero-cta-btn img {
+                max-width: 260px;
+            }
+        }
+
+        /* ハンバーガーメニュー */
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            gap: 5px;
+            width: 28px;
+            height: 28px;
+            cursor: pointer;
+        }
+        .menu-toggle span {
+            display: block;
+            width: 100%;
+            height: 2px;
+            background: #fff;
+            transition: 0.3s;
+        }
+
+        /* ページ導線 */
+        .page-links {
+            background: var(--color-cream);
+            padding: 48px 20px;
+        }
+        .page-links-inner {
+            max-width: 700px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+        .page-link-card {
+            background: #fff;
+            padding: 24px 16px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            transition: all 0.3s;
+            display: block;
+        }
+        .page-link-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        .page-link-title {
+            display: block;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--color-primary);
+            margin-bottom: 6px;
+        }
+        .page-link-desc {
+            display: block;
+            font-size: 0.75rem;
+            color: #888;
+        }
+        @media (max-width: 768px) {
+            .page-links {
+                padding: 36px 16px;
+            }
+            .page-links-inner {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+            }
+            .page-link-card {
+                padding: 18px 12px;
+            }
+            .page-link-title {
+                font-size: 0.82rem;
+            }
+            .page-link-desc {
+                font-size: 0.7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ヘッダー -->
+    <header class="header">
+        <div class="header-inner">
+            <a href="index.html" class="logo">
+                <span class="logo-main">六根清浄</span>
+                <span class="logo-sub">(Rokkon shojo)</span>
+            </a>
+            <div class="nav-wrapper">
+                <nav class="nav">
+                    <a href="index.html">ホーム</a>
+                    <a href="about.html">占い師紹介</a>
+                    <a href="pricing.html">料金案内</a>
+                    <a href="testimonials.html">お客様の声</a>
+                    <a href="faq.html">よくある質問</a>
+                </nav>
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSdG_cRsdXN-z8HUmzwUdAv7exsxFM41qp-WLr6hGORGmQI28w/viewform?usp=header" class="contact-btn" target="_blank">お問い合わせ</a>
+            </div>
+            <div class="menu-toggle" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <main class="main-content">
+
+        <!-- プロフィールヒーロー -->
+        <section class="profile-hero">
+            <div class="profile-hero-inner">
+                <img src="images/unnamed.jpg" alt="長谷川貴紀" class="profile-hero-photo">
+                <div class="profile-hero-content">
+                    <div class="profile-hero-title">占い処 六根清浄 代表</div>
+                    <h1 class="profile-hero-name">長谷川 貴紀</h1>
+                    <div class="profile-hero-name-en">hasegawa atsuki</div>
+                    <div class="profile-hero-tagline">「答え」だけでなく「その先」まで一緒に考える</div>
+                    <p class="profile-hero-catch">
+                        <strong>「占いの帝王」</strong>とも呼ばれる<br>
+                        四柱推命を軸に、<br>
+                        複数の占術を組み合わせて鑑定しています。
+                    </p>
+                    <ul class="profile-hero-methods">
+                        <li>四柱推命</li>
+                        <li>紫微斗数</li>
+                        <li>易</li>
+                        <li>九星気学</li>
+                        <li>タロット</li>
+                        <li>オーラ</li>
+                    </ul>
+                    <p class="profile-hero-methods-note">
+                        この<strong>六つの占術</strong>を組み合わせて鑑定します。
+                    </p>
+                    <div class="profile-hero-greeting">
+                        <p>ご覧頂きありがとうございます。</p>
+                        <p>初めての方でもこちらから話を整理しながら進めます。<br>気軽にご依頼ください。</p>
+                        <a href="https://lin.ee/SvZ69l0" class="hero-cta-btn">
+                            <img src="images/botan.png" alt="LINEでご予約はこちら">
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 鑑定スタイル -->
+        <section class="profile-section style-section">
+            <h2 class="section-title">六根清浄の鑑定</h2>
+            <div class="style-grid">
+                <div class="style-item">
+                    <p>
+                        <span class="style-lead">当たったで終わらせない。</span>
+                        当てて終わり、スッキリして終わり<br>では何も変わらない。<br>その先をどう選び、どう動くかまでを重視。
+                    </p>
+                </div>
+                <div class="style-item">
+                    <p>
+                        <span class="style-lead">占いは「決断の知恵」</span>
+                        東洋の占いは哲学や学問と結びつき、<br>大きな決断を下すための知恵として<br>使われてきました。
+                    </p>
+                </div>
+                <div class="style-item">
+                    <p>
+                        <span class="style-lead">生年月日から導く、的確な答え</span>
+                        生年月日から導き出される答えは<br>驚くほど的確です。<br>曖昧な直感ではなく、<br>根拠のある鑑定をお届け。
+                    </p>
+                </div>
+            </div>
+            <div class="style-highlight">
+                <p>
+                    <strong>話を聞くだけでなく、<br>解決方法まで考えます。</strong>
+                    「この先どうすればいい？」を<br>考えたい方に届けたいです。
+                </p>
+            </div>
+        </section>
+
+        <!-- 実績と経歴 -->
+        <section class="profile-section achievement-section">
+            <h2 class="section-title">実績と経歴</h2>
+            <div class="achievement-grid">
+                <div class="achievement-item">
+                    <div class="achievement-number">7<span>年</span></div>
+                    <div class="achievement-label">占い歴</div>
+                </div>
+                <div class="achievement-item">
+                    <div class="achievement-number">1,500<span>件+</span></div>
+                    <div class="achievement-label">累計鑑定数</div>
+                </div>
+                <div class="achievement-item">
+                    <div class="achievement-number">No.1</div>
+                    <div class="achievement-label">名古屋・栄<br>大手占い館での売上</div>
+                </div>
+                <div class="achievement-item">
+                    <div class="achievement-number">No.1</div>
+                    <div class="achievement-label">某チャット占いアプリ<br>口コミ数</div>
+                </div>
+            </div>
+            <ul class="achievement-list">
+                <li>TV出演多数の著名占い師のもとで修行</li>
+                <li>政財界から頼られる四柱推命師籍に師事</li>
+                <li>芸能・経営者など<br>表舞台で活躍する方々のご相談実績</li>
+                <li>独立し「占い処 六根清浄」を設立</li>
+            </ul>
+        </section>
+
+        <!-- 得意な鑑定内容 -->
+        <section class="profile-section">
+            <h2 class="section-title">得意な鑑定内容</h2>
+            <div class="specialty-grid">
+                <div class="specialty-item">
+                    <div class="specialty-icon">💕</div>
+                    <div class="specialty-title">恋愛・結婚</div>
+                    <div class="specialty-desc">この人と付き合っていい？／彼と結婚して大丈夫？／復縁できる？</div>
+                </div>
+                <div class="specialty-item">
+                    <div class="specialty-icon">💼</div>
+                    <div class="specialty-title">仕事・転職</div>
+                    <div class="specialty-desc">今の会社辞めるべき？／向いてる仕事は？／転職先どっち？</div>
+                </div>
+                <div class="specialty-item">
+                    <div class="specialty-icon">🌱</div>
+                    <div class="specialty-title">人生の選択</div>
+                    <div class="specialty-desc">この選択で後悔しない？／引っ越すべき？／親との距離感</div>
+                </div>
+                <div class="specialty-item">
+                    <div class="specialty-icon">📅</div>
+                    <div class="specialty-title">タイミング</div>
+                    <div class="specialty-desc">告白するならいつ？／入籍日・引っ越し日／今動くべき？</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 占いへの想い -->
+        <section class="profile-section belief-section">
+            <h2 class="section-title">占いへの想い</h2>
+            <div class="belief-content">
+                <p class="belief-lead">
+                    気休めではなく、<br>
+                    本気で使える「道具」として。
+                </p>
+                <p class="belief-text">
+                    この人と付き合っていいのか。<br>
+                    この会社にいていいのか。<br>
+                    この選択で後悔しないか。
+                </p>
+                <p class="belief-text">
+                    誰にも相談できない悩み、<br>
+                    抱えていませんか？
+                </p>
+                <div class="belief-spacer"></div>
+                <p class="belief-text">
+                    私自身、転職も引っ越しも<br>
+                    人間関係も<br>
+                    四柱推命を使って決めてきました。
+                </p>
+                <p class="belief-text">
+                    自分の人生で<br>
+                    「本当に使えた」からこそ、<br>
+                    お裾分けしたい。<br>
+                    それが原点です。
+                </p>
+                <p class="belief-text">
+                    家内に弁護士がいる環境もあり<br>
+                    形は違えど依頼者さんには<br>
+                    <strong>「弁護士並みに味方する」</strong><br>
+                    がモットーです。
+                </p>
+                <p class="belief-text">
+                    人生や日常での悩み、<br>
+                    聞かせてください。
+                </p>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <section class="cta-section">
+            <p class="cta-text">
+                友人に相談しても、<br>わかりきった答えしか返ってこない。
+            </p>
+            <p class="cta-text">
+                親には心配をかけたくない。<br>誰に相談すればいいかわからない。
+            </p>
+            <p class="cta-text cta-strong">
+                <strong>そんな時こそ、占いの出番です。</strong>
+            </p>
+            <div class="cta-guide">
+                <p class="cta-guide-title">
+                    予約は <strong>LINE公式アカウント</strong> から
+                </p>
+                <p class="cta-guide-text">
+                    「友だち追加」→「鑑定予約」ボタンを押すだけ
+                </p>
+            </div>
+            <a href="https://lin.ee/SvZ69l0" class="cta-btn">
+                <img src="images/botan.png" alt="LINEでご予約はこちら">
+            </a>
+            <p class="cta-sub">
+                ※「料金・予約方法」は<a href="pricing.html" style="color: var(--color-gold); text-decoration: underline;">料金案内</a>へ
+            </p>
+        </section>
+
+        <!-- ページ導線 -->
+        <section class="page-links">
+            <div class="page-links-inner">
+                <a href="pricing.html" class="page-link-card">
+                    <span class="page-link-title">料金案内</span>
+                    <span class="page-link-desc">コース・料金について</span>
+                </a>
+                <a href="testimonials.html" class="page-link-card">
+                    <span class="page-link-title">お客様の声</span>
+                    <span class="page-link-desc">実際のご感想</span>
+                </a>
+                <a href="faq.html" class="page-link-card">
+                    <span class="page-link-title">よくある質問</span>
+                    <span class="page-link-desc">Q&A</span>
+                </a>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- フッター -->
+    <footer class="footer">
+        <div class="footer-content">
+            <a href="#">プライバシーポリシー</a>© 2026 六根清浄 All Rights Reserved.
+        </div>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            document.querySelector('.nav-wrapper').classList.toggle('active');
+        }
+    </script>
+
+</body>
+</html>
