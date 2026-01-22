@@ -8,148 +8,645 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html { scroll-behavior: smooth; }
-        body { font-family: 'Shippori Mincho', serif; color: #333; line-height: 1.8; }
-        a { text-decoration: none; color: inherit; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Shippori Mincho', serif;
+            color: #333;
+            line-height: 1.8;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
         :root {
             --color-primary: #2d3d38;
+            --color-primary-dark: #232d2a;
             --color-gold: #c4a35a;
             --color-text-white: #ffffff;
             --color-text-light: rgba(255,255,255,0.9);
             --color-cream: #f8f6f2;
-            --color-love: #f0d0d0;
-            --color-app: #d0e4f0;
-            --color-marriage: #e4d0f0;
-            --color-work: #d0f0e0;
-            --color-life: #f0e8d0;
         }
-        .header { position: fixed; top: 0; left: 0; width: 100%; background: var(--color-primary); z-index: 1000; padding: 0 40px; }
-        .header-inner { max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; height: 75px; }
-        .logo { color: var(--color-text-white); text-align: center; }
-        .logo-main { font-size: 1.4rem; font-weight: 600; letter-spacing: 0.1em; display: block; line-height: 1; }
-        .logo-sub { display: block; font-size: 0.65rem; color: var(--color-text-white); letter-spacing: 0.02em; margin-top: 3px; }
-        .nav-wrapper { display: flex; align-items: center; gap: 25px; }
-        .nav { display: flex; gap: 35px; align-items: center; }
-        .nav a { color: var(--color-text-light); font-size: 0.92rem; letter-spacing: 0.05em; transition: all 0.3s; font-weight: 600; position: relative; }
-        .nav a::after { content: ''; position: absolute; bottom: -5px; left: 0; width: 0; height: 2px; background: var(--color-gold); transition: width 0.3s; }
-        .nav a:hover::after { width: 100%; }
-        .contact-btn { background: transparent; color: var(--color-text-white); padding: 10px 35px; border-radius: 4px; font-size: 0.88rem; font-weight: 500; letter-spacing: 0.08em; transition: all 0.3s; border: 1px solid rgba(255,255,255,0.6); }
-        .contact-btn:hover { background: rgba(255,255,255,0.1); border-color: var(--color-text-white); }
-        .main-content { padding-top: 75px; }
-        .page-header { background: linear-gradient(135deg, #3a4a45 0%, #4a5a55 100%); padding: 48px 20px; text-align: center; position: relative; }
-        .page-title { font-size: 1.7rem; color: var(--color-text-white); letter-spacing: 0.12em; margin-bottom: 8px; }
-        .page-subtitle { color: rgba(255,255,255,0.7); font-size: 0.82rem; }
-        .testimonials-section { background: var(--color-cream); padding: 36px 20px 48px; }
-        .testimonials-container { max-width: 580px; margin: 0 auto; }
-        .genre-tabs { display: flex; justify-content: center; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
-        .genre-tab { padding: 9px 16px; background: #fff; border: 1.5px solid #ccc; border-radius: 22px; font-size: 0.8rem; font-weight: 600; color: #666; cursor: pointer; transition: all 0.3s; font-family: 'Shippori Mincho', serif; }
-        .genre-tab:hover { border-color: #999; background: #f5f5f5; }
-        .genre-tab.active { background: var(--color-primary); border-color: var(--color-primary); color: #fff; }
-        .genre-content { display: none; }
-        .genre-content.active { display: block; }
-        .testimonial-slider { position: relative; }
-        .testimonial-card { display: none; background: #fff; border-radius: 14px; padding: 28px 22px 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); text-align: center; animation: fadeIn 0.4s ease; position: relative; overflow: hidden; }
-        .testimonial-card.active { display: block; }
-        .testimonial-genre-tag { display: inline-block; padding: 4px 12px; border-radius: 14px; font-size: 0.75rem; font-weight: 600; margin-bottom: 16px; }
-        #love .testimonial-genre-tag { background: var(--color-love); color: #8b6565; }
-        #app .testimonial-genre-tag { background: var(--color-app); color: #5b7a8b; }
-        #marriage .testimonial-genre-tag { background: var(--color-marriage); color: #7a5b8b; }
-        #work .testimonial-genre-tag { background: var(--color-work); color: #5b8b7a; }
-        #life .testimonial-genre-tag { background: var(--color-life); color: #8b825b; }
-        #all .testimonial-genre-tag { background: var(--color-cream); color: var(--color-primary); border: 1px solid rgba(45,61,56,0.2); }
-        #love .testimonial-content { background: rgba(240, 208, 208, 0.15); padding: 16px; border-radius: 8px; }
-        #app .testimonial-content { background: rgba(208, 228, 240, 0.15); padding: 16px; border-radius: 8px; }
-        #marriage .testimonial-content { background: rgba(228, 208, 240, 0.15); padding: 16px; border-radius: 8px; }
-        #work .testimonial-content { background: rgba(208, 240, 224, 0.15); padding: 16px; border-radius: 8px; }
-        #life .testimonial-content { background: rgba(240, 232, 208, 0.15); padding: 16px; border-radius: 8px; }
-        #all .testimonial-card { }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-        .testimonial-quote { color: var(--color-gold); font-size: 2.4rem; font-family: 'Shippori Mincho', serif; line-height: 1; opacity: 0.4; margin-bottom: 14px; font-weight: 600; }
-        .testimonial-content { font-size: 0.88rem; line-height: 2; color: #444; margin-bottom: 18px; text-align: center; }
-        .testimonial-author { font-size: 0.8rem; font-weight: 600; color: var(--color-primary); text-align: center; }
-        .slider-nav { display: flex; justify-content: center; align-items: center; gap: 14px; margin-top: 20px; }
-        .slider-dots { display: flex; gap: 7px; }
-        .slider-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(45,61,56,0.22); border: none; cursor: pointer; transition: all 0.3s; }
-        .slider-dot:hover { background: rgba(45,61,56,0.45); }
-        .slider-dot.active { background: var(--color-gold); transform: scale(1.25); }
-        .slider-arrow { width: 30px; height: 30px; border-radius: 50%; background: #fff; border: 1px solid #ddd; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; color: #666; transition: all 0.3s; }
-        .slider-arrow:hover { background: var(--color-primary); border-color: var(--color-primary); color: #fff; }
-        .testimonials-note { text-align: center; color: #999; font-size: 0.75rem; margin-top: 28px; }
-        .review-cta { background: #fff; border-radius: 14px; padding: 28px 20px; margin-top: 28px; text-align: center; box-shadow: 0 4px 16px rgba(0,0,0,0.05); border: 2px solid var(--color-gold); }
-        .review-cta-badge { display: inline-block; background: linear-gradient(135deg, var(--color-gold) 0%, #d4b36a 100%); color: #fff; font-size: 0.72rem; font-weight: 600; padding: 5px 14px; border-radius: 18px; margin-bottom: 12px; }
-        .review-cta-title { font-size: 1rem; font-weight: 600; color: var(--color-primary); margin-bottom: 10px; }
-        .review-cta-text { font-size: 0.82rem; color: #666; line-height: 1.75; margin-bottom: 16px; }
-        .review-cta-btn { display: inline-block; background: var(--color-gold); color: #fff; padding: 12px 28px; border-radius: 28px; font-size: 0.85rem; font-weight: 600; transition: all 0.3s; }
-        .review-cta-btn:hover { background: #d4b36a; transform: translateY(-2px); }
-        .cta-section { background: linear-gradient(135deg, #4a5a55 0%, #5a6a65 100%); position: relative; padding: 44px 20px; text-align: center; }
-        .cta-text { color: rgba(255,255,255,0.88); font-size: 0.88rem; line-height: 1.85; margin-bottom: 18px; }
-        .cta-btn { display: inline-block; transition: transform 0.3s; }
-        .cta-btn:hover { transform: scale(1.03); }
-        .cta-btn img { max-width: 380px; height: auto; }
-        /* ページ導線 */
-        .page-links { background: var(--color-cream); padding: 50px 20px; border-top: 1px solid rgba(0,0,0,0.05); }
-        .page-links-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
-        .page-link-card { background: #fff; padding: 24px 16px; border-radius: 12px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.06); transition: all 0.3s; display: block; border: 2px solid transparent; position: relative; }
-        .page-link-card::after { content: '→'; position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--color-gold); font-size: 1rem; opacity: 0; transition: all 0.3s; }
-        .page-link-card:hover { transform: translateY(-4px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); border-color: var(--color-gold); }
-        .page-link-card:hover::after { opacity: 1; right: 8px; }
-        .page-link-title { display: block; font-size: 0.95rem; font-weight: 600; color: var(--color-primary); margin-bottom: 6px; }
-        .page-link-desc { display: block; font-size: 0.75rem; color: #888; }
-        .footer { background: var(--color-primary); color: rgba(255,255,255,0.7); text-align: center; padding: 22px 20px; }
-        .footer-content { font-size: 0.8rem; }
-        .footer-content a { margin-right: 18px; transition: color 0.3s; }
-        .footer-content a:hover { color: #fff; }
-        .menu-toggle { display: none; flex-direction: column; justify-content: center; gap: 5px; width: 28px; height: 28px; cursor: pointer; }
-        .menu-toggle span { display: block; width: 100%; height: 2px; background: #fff; transition: 0.3s; }
+
+        /* ========== ヘッダー ========== */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: var(--color-primary);
+            z-index: 1000;
+            padding: 0 40px;
+        }
+
+        .header-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 75px;
+        }
+
+        .logo {
+            color: var(--color-text-white);
+            text-align: center;
+        }
+
+        .logo-main {
+            font-size: 1.4rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            display: block;
+            line-height: 1;
+        }
+
+        .logo-sub {
+            display: block;
+            font-size: 0.65rem;
+            color: var(--color-text-white);
+            letter-spacing: 0.02em;
+            margin-top: 3px;
+            font-weight: 400;
+        }
+
+        .nav-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .nav {
+            display: flex;
+            gap: 35px;
+            align-items: center;
+        }
+
+        .nav a {
+            color: var(--color-text-light);
+            font-size: 0.92rem;
+            letter-spacing: 0.05em;
+            transition: all 0.3s;
+            font-weight: 600;
+            position: relative;
+            padding-bottom: 5px;
+        }
+
+        .nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 1px;
+            background: var(--color-gold);
+            transition: all 0.3s;
+            transform: translateX(-50%);
+        }
+
+        .nav a:hover::after {
+            width: 100%;
+        }
+
+        .nav a:hover {
+            color: var(--color-gold);
+        }
+
+        .contact-btn {
+            background: transparent;
+            color: var(--color-text-white);
+            padding: 10px 35px;
+            border-radius: 4px;
+            font-size: 0.88rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            transition: all 0.3s;
+            border: 1px solid rgba(255,255,255,0.6);
+        }
+
+        .contact-btn:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: var(--color-text-white);
+        }
+
+        /* ========== メインコンテンツ ========== */
+        .main-content {
+            padding-top: 75px;
+        }
+
+        /* ========== ページヒーロー ========== */
+        .page-hero {
+            background: linear-gradient(135deg, #3a4a45 0%, #4a5a55 100%);
+            position: relative;
+            padding: 80px 20px;
+            text-align: center;
+        }
+
+        .page-hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L30 60M0 30L60 30' stroke='%23ffffff' stroke-opacity='0.03' stroke-width='1'/%3E%3C/svg%3E");
+            pointer-events: none;
+        }
+
+        .page-hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-hero-title {
+            color: #fff;
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            letter-spacing: 0.08em;
+        }
+
+        .page-hero-subtitle {
+            color: rgba(255,255,255,0.85);
+            font-size: 1rem;
+            line-height: 2;
+        }
+
+        /* ========== フィルターセクション ========== */
+        .filter-section {
+            background: #fff;
+            padding: 30px 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .filter-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .filter-title {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 16px;
+            letter-spacing: 0.05em;
+        }
+
+        .filter-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 10px 24px;
+            background: var(--color-cream);
+            color: var(--color-primary);
+            border: 2px solid transparent;
+            border-radius: 25px;
+            font-size: 0.88rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            letter-spacing: 0.05em;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: #fff;
+            border-color: var(--color-gold);
+            color: var(--color-gold);
+        }
+
+        /* ========== お客様の声一覧 ========== */
+        .testimonials-section {
+            background: var(--color-cream);
+            padding: 60px 20px 80px;
+        }
+
+        .testimonials-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+        }
+
+        .testimonial-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 28px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            transition: all 0.3s;
+            position: relative;
+            border: 2px solid transparent;
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            border-color: var(--color-gold);
+        }
+
+        .testimonial-header {
+            margin-bottom: 16px;
+        }
+
+        .testimonial-name {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--color-primary);
+            margin-bottom: 4px;
+        }
+
+        .testimonial-meta {
+            font-size: 0.75rem;
+            color: #888;
+        }
+
+        .testimonial-category {
+            display: inline-block;
+            padding: 5px 12px;
+            background: rgba(90, 138, 122, 0.1);
+            color: #5a8a7a;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-bottom: 16px;
+            border: 1px solid rgba(90, 138, 122, 0.2);
+        }
+
+        .testimonial-text {
+            font-size: 0.92rem;
+            line-height: 1.9;
+            color: #444;
+            position: relative;
+        }
+
+        .testimonial-text::before {
+            content: '"';
+            position: absolute;
+            left: -12px;
+            top: -8px;
+            font-size: 3rem;
+            color: var(--color-gold);
+            opacity: 0.2;
+            font-family: Georgia, serif;
+        }
+
+        /* ========== CTA ========== */
+        .cta-section {
+            background: linear-gradient(135deg, #4a5a55 0%, #5a6a65 100%);
+            position: relative;
+            padding: 64px 20px;
+            text-align: center;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L30 60M0 30L60 30' stroke='%23ffffff' stroke-opacity='0.05' stroke-width='1'/%3E%3C/svg%3E");
+            pointer-events: none;
+        }
+
+        .cta-content {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-title {
+            color: #fff;
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            letter-spacing: 0.05em;
+        }
+
+        .cta-text {
+            color: rgba(255,255,255,0.9);
+            font-size: 0.95rem;
+            line-height: 2;
+            margin-bottom: 32px;
+        }
+
+        .cta-btn {
+            display: inline-block;
+            margin-top: 8px;
+            transition: transform 0.3s;
+        }
+
+        .cta-btn:hover {
+            transform: scale(1.03);
+        }
+
+        .cta-btn img {
+            max-width: 380px;
+            height: auto;
+        }
+
+        /* ========== フッター ========== */
+        .footer {
+            background: var(--color-primary);
+            color: rgba(255,255,255,0.7);
+            text-align: center;
+            padding: 25px 20px;
+            height: 75px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .footer-content {
+            font-size: 0.85rem;
+        }
+
+        .footer-content a {
+            color: rgba(255,255,255,0.7);
+            margin-right: 20px;
+            transition: color 0.3s;
+        }
+
+        .footer-content a:hover {
+            color: var(--color-gold);
+        }
+
+        /* ========== レスポンシブ ========== */
+        @media (max-width: 1100px) {
+            .header {
+                padding: 0 20px;
+            }
+            .nav {
+                gap: 20px;
+            }
+            .nav a {
+                font-size: 0.8rem;
+            }
+            .contact-btn {
+                padding: 10px 18px;
+                font-size: 0.8rem;
+            }
+        }
+
         @media (max-width: 900px) {
-            .header { padding: 0 20px; }
-            .header-inner { height: 60px; }
-            .logo-main { font-size: 1.1rem; }
-            .nav { gap: 15px; }
-            .nav a { font-size: 0.75rem; }
-            .contact-btn { padding: 8px 14px; font-size: 0.75rem; }
-            .main-content { padding-top: 60px; }
-            .page-links-inner { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .header-inner {
+                height: 60px;
+            }
+            .logo-main {
+                font-size: 1.1rem;
+            }
+            .nav {
+                gap: 15px;
+            }
+            .nav a {
+                font-size: 0.75rem;
+            }
+            .contact-btn {
+                padding: 8px 14px;
+                font-size: 0.75rem;
+            }
+            .main-content {
+                padding-top: 60px;
+            }
+            .page-hero {
+                padding: 60px 20px;
+            }
+            .page-hero-title {
+                font-size: 2rem;
+            }
+            .testimonials-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            .footer {
+                height: auto;
+                padding: 20px;
+            }
+            .footer-content {
+                font-size: 0.75rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-hero-title {
+                font-size: 1.8rem;
+            }
+            .page-hero-subtitle {
+                font-size: 0.92rem;
+            }
+            .filter-section {
+                padding: 24px 16px;
+            }
+            .filter-btn {
+                padding: 8px 18px;
+                font-size: 0.82rem;
+            }
+            .testimonials-section {
+                padding: 48px 16px;
+            }
+            .testimonial-card {
+                padding: 24px;
+            }
+            .cta-section {
+                padding: 48px 20px;
+            }
+            .cta-title {
+                font-size: 1.2rem;
+            }
+            .cta-text {
+                font-size: 0.88rem;
+            }
+            .cta-btn img {
+                max-width: 320px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-wrapper {
+                display: none;
+                position: fixed;
+                top: 60px;
+                left: 0;
+                width: 100%;
+                background: var(--color-primary);
+                flex-direction: column;
+                padding: 20px;
+                gap: 0;
+                z-index: 999;
+            }
+            .nav-wrapper.active {
+                display: flex;
+            }
+            .nav {
+                flex-direction: column;
+                gap: 0;
+                width: 100%;
+            }
+            .nav a {
+                padding: 15px 0;
+                font-size: 1rem;
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+                width: 100%;
+                text-align: center;
+            }
+            .nav a::after {
+                display: none;
+            }
+            .contact-btn {
+                margin-top: 10px;
+                padding: 12px 30px;
+                font-size: 1rem;
+                text-align: center;
+            }
+            .menu-toggle {
+                display: flex !important;
+            }
+            .page-hero {
+                padding: 40px 16px;
+            }
+            .page-hero-title {
+                font-size: 1.5rem;
+            }
+            .page-hero-subtitle {
+                font-size: 0.85rem;
+            }
+            .filter-buttons {
+                gap: 8px;
+            }
+            .filter-btn {
+                padding: 6px 14px;
+                font-size: 0.75rem;
+            }
+        }
+
+        /* ハンバーガーメニュー */
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            gap: 6px;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            padding: 8px;
+        }
+        .menu-toggle span {
+            display: block;
+            width: 100%;
+            height: 3px;
+            background: #fff;
+            transition: 0.3s;
+            border-radius: 2px;
+        }
+
+        /* ページ導線 */
+        .page-links {
+            background: var(--color-cream);
+            padding: 60px 20px;
+        }
+        .page-links-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+        .page-link-card {
+            background: #fff;
+            padding: 24px 16px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            transition: all 0.3s;
+            display: block;
+            border: 2px solid transparent;
+            position: relative;
+        }
+        .page-link-card::after {
+            content: '→';
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--color-gold);
+            font-size: 1rem;
+            opacity: 0;
+            transition: all 0.3s;
+        }
+        .page-link-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border-color: var(--color-gold);
+        }
+        .page-link-card:hover::after {
+            opacity: 1;
+            right: 8px;
+        }
+        .page-link-title {
+            display: block;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--color-primary);
+            margin-bottom: 6px;
+        }
+        .page-link-desc {
+            display: block;
+            font-size: 0.75rem;
+            color: #888;
+        }
+        @media (max-width: 900px) {
+            .page-links-inner {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
         }
         @media (max-width: 600px) {
-            .page-links { padding: 40px 16px; }
-            .page-links-inner { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-            .page-link-card { padding: 18px 12px; }
-            .page-link-card::after { display: none; }
-            .page-link-title { font-size: 0.85rem; }
-            .page-link-desc { font-size: 0.7rem; }
-        }
-        @media (max-width: 480px) {
-            .nav-wrapper { display: none; position: fixed; top: 60px; left: 0; width: 100%; background: var(--color-primary); flex-direction: column; padding: 20px; gap: 0; z-index: 999; }
-            .nav-wrapper.active { display: flex; }
-            .nav { flex-direction: column; gap: 0; width: 100%; }
-            .nav a { padding: 15px 0; font-size: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); width: 100%; text-align: center; }
-            .nav a::after { display: none; }
-            .contact-btn { margin-top: 15px; padding: 12px 30px; font-size: 1rem; text-align: center; }
-            .menu-toggle { display: flex; }
-            .page-header { padding: 36px 16px; }
-            .page-title { font-size: 1.35rem; }
-            .testimonials-section { padding: 24px 14px 36px; }
-            .genre-tabs { gap: 6px; margin-bottom: 18px; }
-            .genre-tab { padding: 8px 12px; font-size: 0.73rem; }
-            .testimonial-card { padding: 22px 16px 20px; border-radius: 12px; }
-            .testimonial-quote { font-size: 2rem; margin-bottom: 10px; }
-            .testimonial-content { font-size: 0.82rem; line-height: 1.95; margin-bottom: 14px; }
-            .testimonial-author { font-size: 0.75rem; }
-            .slider-nav { margin-top: 16px; gap: 10px; }
-            .slider-dot { width: 7px; height: 7px; }
-            .slider-arrow { width: 26px; height: 26px; font-size: 0.75rem; }
-            .review-cta { padding: 22px 16px; margin-top: 22px; }
-            .cta-section { padding: 32px 16px; }
-            .cta-btn img { max-width: 300px; }
+            .page-links {
+                padding: 40px 16px;
+            }
+            .page-links-inner {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+            .page-link-card {
+                padding: 18px 12px;
+            }
+            .page-link-card::after {
+                display: none;
+            }
+            .page-link-title {
+                font-size: 0.85rem;
+            }
+            .page-link-desc {
+                font-size: 0.7rem;
+            }
         }
     </style>
 </head>
 <body>
+
+    <!-- ヘッダー -->
     <header class="header">
         <div class="header-inner">
-            <a href="index.html" class="logo"><span class="logo-main">六根清浄</span><span class="logo-sub">(Rokkon shojo)</span></a>
+            <a href="index.html" class="logo">
+                <span class="logo-main">六根清浄</span>
+                <span class="logo-sub">(Rokkon shojo)</span>
+            </a>
             <div class="nav-wrapper">
                 <nav class="nav">
                     <a href="index.html">ホーム</a>
@@ -161,297 +658,217 @@
                 </nav>
                 <a href="https://docs.google.com/forms/d/e/1FAIpQLSdG_cRsdXN-z8HUmzwUdAv7exsxFM41qp-WLr6hGORGmQI28w/viewform?usp=header" class="contact-btn" target="_blank">お問い合わせ</a>
             </div>
-            <div class="menu-toggle" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+            <div class="menu-toggle" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
         </div>
     </header>
+
+    <!-- メインコンテンツ -->
     <main class="main-content">
-        <div class="page-header">
-            <h1 class="page-title">お客様の声</h1>
-            <p class="page-subtitle">実際に鑑定を受けられた方からのご感想</p>
-        </div>
-        <section class="testimonials-section">
-            <div class="testimonials-container">
-                <div class="genre-tabs">
-                    <button class="genre-tab active" data-genre="love" onclick="showGenre('love')">恋愛</button>
-                    <button class="genre-tab" data-genre="app" onclick="showGenre('app')">マッチングアプリ</button>
-                    <button class="genre-tab" data-genre="marriage" onclick="showGenre('marriage')">結婚・婚活</button>
-                    <button class="genre-tab" data-genre="work" onclick="showGenre('work')">仕事</button>
-                    <button class="genre-tab" data-genre="life" onclick="showGenre('life')">人生・家族</button>
-                    <button class="genre-tab" data-genre="all" onclick="showGenre('all')">すべて</button>
-                </div>
-                <!-- 恋愛 -->
-                <div id="love" class="genre-content active">
-                    <div class="testimonial-slider" data-genre="love">
-                        <div class="testimonial-card active">
-                            <div class="testimonial-quote">❝</div>
-                            <p class="testimonial-content">彼氏との関係で悩んでて。<br>好きだけど噛み合わないというか…。<br><br>友達は「別れたら？」って言うし、<br>親は「まだ若いんだから」って。<br><br>鑑定で<strong>相性とか、どう接すればいいか、<br>地雷ワード</strong>とかを教えてもらえて<br>本当に関係が良くなりました。<br><br>別れなくてよかったです！</p>
-                            <div class="testimonial-author">りおさん（21歳・女性）</div>
-                        </div>
-                        <div class="testimonial-card">
-                            <div class="testimonial-genre-tag">恋愛</div>
-                            <div class="testimonial-quote">❝</div>
-                            <p class="testimonial-content">別れて半年、未練タラタラで<br>周りには「執着だよ」「次行きな」って<br>何回言われたことか。<br><br>でも先生は「相性見る限り、<br>別れる組み合わせじゃない。<br>彼、今運気落ちてるから<br><strong>◯月以降にこういう内容で連絡して</strong>」<br>って超具体的で。<br><br>言われた通りにしたら長文返信きて泣きました。<br><strong>今は復縁して同棲してます。</strong></p>
-                            <div class="testimonial-author">みなみさん(26歳・女性)</div>
-                        </div>
-                        <div class="testimonial-card">
-                            <div class="testimonial-genre-tag">恋愛</div>
-                            <div class="testimonial-quote">❝</div>
-                            <p class="testimonial-content">片思いの相手がいて、<br>告白するか悩んでました。<br><br>「この人とは相性いいけど、<br>今はタイミングじゃない。<br><strong>◯月に向こうから来るから待って</strong>」って。<br><br>半信半疑だったけど<br>本当に向こうから食事に誘われて、<br>今付き合ってます。<br><br>焦らなくてよかった！</p>
-                            <div class="testimonial-author">ゆいさん（23歳・女性）</div>
-                        </div>
-                        <div class="testimonial-card">
-                            <div class="testimonial-genre-tag">恋愛</div>
-                            <div class="testimonial-quote">❝</div>
-                            <p class="testimonial-content">彼がなかなか会ってくれなくて<br>不安で仕方なかったんです。<br><br>「彼は<strong>一人の時間が必要なタイプ</strong>。<br>束縛すると逃げるから、<br>連絡頻度より質を大事にして」<br>ってアドバイスもらって実践したら<br><strong>向こうから連絡くるようになりました。</strong></p>
-                            <div class="testimonial-author">なつきさん（24歳・女性）</div>
-                        </div>
-                        <div class="testimonial-card">
-                            <div class="testimonial-genre-tag">恋愛</div>
-                            <div class="testimonial-quote">❝</div>
-                            <p class="testimonial-content">好きな人がいるけど、<br>脈ありかどうか全然わからなくて。<br><br>「相手は好意持ってるけど<br><strong>表現が下手なタイプ</strong>。<br>あなたから一歩踏み込んで大丈夫」<br>って背中押されて連絡したら<br><strong>「ずっと気になってた」</strong>って言われました！</p>
-                            <div class="testimonial-author">さきさん（22歳・女性）</div>
-                        </div>
-                    </div>
-                    <div class="slider-nav">
-                        <button class="slider-arrow" onclick="prevSlide('love')">‹</button>
-                        <div class="slider-dots" data-genre="love">
-                            <span class="slider-dot active" onclick="showSlide('love', 0)"></span>
-                            <span class="slider-dot" onclick="showSlide('love', 1)"></span>
-                            <span class="slider-dot" onclick="showSlide('love', 2)"></span>
-                            <span class="slider-dot" onclick="showSlide('love', 3)"></span>
-                            <span class="slider-dot" onclick="showSlide('love', 4)"></span>
-                        </div>
-                        <button class="slider-arrow" onclick="nextSlide('love')">›</button>
-                    </div>
-                </div>
-                <!-- マッチングアプリ -->
-                <div id="app" class="genre-content">
-                    <div class="testimonial-slider" data-genre="app">
-                        <div class="testimonial-card active">
-                            <div class="testimonial-quote">❝</div>
-                            <p class="testimonial-content">アプリで何人かいい人がいて、<br>友達に相談したら<br>「気持ち次第じゃない？」って。<br><br>いや、それが分からないから<br>困ってるんだけど…って（笑）<br><br>占ってもらったら、<br><strong>今まで選んでた彼氏が<br>たまたま相性悪かった</strong>ってわかって。<br><br>占い通りの人を選んだら<br><strong>結婚まで進みました。</strong></p>
-                            <div class="testimonial-author">M.Tさん（29歳・女性）</div>
-                        </div>
-                        <div class="testimonial-card">
-                            <div class="testimonial-genre-tag">恋愛</div>
-                            <div class="testimonial-quote">❝</div>
-                            <p class="testimonial-content">マッチングアプリで出会った彼が<br>本気なのかわからなくて相談。<br><br>生年月日だけで<br>「この人は<strong>慎重だけど誠実</strong>。<br>焦らず待てば大丈夫」って言われて<br>信じて待ったら<br><strong>3ヶ月後に告白されました！</strong><br><br>あの時焦って離れなくてよかったです。</p>
-                            <div class="testimonial-author">あやかさん（25歳・女性）</div>
-                        </div>
-                        <div class="testimonial-card">
-                            <div class="testimonial-genre-tag">恋愛</div>
-                            <div class="testimonial-quote">❝</div>
-                            <p class="testimonial-content">アプリで知り合った人と<br>2回目のデート後に音信不通に。<br><br>「この人は悪い人じゃないけど、<br>あなたとは相性が合わない。<br><strong>次はこういう特徴の人を探して</strong>」<br>って具体的に教えてもらって。<br><br>言われた通りの人を選んだら<br><strong>今度はトントン拍子で進んでます！</strong></p>
-                            <div class="testimonial-author">ことねさん（27歳・女性）</div>
-                        </div>
-                        <div class="testimonial-card">
-                            <div class="testimonial-genre-tag">恋愛</div>
-                            <div class="testimonial-quote">❝</div>
-                            <p class="testimonial-content">アプリで50人以上会っても<br>全然ピンとくる人がいなくて。<br><br>「あなたは<br><strong>直感より相性で選んだ方がいい</strong>。<br>第一印象は悪くても、<br>この条件の人と会ってみて」<br>って言われて。<br><br>正直「えー」と思ったけど<br>その通りにしたら<br><strong>今の彼氏に出会えました。</strong></p>
-                            <div class="testimonial-author">えみさん（30歳・女性）</div>
-                        </div>
-                        <div class="testimonial-card">
-                            <div class="testimonial-genre-tag">恋愛</div>
-                            <div class="testimonial-quote">❝</div>
-                            <p class="testimonial-content">アプリで会った女性と<br>いい感じだったのに<br>急に連絡が減って。<br><br>「彼女は<strong>仕事が忙しい時期に入った</strong>だけ。<br>今は追いかけず、◯週間後に<br>軽い感じで連絡して」って言われて。<br><br>その通りにしたら向こうから<br><strong>「会いたかった」って連絡きました。</strong><br>今は真剣交際中です。</p>
-                            <div class="testimonial-author">健一さん（32歳・男性）</div>
-                        </div>
-                    </div>
-                    <div class="slider-nav">
-                        <button class="slider-arrow" onclick="prevSlide('app')">‹</button>
-                        <div class="slider-dots" data-genre="app">
-                            <span class="slider-dot active" onclick="showSlide('app', 0)"></span>
-                            <span class="slider-dot" onclick="showSlide('app', 1)"></span>
-                            <span class="slider-dot" onclick="showSlide('app', 2)"></span>
-                            <span class="slider-dot" onclick="showSlide('app', 3)"></span>
-                            <span class="slider-dot" onclick="showSlide('app', 4)"></span>
-                        </div>
-                        <button class="slider-arrow" onclick="nextSlide('app')">›</button>
-                    </div>
-                </div>
-                <!-- 結婚・婚活 -->
-                <div id="marriage" class="genre-content">
-                    <div class="testimonial-slider" data-genre="marriage">
-                        <div class="testimonial-card active">
-                            <div class="testimonial-quote">❝</div>
-                            <p class="testimonial-content">32歳、婚活3年目。<br>何十人と会って全部ダメで<br>「私に問題があるのかも」って<br>本気で病んでました。<br><br>先生に「<strong>今年は縁がない年。<br>来年の春から動いて</strong>」って。<br><br>言われた通りにしたら<br>3人目で今の彼に出会えて、<br>しかも<strong>先生が言ってた特徴そのままの人。</strong><br><br>焦って変な人と結婚してたらと思うと<br>ゾッとします。</p>
-                            <div class="testimonial-author">さくらさん（33歳・女性）</div>
-                        </div>
-                        <div class="testimonial-card">
-                            <div class="testimonial-genre-tag">恋愛</div>
-                            <div class="testimonial-quote">❝</div>
-                            <p class="testimonial-content">彼女と5年付き合ってるけど<br>なかなかプロポーズする勇気が出なくて。<br><br>「この人とは結婚していいのか」<br>「今のタイミングでいいのか」<br>ずっと迷って。<br><br>鑑定で「<strong>相性は抜群。<br>◯月に動けば、向こうも覚悟決めてる</strong>」<br>って言われてプロポーズしたら<br><strong>泣いて喜んでくれました。</strong><br><br>背中押してもらえて本当に感謝です。</p>
-                            <div class="testimonial-author">大輔さん（34歳・男性）</div>
-                        </div>
-                        <div class="testimonial-card">
-                            <div class="testimonial-genre-tag">恋愛</div>
-                            <div class="testimonial-quote">❝</div>
-                            <p class="testimonial-content">彼氏と5年付き合ってるけど<br>プロポーズしてくれなくて。<br><br>「この人と結婚していいのか」<br>「待ってていいのか」<br>ずっとモヤモヤして。<br><br>鑑定で「彼は<strong>慎重なタイプ</strong>。<br>あなたから具体的な話を振った方がいい」<br>「<strong>◯月頃が動きやすい</strong>」って言われて<br>その通りにしたら、<br><strong>年内に婚約できました。</strong></p>
-                            <div class="testimonial-author">ゆかさん（30歳・女性）</div>
-                        </div>
-                    </div>
-                    <div class="slider-nav">
-                        <button class="slider-arrow" onclick="prevSlide('marriage')">‹</button>
-                        <div class="slider-dots" data-genre="marriage">
-                            <span class="slider-dot active" onclick="showSlide('marriage', 0)"></span>
-                            <span class="slider-dot" onclick="showSlide('marriage', 1)"></span>
-                            <span class="slider-dot" onclick="showSlide('marriage', 2)"></span>
-                        </div>
-                        <button class="slider-arrow" onclick="nextSlide('marriage')">›</button>
-                    </div>
-                </div>
-                <!-- 仕事 -->
-                <div id="work" class="genre-content">
-                    <div class="testimonial-slider" data-genre="work">
-                        <div class="testimonial-card active">
-                            <div class="testimonial-quote">❝</div>
-                            <p class="testimonial-content">仕事がしんどいけど<br>辞めていいのか分からなくて。<br>まだ3年目だし頑張らないと<br>って余計モヤモヤして。<br><br>鑑定してもらったら、<br>私が<strong>素質的に苦手なことを<br>無理に頑張ってた</strong>ことが分かりました。<br><br>向いてる分野を教えてもらって<br>転職活動したら、<strong>すぐ内定もらえて。</strong><br>今は毎日楽しく働けてます。</p>
-                            <div class="testimonial-author">川田さん（27歳・女性）</div>
-                        </div>
-                        <div class="testimonial-card">
-                            <div class="testimonial-genre-tag">恋愛</div>
-                            <div class="testimonial-quote">❝</div>
-                            <p class="testimonial-content">会社員しながら週末起業したくて、<br>コンサルとかコーチングとか<br>始めようかなって。<br><br>でも先生に<br>「あなたは<strong>人前に立つより裏方タイプ</strong>。<br>表に出ると消耗する命式」<br>って言われてハッとして。<br><br>Webライターに切り替えたら<br><strong>半年で月10万超えました。</strong><br><br>「向いてないことで成功しても続かない」<br>って言葉が刺さりました。</p>
-                            <div class="testimonial-author">たくやさん（31歳・男性）</div>
-                        </div>
-                        <div class="testimonial-card">
-                            <div class="testimonial-genre-tag">恋愛</div>
-                            <div class="testimonial-quote">❝</div>
-                            <p class="testimonial-content">仕事で精神的に追い詰められて、<br>休職か悩んでました。<br>具体的にどうすればいいか分からなくて。<br><br>先生は人生経験が豊富で、<br>選択肢を真剣に考えてくれました。<br><strong>利用できそうな制度とか<br>すごく具体的に教えてくれて。</strong><br><br>おかげで冷静に判断できて、<br>今は休みながら復帰の準備をしています。</p>
-                            <div class="testimonial-author">Y.Nさん（42歳・女性）</div>
-                        </div>
-                        <div class="testimonial-card">
-                            <div class="testimonial-genre-tag">恋愛</div>
-                            <div class="testimonial-quote">❝</div>
-                            <p class="testimonial-content">スタッフとの接し方で悩んでて、<br>従業員全員の素質を見てもらいました。<br><br>そしたらスタッフが<br><strong>特定の属性に偏ってた</strong>みたいで<br>笑っちゃいました（笑）<br><br>どんな人がいるとバランスが取れるか<br>教えてもらって、それ以降、<br><strong>採用するときも参考にしてます。</strong><br>おかげで職場の雰囲気が良くなりました。</p>
-                            <div class="testimonial-author">よっしーさん（38歳・男性）</div>
-                        </div>
-                    </div>
-                    <div class="slider-nav">
-                        <button class="slider-arrow" onclick="prevSlide('work')">‹</button>
-                        <div class="slider-dots" data-genre="work">
-                            <span class="slider-dot active" onclick="showSlide('work', 0)"></span>
-                            <span class="slider-dot" onclick="showSlide('work', 1)"></span>
-                            <span class="slider-dot" onclick="showSlide('work', 2)"></span>
-                            <span class="slider-dot" onclick="showSlide('work', 3)"></span>
-                        </div>
-                        <button class="slider-arrow" onclick="nextSlide('work')">›</button>
-                    </div>
-                </div>
-                <!-- 人生・家族 -->
-                <div id="life" class="genre-content">
-                    <div class="testimonial-slider" data-genre="life">
-                        <div class="testimonial-card active">
-                            <div class="testimonial-quote">❝</div>
-                            <p class="testimonial-content">母との関係がずっと苦しくて。<br>何を言っても否定、姉と比較、<br>私の選択は全部ダメ出し。<br><br>「お母さんの命式見ると、<br><strong>本人も苦しんでるタイプ</strong>。<br>愛情はあるけど表現が下手で、<br>心配が攻撃になっちゃう人」<br>って言われて涙が止まらなくなって。<br><br>「<strong>あなたは実家出た方がいい命式</strong>」<br>って背中押されて一人暮らし始めたら<br>本当に楽になりました。</p>
-                            <div class="testimonial-author">A.Kさん（28歳・女性）</div>
-                        </div>
-                        <div class="testimonial-card">
-                            <div class="testimonial-genre-tag">恋愛</div>
-                            <div class="testimonial-quote">❝</div>
-                            <p class="testimonial-content">転勤で関西から関東へ。<br>どうせ引っ越すなら<br>運気上がる場所がいいなと思って相談。<br><br>「今年は南東がいいけど、<br>あなたの場合は<br><strong>◯◯区より◯◯区。<br>駅でいうとこの辺り</strong>」<br>ってめちゃくちゃ具体的で。<br><br>言われたエリアで探したら<br><strong>相場より安くて日当たり良い物件が見つかって、<br>引っ越してから半年で昇進しました。</strong></p>
-                            <div class="testimonial-author">健太さん（35歳・男性）</div>
-                        </div>
-                        <div class="testimonial-card">
-                            <div class="testimonial-genre-tag">恋愛</div>
-                            <div class="testimonial-quote">❝</div>
-                            <p class="testimonial-content">「このまま今の生活続けていいのかな」<br>ってずっとモヤモヤしてて。<br>特に大きな不満はないけど、<br>何か違う気がして。<br><br>先生に<br>「あなたは<strong>30代後半から運気が変わる</strong>。<br>今は準備期間だから焦らなくていい。<br>ただ、<strong>◯◯だけは始めておいた方がいい</strong>」<br>って言われて、すごく腑に落ちました。<br><br>漠然とした不安が消えて、<br>今やるべきことが明確になりました。</p>
-                            <div class="testimonial-author">まいさん（32歳・女性）</div>
-                        </div>
-                    </div>
-                    <div class="slider-nav">
-                        <button class="slider-arrow" onclick="prevSlide('life')">‹</button>
-                        <div class="slider-dots" data-genre="life">
-                            <span class="slider-dot active" onclick="showSlide('life', 0)"></span>
-                            <span class="slider-dot" onclick="showSlide('life', 1)"></span>
-                            <span class="slider-dot" onclick="showSlide('life', 2)"></span>
-                        </div>
-                        <button class="slider-arrow" onclick="nextSlide('life')">›</button>
-                    </div>
-                </div>
-                <!-- すべて（全ジャンルの口コミを集約） -->
-                <div id="all" class="genre-content">
-                    <div class="testimonial-slider" data-genre="all">
-                        <div class="testimonial-card active">
-                            <div class="testimonial-genre-tag">恋愛</div>
-                            <div class="testimonial-quote">❝</div>
-                            <p class="testimonial-content">別れて半年、未練タラタラで<br>周りには「執着だよ」「次行きな」って<br>何回言われたことか。<br><br>でも先生は「相性見る限り、<br>別れる組み合わせじゃない。<br>彼、今運気落ちてるから<br><strong>◯月以降にこういう内容で連絡して</strong>」<br>って超具体的で。<br><br>言われた通りにしたら長文返信きて泣きました。<br><strong>今は復縁して同棲してます。</strong></p>
-                            <div class="testimonial-author">みなみさん（26歳・女性）／恋愛</div>
-                        </div>
-                        <div class="testimonial-card">
-                            <div class="testimonial-genre-tag">マッチングアプリ</div>
-                            <div class="testimonial-quote">❝</div>
-                            <p class="testimonial-content">アプリで何人かいい人がいて、<br>友達に相談したら<br>「気持ち次第じゃない？」って。<br><br>いや、それが分からないから<br>困ってるんだけど…って（笑）<br><br>占ってもらったら、<br><strong>今まで選んでた彼氏が<br>たまたま相性悪かった</strong>ってわかって。<br><br>占い通りの人を選んだら<br><strong>結婚まで進みました。</strong></p>
-                            <div class="testimonial-author">M.Tさん（29歳・女性）／マッチングアプリ</div>
-                        </div>
-                        <div class="testimonial-card">
-                            <div class="testimonial-genre-tag">結婚・婚活</div>
-                            <div class="testimonial-quote">❝</div>
-                            <p class="testimonial-content">32歳、婚活3年目。<br>何十人と会って全部ダメで<br>「私に問題があるのかも」って<br>本気で病んでました。<br><br>先生に「<strong>今年は縁がない年。<br>来年の春から動いて</strong>」って。<br><br>言われた通りにしたら<br>3人目で今の彼に出会えて、<br>しかも<strong>先生が言ってた特徴そのままの人。</strong></p>
-                            <div class="testimonial-author">さくらさん（33歳・女性）／結婚・婚活</div>
-                        </div>
-                        <div class="testimonial-card">
-                            <div class="testimonial-genre-tag">結婚・婚活</div>
-                            <div class="testimonial-quote">❝</div>
-                            <p class="testimonial-content">彼女と5年付き合ってるけど<br>なかなかプロポーズする勇気が出なくて。<br><br>鑑定で「<strong>相性は抜群。<br>◯月に動けば、向こうも覚悟決めてる</strong>」<br>って言われてプロポーズしたら<br><strong>泣いて喜んでくれました。</strong><br><br>背中押してもらえて本当に感謝です。</p>
-                            <div class="testimonial-author">大輔さん（34歳・男性）／結婚・婚活</div>
-                        </div>
-                        <div class="testimonial-card">
-                            <div class="testimonial-genre-tag">仕事・転職</div>
-                            <div class="testimonial-quote">❝</div>
-                            <p class="testimonial-content">仕事がしんどいけど<br>辞めていいのか分からなくて。<br>まだ3年目だし頑張らないと<br>って余計モヤモヤして。<br><br>鑑定してもらったら、<br>私が<strong>素質的に苦手なことを<br>無理に頑張ってた</strong>ことが分かりました。<br><br>向いてる分野を教えてもらって<br>転職活動したら、<strong>すぐ内定もらえて。</strong><br>今は毎日楽しく働けてます。</p>
-                            <div class="testimonial-author">川田さん（27歳・女性）／仕事</div>
-                        </div>
-                        <div class="testimonial-card">
-                            <div class="testimonial-genre-tag">仕事・転職</div>
-                            <div class="testimonial-quote">❝</div>
-                            <p class="testimonial-content">会社員しながら週末起業したくて。<br><br>でも先生に<br>「あなたは<strong>人前に立つより裏方タイプ</strong>。<br>表に出ると消耗する命式」<br>って言われてハッとして。<br><br>Webライターに切り替えたら<br><strong>半年で月10万超えました。</strong><br><br>「向いてないことで成功しても続かない」<br>って言葉が刺さりました。</p>
-                            <div class="testimonial-author">たくやさん（31歳・男性）／仕事</div>
-                        </div>
-                        <div class="testimonial-card">
-                            <div class="testimonial-genre-tag">人生・家族</div>
-                            <div class="testimonial-quote">❝</div>
-                            <p class="testimonial-content">母との関係がずっと苦しくて。<br>何を言っても否定、姉と比較、<br>私の選択は全部ダメ出し。<br><br>「お母さんの命式見ると、<br><strong>本人も苦しんでるタイプ</strong>。<br>愛情はあるけど表現が下手」<br>って言われて涙が止まらなくなって。<br><br>「<strong>あなたは実家出た方がいい命式</strong>」<br>って背中押されて一人暮らし始めたら<br>本当に楽になりました。</p>
-                            <div class="testimonial-author">A.Kさん（28歳・女性）／人生・家族</div>
-                        </div>
-                        <div class="testimonial-card">
-                            <div class="testimonial-genre-tag">人生・家族</div>
-                            <div class="testimonial-quote">❝</div>
-                            <p class="testimonial-content">転勤で関西から関東へ。<br>どうせ引っ越すなら<br>運気上がる場所がいいなと思って相談。<br><br>「あなたの場合は<br><strong>◯◯区より◯◯区。<br>駅でいうとこの辺り</strong>」<br>ってめちゃくちゃ具体的で。<br><br>言われたエリアで探したら<br><strong>相場より安くて日当たり良い物件が見つかって、<br>引っ越してから半年で昇進しました。</strong></p>
-                            <div class="testimonial-author">健太さん（35歳・男性）／人生・家族</div>
-                        </div>
-                    </div>
-                    <div class="slider-nav">
-                        <button class="slider-arrow" onclick="prevSlide('all')">‹</button>
-                        <div class="slider-dots" data-genre="all">
-                            <span class="slider-dot active" onclick="showSlide('all', 0)"></span>
-                            <span class="slider-dot" onclick="showSlide('all', 1)"></span>
-                            <span class="slider-dot" onclick="showSlide('all', 2)"></span>
-                            <span class="slider-dot" onclick="showSlide('all', 3)"></span>
-                            <span class="slider-dot" onclick="showSlide('all', 4)"></span>
-                            <span class="slider-dot" onclick="showSlide('all', 5)"></span>
-                            <span class="slider-dot" onclick="showSlide('all', 6)"></span>
-                            <span class="slider-dot" onclick="showSlide('all', 7)"></span>
-                        </div>
-                        <button class="slider-arrow" onclick="nextSlide('all')">›</button>
-                    </div>
-                </div>
-                <p class="testimonials-note">※ 掲載にあたり、ご本人様の許可をいただいております。</p>
-                <div class="review-cta">
-                    <span class="review-cta-badge">🎁 特典あり</span>
-                    <h3 class="review-cta-title">口コミを書いてくださる方へ</h3>
-                    <p class="review-cta-text">サイト掲載OKの口コミを送っていただいた方に<br><strong>次回使える500円OFFクーポン</strong>をプレゼント！<br><span style="font-size: 0.75rem; color: #888;">※事務局で内容を拝見し、掲載させていただいた方へ、後日メールにてクーポンをお送りいたします。</span></p>
-                    <a href="https://docs.google.com/forms/d/e/1FAIpQLScgYAe_uNa1YDet7VNvNFiycsVtEKGbnQML3cpYgdtOkV81rg/viewform?usp=dialog" class="review-cta-btn" target="_blank">口コミ投稿はこちら</a>
+
+        <!-- ページヒーロー -->
+        <section class="page-hero">
+            <div class="page-hero-content">
+                <h1 class="page-hero-title">お客様の声</h1>
+                <p class="page-hero-subtitle">
+                    実際に鑑定を受けられた方々からの<br>
+                    率直なご感想をご紹介します。
+                </p>
+            </div>
+        </section>
+
+        <!-- フィルター -->
+        <section class="filter-section">
+            <div class="filter-inner">
+                <div class="filter-title">相談内容で絞り込む</div>
+                <div class="filter-buttons">
+                    <button class="filter-btn" data-category="love">恋愛・結婚</button>
+                    <button class="filter-btn" data-category="meeting">出会い</button>
+                    <button class="filter-btn" data-category="work">仕事・転職</button>
+                    <button class="filter-btn" data-category="life">人生の選択</button>
+                    <button class="filter-btn" data-category="timing">タイミング</button>
+                    <button class="filter-btn active" data-category="all">すべて</button>
                 </div>
             </div>
         </section>
-        <section class="cta-section">
-            <p class="cta-text">あなたの悩みも、解決の糸口が見つかるかもしれません。<br>まずはお気軽にご相談ください。</p>
-            <a href="https://lin.ee/SvZ69l0" class="cta-btn"><img src="images/botan.png" alt="LINEでご予約はこちら"></a>
+
+        <!-- お客様の声一覧 -->
+        <section class="testimonials-section">
+            <div class="testimonials-inner">
+                <div class="testimonials-grid">
+
+                    <div class="testimonial-card" data-category="love">
+                        <div class="testimonial-header">
+                            <div class="testimonial-name">M.K様</div>
+                            <div class="testimonial-meta">20代女性</div>
+                        </div>
+                        <div class="testimonial-category">恋愛・結婚</div>
+                        <div class="testimonial-text">
+                            彼との結婚で悩んでいましたが、四柱推命で相性と今後の流れを見てもらい、すごく納得できました。具体的なアドバイスもいただき、前向きに考えられるようになりました。本当にありがとうございました。
+                        </div>
+                    </div>
+
+                    <div class="testimonial-card" data-category="work">
+                        <div class="testimonial-header">
+                            <div class="testimonial-name">T.S様</div>
+                            <div class="testimonial-meta">30代男性</div>
+                        </div>
+                        <div class="testimonial-category">仕事・転職</div>
+                        <div class="testimonial-text">
+                            転職のタイミングで迷っていた時に相談しました。今の状況と未来の展開を的確に言い当てられ、どう動けばいいかも明確になりました。占いでここまで具体的なアドバイスがもらえるとは思いませんでした。
+                        </div>
+                    </div>
+
+                    <div class="testimonial-card" data-category="love">
+                        <div class="testimonial-header">
+                            <div class="testimonial-name">Y.H様</div>
+                            <div class="testimonial-meta">20代女性</div>
+                        </div>
+                        <div class="testimonial-category">恋愛・結婚</div>
+                        <div class="testimonial-text">
+                            復縁を諦めきれずにいましたが、長谷川先生の鑑定で冷静に現状を見つめ直すことができました。厳しいことも優しく伝えてくださり、次に進む勇気をもらえました。また人生の岐路で相談させてください。
+                        </div>
+                    </div>
+
+                    <div class="testimonial-card" data-category="life">
+                        <div class="testimonial-header">
+                            <div class="testimonial-name">A.M様</div>
+                            <div class="testimonial-meta">40代女性</div>
+                        </div>
+                        <div class="testimonial-category">人生の選択</div>
+                        <div class="testimonial-text">
+                            家族関係で長年悩んでいたことを相談しました。自分では気づけなかった視点を教えていただき、心がすっと軽くなりました。占いというより人生相談に近い感覚で、本当に助けられました。
+                        </div>
+                    </div>
+
+                    <div class="testimonial-card" data-category="work">
+                        <div class="testimonial-header">
+                            <div class="testimonial-name">K.I様</div>
+                            <div class="testimonial-meta">30代男性</div>
+                        </div>
+                        <div class="testimonial-category">仕事・転職</div>
+                        <div class="testimonial-text">
+                            起業するかどうかで悩んでいて相談しました。自分の性格や運気の流れから、今動くべきかどうかを論理的に説明していただき、納得して決断できました。ビジネスの相談でも占いって役に立つんですね。
+                        </div>
+                    </div>
+
+                    <div class="testimonial-card" data-category="timing">
+                        <div class="testimonial-header">
+                            <div class="testimonial-name">R.T様</div>
+                            <div class="testimonial-meta">20代女性</div>
+                        </div>
+                        <div class="testimonial-category">タイミング</div>
+                        <div class="testimonial-text">
+                            引っ越しのタイミングを見てもらいました。良い時期と避けるべき時期を明確に教えていただき、安心して計画を進められました。気学の知識も豊富で、方角の話も興味深かったです。
+                        </div>
+                    </div>
+
+                    <div class="testimonial-card" data-category="meeting">
+                        <div class="testimonial-header">
+                            <div class="testimonial-name">S.N様</div>
+                            <div class="testimonial-meta">30代女性</div>
+                        </div>
+                        <div class="testimonial-category">出会い</div>
+                        <div class="testimonial-text">
+                            マッチングアプリで出会った二人のうち誰を選ぶべきか相談しました。それぞれとの相性を詳しく見ていただき、自分でも気づかなかった相手の本質を教えてもらいました。おかげで後悔のない選択ができそうです。
+                        </div>
+                    </div>
+
+                    <div class="testimonial-card" data-category="life">
+                        <div class="testimonial-header">
+                            <div class="testimonial-name">H.Y様</div>
+                            <div class="testimonial-meta">40代男性</div>
+                        </div>
+                        <div class="testimonial-category">人生の選択</div>
+                        <div class="testimonial-text">
+                            人生の転機で何を優先すべきか分からなくなっていました。長谷川先生は私の価値観を理解した上で、今後の流れと選択肢を示してくださいました。話しやすい雰囲気で、本音で相談できました。
+                        </div>
+                    </div>
+
+                    <div class="testimonial-card" data-category="work">
+                        <div class="testimonial-header">
+                            <div class="testimonial-name">N.O様</div>
+                            <div class="testimonial-meta">20代男性</div>
+                        </div>
+                        <div class="testimonial-category">仕事・転職</div>
+                        <div class="testimonial-text">
+                            職場の人間関係で悩んでいて相談しました。相手の性質と自分の運気から、今どう対応すべきかを教えてもらい、実践したら本当に関係が改善しました。占いって当たるだけじゃなく、実用的なんですね。
+                        </div>
+                    </div>
+
+                    <div class="testimonial-card" data-category="timing">
+                        <div class="testimonial-header">
+                            <div class="testimonial-name">C.W様</div>
+                            <div class="testimonial-meta">30代女性</div>
+                        </div>
+                        <div class="testimonial-category">タイミング</div>
+                        <div class="testimonial-text">
+                            入籍日を決めるのに相談しました。二人の命式から最適な日を複数提案していただき、スケジュールと合わせて選ぶことができました。大切な日を良い日にできて、本当に嬉しいです。
+                        </div>
+                    </div>
+
+                    <div class="testimonial-card" data-category="love">
+                        <div class="testimonial-header">
+                            <div class="testimonial-name">E.K様</div>
+                            <div class="testimonial-meta">20代女性</div>
+                        </div>
+                        <div class="testimonial-category">恋愛・結婚</div>
+                        <div class="testimonial-text">
+                            気になる人との進展がなく相談しました。相手の性格と今の時期的な流れから、どうアプローチすべきか具体的に教えてもらいました。実践したら本当に距離が縮まって驚いています。また相談したいです。
+                        </div>
+                    </div>
+
+                    <div class="testimonial-card" data-category="life">
+                        <div class="testimonial-header">
+                            <div class="testimonial-name">D.F様</div>
+                            <div class="testimonial-meta">50代女性</div>
+                        </div>
+                        <div class="testimonial-category">人生の選択</div>
+                        <div class="testimonial-text">
+                            子供の進路について親としてどうサポートすべきか相談しました。子供の命式を見ていただき、その子の本質と向いている道を教えてもらい、押し付けではなく導けるようになりました。親子関係も良くなりました。
+                        </div>
+                    </div>
+
+                    <div class="testimonial-card" data-category="meeting">
+                        <div class="testimonial-header">
+                            <div class="testimonial-name">J.L様</div>
+                            <div class="testimonial-meta">30代男性</div>
+                        </div>
+                        <div class="testimonial-category">出会い</div>
+                        <div class="testimonial-text">
+                            マッチングアプリで真剣交際に進むべきか迷っていました。相手との相性や今後の展開を見ていただき、不安が解消されました。具体的なアドバイスのおかげで、自信を持って進めています。
+                        </div>
+                    </div>
+
+                </div>
+            </div>
         </section>
+
+        <!-- CTA -->
+        <section class="cta-section">
+            <div class="cta-content">
+                <h2 class="cta-title">あなたも一歩踏み出してみませんか？</h2>
+                <p class="cta-text">
+                    占いは気休めではなく、<br>
+                    人生の選択を支える道具です。<br>
+                    あなたの悩みを聞かせてください。
+                </p>
+                <a href="https://lin.ee/SvZ69l0" class="cta-btn">
+                    <img src="images/botan.png" alt="LINEでご予約はこちら">
+                </a>
+            </div>
+        </section>
+
         <!-- ページ導線 -->
         <section class="page-links">
             <div class="page-links-inner">
+                <a href="index.html" class="page-link-card">
+                    <span class="page-link-title">ホーム</span>
+                    <span class="page-link-desc">トップページ</span>
+                </a>
                 <a href="about.html" class="page-link-card">
                     <span class="page-link-title">占い師紹介</span>
                     <span class="page-link-desc">鑑定スタイル</span>
@@ -460,57 +877,47 @@
                     <span class="page-link-title">料金案内</span>
                     <span class="page-link-desc">コース・料金</span>
                 </a>
-                <a href="index.html" class="page-link-card">
-                    <span class="page-link-title">ホーム</span>
-                    <span class="page-link-desc">トップページ</span>
-                </a>
                 <a href="faq.html" class="page-link-card">
                     <span class="page-link-title">よくある質問</span>
                     <span class="page-link-desc">Q&A</span>
                 </a>
             </div>
         </section>
+
     </main>
+
+    <!-- フッター -->
     <footer class="footer">
-        <div class="footer-content"><a href="#">プライバシーポリシー</a>© 2026 六根清浄 All Rights Reserved.</div>
+        <div class="footer-content">
+            <a href="#">プライバシーポリシー</a>© 2026 六根清浄 All Rights Reserved.
+        </div>
     </footer>
+
     <script>
-        function toggleMenu() { document.querySelector('.nav-wrapper').classList.toggle('active'); }
-        const currentSlides = { all: 0, love: 0, app: 0, marriage: 0, work: 0, life: 0 };
-        function showGenre(genre) {
-            document.querySelectorAll('.genre-tab').forEach(tab => tab.classList.remove('active'));
-            document.querySelector('.genre-tab[data-genre="'+genre+'"]').classList.add('active');
-            document.querySelectorAll('.genre-content').forEach(content => content.classList.remove('active'));
-            document.getElementById(genre).classList.add('active');
+        function toggleMenu() {
+            document.querySelector('.nav-wrapper').classList.toggle('active');
         }
-        function showSlide(genre, index) {
-            const container = document.getElementById(genre);
-            const cards = container.querySelectorAll('.testimonial-card');
-            const dots = container.querySelectorAll('.slider-dot');
-            cards.forEach(card => card.classList.remove('active'));
-            dots.forEach(dot => dot.classList.remove('active'));
-            currentSlides[genre] = index;
-            cards[index].classList.add('active');
-            dots[index].classList.add('active');
-        }
-        function nextSlide(genre) {
-            const cards = document.getElementById(genre).querySelectorAll('.testimonial-card');
-            showSlide(genre, (currentSlides[genre] + 1) % cards.length);
-        }
-        function prevSlide(genre) {
-            const cards = document.getElementById(genre).querySelectorAll('.testimonial-card');
-            showSlide(genre, (currentSlides[genre] - 1 + cards.length) % cards.length);
-        }
-        document.querySelectorAll('.testimonial-slider').forEach(slider => {
-            let startX = 0, endX = 0;
-            const genre = slider.dataset.genre;
-            slider.addEventListener('touchstart', e => { startX = e.changedTouches[0].screenX; });
-            slider.addEventListener('touchend', e => {
-                endX = e.changedTouches[0].screenX;
-                const diff = startX - endX;
-                if (Math.abs(diff) > 50) { diff > 0 ? nextSlide(genre) : prevSlide(genre); }
+
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const testimonialCards = document.querySelectorAll('.testimonial-card');
+
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const category = button.getAttribute('data-category');
+
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+
+                testimonialCards.forEach(card => {
+                    if (category === 'all' || card.getAttribute('data-category') === category) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
             });
         });
     </script>
+
 </body>
 </html>
