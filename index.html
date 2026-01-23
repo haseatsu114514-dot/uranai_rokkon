@@ -338,6 +338,14 @@
             letter-spacing: 0.1em;
         }
 
+        .section-subtitle {
+            text-align: center;
+            font-size: 0.95rem;
+            color: #666;
+            margin-bottom: 40px;
+            line-height: 1.8;
+        }
+
         .flow-steps {
             display: flex;
             flex-direction: column;
@@ -351,6 +359,10 @@
             padding-bottom: 40px;
         }
 
+        .flow-step {
+            padding-bottom: 40px;
+        }
+
         .flow-step:last-child {
             padding-bottom: 0;
         }
@@ -359,10 +371,10 @@
             position: absolute;
             left: 27px;
             top: 56px;
-            bottom: 0;
             width: 2px;
             background: var(--color-gold);
             opacity: 0.4;
+            height: calc(100% - 56px);
         }
 
         .flow-step:last-child .flow-line {
@@ -415,13 +427,24 @@
             display: inline-block;
         }
 
-        .flow-cta {
-            text-align: center;
-            margin-top: 50px;
+        .flow-screenshot {
+            width: 100%;
+            height: 400px;
+            background: #f0f0f0;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #ddd;
+            overflow: hidden;
         }
 
-        .flow-cta .hero-btn img {
-            max-width: 360px;
+        .flow-screenshot img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: #fff;
         }
 
         /* ========== フッター ========== */
@@ -541,6 +564,9 @@
             }
             .flow-desc {
                 font-size: 0.9rem;
+            }
+            .flow-screenshot {
+                height: 350px;
             }
             .footer {
                 height: auto;
@@ -695,11 +721,8 @@
                 font-size: 0.75rem;
                 padding: 6px 10px;
             }
-            .flow-cta {
-                margin-top: 35px;
-            }
-            .flow-cta .hero-btn img {
-                max-width: 320px;
+            .flow-screenshot {
+                height: 300px;
             }
         }
 
@@ -889,53 +912,117 @@
     <section class="flow-section">
         <div class="flow-inner">
             <h2 class="section-title">ご予約の流れ</h2>
+            <p class="section-subtitle">LINEで完結。シンプルで簡単な予約プロセス。</p>
             <div class="flow-steps">
                 <div class="flow-step">
                     <div class="flow-number">1</div>
                     <div class="flow-line"></div>
                     <div class="flow-content">
-                        <div class="flow-title">LINE公式アカウントを追加</div>
-                        <div class="flow-desc">下のボタンから友だち追加してください。</div>
+                        <div class="flow-title">LINE公式アカウントを友だち追加</div>
+                        <div class="flow-desc">
+                            下のボタンをタップして『六根清浄』公式LINEを友だち追加してください。<br>
+                            ここからすべてのご予約手続きが始まります。<br>
+                            一度友だち追加いただければ、以降のご利用時も同じLINEでやり取りさせていただきます。
+                        </div>
+                        <div class="flow-cta" style="margin: 20px 0 0 0;">
+                            <a href="https://lin.ee/SvZ69l0" class="hero-btn">
+                                <img src="images/botan.png" alt="LINEでご予約はこちら" style="max-width: 280px;">
+                            </a>
+                        </div>
                     </div>
                 </div>
                 <div class="flow-step">
                     <div class="flow-number">2</div>
                     <div class="flow-line"></div>
                     <div class="flow-content">
-                        <div class="flow-title">「鑑定予約」ボタンを押す</div>
-                        <div class="flow-desc">LINEのメニューから予約フォームへ進みます。</div>
+                        <div class="flow-title">「鑑定予約」ボタンをタップ</div>
+                        <div class="flow-desc">
+                            友だち追加後、LINEメニューから『鑑定予約』ボタンが表示されます。<br>
+                            このボタンをタップして、ご予約画面へ進みます。<br>
+                            必要な情報のヒアリングが始まります。
+                        </div>
+                        <div class="flow-screenshot">
+                            <img src="images/flow/step2.png" alt="ステップ2">
+                        </div>
                     </div>
                 </div>
                 <div class="flow-step">
                     <div class="flow-number">3</div>
                     <div class="flow-line"></div>
                     <div class="flow-content">
-                        <div class="flow-title">日時・鑑定形式を選択</div>
-                        <div class="flow-desc">ご希望の日時と鑑定形式をお選びください。</div>
-                        <div class="flow-note">※ オンライン / 対面（愛知県内限定）</div>
+                        <div class="flow-title">形式・日時・時間を選択</div>
+                        <div class="flow-desc">
+                            まず、ご希望の鑑定形式をお選びください。<br>
+                            <br>
+                            <span style="background: rgba(196, 163, 90, 0.15); padding: 8px 12px; border-radius: 4px; display: inline-block; margin: 8px 0;">【オンライン】</span><br>
+                            Google MeetのURLをLINEでお送りします。URLを開くだけで参加でき、アプリ登録・会員登録は不要です。ご自宅やお好きな場所からお気軽にご受講いただけます。<br>
+                            <br>
+                            <span style="background: rgba(196, 163, 90, 0.15); padding: 8px 12px; border-radius: 4px; display: inline-block; margin: 8px 0;">【対面】</span><br>
+                            名駅・栄・金山の指定駅から徒歩5分のカフェで行います。対面だからこそ感じられる空間の中で、じっくりと鑑定させていただきます。<br>
+                            （店名はご予約確定後にLINEでご案内いたします）<br>
+                            <br>
+                            形式を選んだ後、ご希望の日時と鑑定時間（30分〜120分）をお選びください。
+                        </div>
+                        <div class="flow-screenshot">
+                            <img src="images/flow/step3.png" alt="ステップ3">
+                        </div>
                     </div>
                 </div>
                 <div class="flow-step">
                     <div class="flow-number">4</div>
                     <div class="flow-line"></div>
                     <div class="flow-content">
-                        <div class="flow-title">予約完了 → 自動メールが届く</div>
-                        <div class="flow-desc">オンラインならGoogle Meetの参加URL、対面なら集合場所とお支払い方法をメールでお知らせします。</div>
+                        <div class="flow-title">フォーム入力（所要時間：約3分）</div>
+                        <div class="flow-desc">
+                            Googleフォームが自動で送られてきます。<br>
+                            占いに必要な情報などをお聞きします。<br>
+                            フォーム送信をもって、ご予約が確定いたします。
+                        </div>
+                        <div class="flow-screenshot">
+                            <img src="images/flow/step4.png" alt="ステップ4">
+                        </div>
                     </div>
                 </div>
                 <div class="flow-step">
                     <div class="flow-number">5</div>
+                    <div class="flow-line"></div>
                     <div class="flow-content">
-                        <div class="flow-title">鑑定の6時間前までにお支払い</div>
-                        <div class="flow-desc">メールに記載されたお支払い方法でお手続きください。<br>対面の場合は現地払いですので、そのまま合流してください。</div>
-                        <div class="flow-note">※ 口座振込 / PayPay / 現金（対面のみ）/ その他決済方法は今後増えていく予定です</div>
+                        <div class="flow-title">支払情報をLINEで受け取り</div>
+                        <div class="flow-desc">
+                            <span style="background: rgba(196, 163, 90, 0.15); padding: 8px 12px; border-radius: 4px; display: inline-block; margin: 8px 0;">【オンライン】</span><br>
+                            予約確定後、フォーム内でお選びいただいたご希望のお支払い方法の詳細情報をLINEでご案内いたします。<br>
+                            ご指定いただいた方法でお手続きください。<br>
+                            お支払い完了で、ご予約が最終確定となります。<br>
+                            <br>
+                            <span style="background: rgba(196, 163, 90, 0.15); padding: 8px 12px; border-radius: 4px; display: inline-block; margin: 8px 0;">【対面】</span><br>
+                            当日、待ち合わせ場所で現金またはPayPayでお支払いいただきます。<br>
+                            ステップ6へお進みください。
+                        </div>
+                        <div class="flow-note">※ 決済方法は今後増える予定です</div>
+                        <div class="flow-screenshot">
+                            <img src="images/flow/step5.png" alt="ステップ5">
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="flow-cta">
-                <a href="https://lin.ee/SvZ69l0" class="hero-btn">
-                    <img src="images/botan.png" alt="LINEでご予約はこちら">
-                </a>
+                <div class="flow-step">
+                    <div class="flow-number">6</div>
+                    <div class="flow-content">
+                        <div class="flow-title">当日のご案内をLINEで受け取り</div>
+                        <div class="flow-desc">
+                            鑑定の当日、詳細なご案内がLINEで届きます。<br>
+                            <br>
+                            <strong>【オンライン鑑定の場合】</strong><br>
+                            Google MeetのURLをLINEでお送りします。<br>
+                            URLを開くだけで参加でき、アプリ登録・会員登録は不要です。<br>
+                            <br>
+                            <strong>【対面鑑定の場合】</strong><br>
+                            待ち合わせ場所と時間の詳細をLINEでご案内いたします。
+                        </div>
+                        <div class="flow-screenshot">
+                            <img src="images/flow/step6.png" alt="ステップ6">
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
