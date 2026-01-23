@@ -148,7 +148,7 @@
 
         .page-header {
             background: linear-gradient(135deg, #3a4a45 0%, #4a5a55 100%);
-            padding: 60px 20px;
+            padding: 48px 20px;
             text-align: center;
         }
 
@@ -479,45 +479,16 @@
             }
         }
 
-        @media (max-width: 768px) {
-            .nav-wrapper {
-                display: none;
-                position: fixed;
-                top: 60px;
-                left: 0;
-                width: 100%;
-                background: var(--color-primary);
-                flex-direction: column;
-                padding: 20px;
-                gap: 0;
-                z-index: 999;
-            }
-            .nav-wrapper.active {
-                display: flex;
-            }
+        @media (max-width: 600px) {
             .nav {
-                flex-direction: column;
-                gap: 0;
-                width: 100%;
+                gap: 8px;
             }
             .nav a {
-                padding: 15px 0;
-                font-size: 1rem;
-                border-bottom: 1px solid rgba(255,255,255,0.1);
-                width: 100%;
-                text-align: center;
-            }
-            .nav a::after {
-                display: none;
+                font-size: 0.65rem;
             }
             .contact-btn {
-                margin-top: 15px;
-                padding: 12px 30px;
-                font-size: 1rem;
-                text-align: center;
-            }
-            .menu-toggle {
-                display: flex !important;
+                padding: 6px 10px;
+                font-size: 0.65rem;
             }
             .page-header {
                 padding: 35px 15px;
@@ -621,11 +592,57 @@
             font-size: 0.75rem;
             color: #888;
         }
+
+        @media (max-width: 1024px) {
+            .page-links-container {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+        }
+
         @media (max-width: 768px) {
+            .nav-wrapper {
+                display: none;
+                position: fixed;
+                top: 60px;
+                left: 0;
+                width: 100%;
+                background: var(--color-primary);
+                flex-direction: column;
+                padding: 20px;
+                gap: 0;
+                z-index: 999;
+            }
+            .nav-wrapper.active {
+                display: flex;
+            }
+            .nav {
+                flex-direction: column;
+                gap: 0;
+                width: 100%;
+            }
+            .nav a {
+                padding: 15px 0;
+                font-size: 1rem;
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+                width: 100%;
+                text-align: center;
+            }
+            .nav a::after {
+                display: none;
+            }
+            .contact-btn {
+                margin-top: 15px;
+                padding: 12px 30px;
+                font-size: 1rem;
+                text-align: center;
+            }
+            .menu-toggle {
+                display: flex;
+            }
             .page-links-container {
                 grid-template-columns: repeat(2, 1fr);
                 gap: 10px;
-                margin-top: 36px;
             }
             .page-link-card {
                 padding: 18px 10px;
