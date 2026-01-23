@@ -170,7 +170,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            object-position: center 15%;
+            object-position: center top;
             display: block;
         }
 
@@ -667,6 +667,24 @@
             .main-content {
                 padding-top: 60px;
             }
+            .profile-hero-inner {
+                grid-template-columns: 1fr;
+                min-height: auto;
+            }
+            .profile-hero-photo {
+                height: 450px;
+                object-fit: contain;
+                object-position: center top;
+                background: linear-gradient(135deg, #3a4a45 0%, #4a5a55 100%);
+            }
+            .profile-hero-content {
+                padding: 32px 24px 40px;
+                text-align: center;
+                align-items: center;
+            }
+            .profile-hero-greeting {
+                max-width: 100%;
+            }
             .achievement-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
@@ -680,19 +698,8 @@
         }
 
         @media (max-width: 768px) {
-            .profile-hero-inner {
-                grid-template-columns: 1fr;
-                min-height: auto;
-            }
             .profile-hero-photo {
                 height: 500px;
-                object-position: center top;
-                background: linear-gradient(135deg, #3a4a45 0%, #4a5a55 100%);
-            }
-            .profile-hero-content {
-                padding: 32px 24px 40px;
-                text-align: center;
-                align-items: center;
             }
             .profile-hero-name {
                 font-size: 1.5rem;
@@ -710,10 +717,6 @@
             .profile-hero-methods li {
                 font-size: 0.75rem;
                 padding: 6px 10px;
-            }
-            .profile-hero-greeting {
-                text-align: center;
-                max-width: 100%;
             }
             .hero-cta-btn img {
                 max-width: 240px;
