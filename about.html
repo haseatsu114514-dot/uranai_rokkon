@@ -83,7 +83,7 @@
         .nav-wrapper {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 20px;
         }
 
         .nav {
@@ -125,7 +125,7 @@
         .contact-btn {
             background: transparent;
             color: var(--color-text-white);
-            padding: 10px 35px;
+            padding: 10px 28px;
             border-radius: 4px;
             font-size: 0.88rem;
             font-weight: 500;
@@ -170,7 +170,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            object-position: center top;
+            object-position: center 15%;
             display: block;
         }
 
@@ -284,7 +284,7 @@
         }
 
         .hero-cta-btn img {
-            max-width: 350px;
+            max-width: 300px;
             height: auto;
         }
 
@@ -600,8 +600,16 @@
         }
 
         .cta-btn img {
-            max-width: 380px;
+            max-width: 320px;
             height: auto;
+        }
+
+        .cta-sub {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.8rem;
+            margin-top: 16px;
+            position: relative;
+            z-index: 1;
         }
 
         /* ========== フッター ========== */
@@ -667,24 +675,6 @@
             .main-content {
                 padding-top: 60px;
             }
-            .profile-hero-inner {
-                grid-template-columns: 1fr;
-                min-height: auto;
-            }
-            .profile-hero-photo {
-                height: 450px;
-                object-fit: contain;
-                object-position: center top;
-                background: linear-gradient(135deg, #3a4a45 0%, #4a5a55 100%);
-            }
-            .profile-hero-content {
-                padding: 32px 24px 40px;
-                text-align: center;
-                align-items: center;
-            }
-            .profile-hero-greeting {
-                max-width: 100%;
-            }
             .achievement-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
@@ -698,8 +688,57 @@
         }
 
         @media (max-width: 768px) {
+            .nav-wrapper {
+                display: none;
+                position: fixed;
+                top: 60px;
+                left: 0;
+                width: 100%;
+                background: var(--color-primary);
+                flex-direction: column;
+                padding: 20px;
+                gap: 0;
+                z-index: 999;
+            }
+            .nav-wrapper.active {
+                display: flex;
+            }
+            .nav {
+                flex-direction: column;
+                gap: 0;
+                width: 100%;
+            }
+            .nav a {
+                padding: 15px 0;
+                font-size: 1rem;
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+                width: 100%;
+                text-align: center;
+            }
+            .nav a::after {
+                display: none;
+            }
+            .contact-btn {
+                margin-top: 15px;
+                padding: 12px 30px;
+                font-size: 1rem;
+                text-align: center;
+            }
+            .menu-toggle {
+                display: flex !important;
+            }
+            .profile-hero-inner {
+                grid-template-columns: 1fr;
+                min-height: auto;
+            }
             .profile-hero-photo {
-                height: 500px;
+                height: 320px;
+                object-position: center top;
+            }
+            .profile-hero-content {
+                padding: 32px 24px 40px;
+                text-align: center;
+                align-items: center;
             }
             .profile-hero-name {
                 font-size: 1.5rem;
@@ -718,8 +757,12 @@
                 font-size: 0.75rem;
                 padding: 6px 10px;
             }
+            .profile-hero-greeting {
+                text-align: center;
+                max-width: 100%;
+            }
             .hero-cta-btn img {
-                max-width: 240px;
+                max-width: 200px;
             }
             .profile-section {
                 padding: 48px 20px;
@@ -808,52 +851,10 @@
                 font-size: 0.82rem;
             }
             .cta-btn img {
-                max-width: 320px;
+                max-width: 280px;
             }
             .hero-cta-btn img {
-                max-width: 300px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .nav-wrapper {
-                display: none;
-                position: fixed;
-                top: 60px;
-                left: 0;
-                width: 100%;
-                background: var(--color-primary);
-                flex-direction: column;
-                padding: 20px;
-                gap: 0;
-                z-index: 999;
-            }
-            .nav-wrapper.active {
-                display: flex;
-            }
-            .nav {
-                flex-direction: column;
-                gap: 0;
-                width: 100%;
-            }
-            .nav a {
-                padding: 15px 0;
-                font-size: 1rem;
-                border-bottom: 1px solid rgba(255,255,255,0.1);
-                width: 100%;
-                text-align: center;
-            }
-            .nav a::after {
-                display: none;
-            }
-            .contact-btn {
-                margin-top: 10px;
-                padding: 12px 30px;
-                font-size: 1rem;
-                text-align: center;
-            }
-            .menu-toggle {
-                display: flex !important;
+                max-width: 260px;
             }
         }
 
@@ -880,7 +881,8 @@
         /* ページ導線 */
         .page-links {
             background: var(--color-cream);
-            padding: 60px 20px;
+            padding: 48px 20px;
+            border-top: 1px solid rgba(0,0,0,0.05);
         }
         .page-links-inner {
             max-width: 1100px;
@@ -932,15 +934,9 @@
             font-size: 0.75rem;
             color: #888;
         }
-        @media (max-width: 900px) {
-            .page-links-inner {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 12px;
-            }
-        }
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
             .page-links {
-                padding: 40px 16px;
+                padding: 36px 16px;
             }
             .page-links-inner {
                 grid-template-columns: repeat(2, 1fr);
@@ -953,13 +949,14 @@
                 display: none;
             }
             .page-link-title {
-                font-size: 0.85rem;
+                font-size: 0.82rem;
             }
             .page-link-desc {
                 font-size: 0.7rem;
             }
         }
     </style>
+    <link rel="stylesheet" href="css/animations.css">
 </head>
 <body>
 
@@ -981,7 +978,7 @@
                 </nav>
                 <a href="https://docs.google.com/forms/d/e/1FAIpQLSdG_cRsdXN-z8HUmzwUdAv7exsxFM41qp-WLr6hGORGmQI28w/viewform?usp=header" class="contact-btn" target="_blank">お問い合わせ</a>
             </div>
-            <div class="menu-toggle" onclick="toggleMenu()">
+            <div class="menu-toggle" onclick="toggleMenu();" aria-label="メニュー">
                 <span></span>
                 <span></span>
                 <span></span>
@@ -995,7 +992,7 @@
         <!-- プロフィールヒーロー -->
         <section class="profile-hero">
             <div class="profile-hero-inner">
-                <img src="images/unnamed.jpg" alt="長谷川貴紀" class="profile-hero-photo">
+                <img src="images/unnamed.jpg" alt="長谷川貴紀" class="profile-hero-photo" loading="lazy">
                 <div class="profile-hero-content">
                     <div class="profile-hero-title">占い処 六根清浄 代表</div>
                     <h1 class="profile-hero-name">長谷川 貴紀</h1>
@@ -1032,26 +1029,26 @@
         <section class="profile-section style-section">
             <h2 class="section-title">六根清浄の鑑定</h2>
             <div class="style-grid">
-                <div class="style-item">
+                <div class="style-item animate-on-scroll">
                     <p>
                         <span class="style-lead">当たったで終わらせない。</span>
                         当てて終わり、スッキリして終わり<br>では何も変わらない。<br>その先をどう選び、どう動くかまでを重視。
                     </p>
                 </div>
-                <div class="style-item">
+                <div class="style-item animate-on-scroll animate-delay-1">
                     <p>
                         <span class="style-lead">占いは「決断の知恵」</span>
                         東洋の占いは哲学や学問と結びつき、<br>大きな決断を下すための知恵として<br>使われてきました。
                     </p>
                 </div>
-                <div class="style-item">
+                <div class="style-item animate-on-scroll animate-delay-2">
                     <p>
                         <span class="style-lead">生年月日から導く、的確な答え</span>
                         生年月日から導き出される答えは<br>驚くほど的確です。<br>曖昧な直感ではなく、<br>根拠のある鑑定をお届け。
                     </p>
                 </div>
             </div>
-            <div class="style-highlight">
+            <div class="style-highlight animate-on-scroll animate-delay-3">
                 <p>
                     <strong>話を聞くだけでなく、<br>解決方法まで考えます。</strong>
                     「この先どうすればいい？」を<br>考えたい方に届けたいです。
@@ -1063,24 +1060,24 @@
         <section class="profile-section achievement-section">
             <h2 class="section-title">実績と経歴</h2>
             <div class="achievement-grid">
-                <div class="achievement-item">
+                <div class="achievement-item animate-on-scroll">
                     <div class="achievement-number">7<span>年</span></div>
                     <div class="achievement-label">占い歴</div>
                 </div>
-                <div class="achievement-item">
+                <div class="achievement-item animate-on-scroll animate-delay-1">
                     <div class="achievement-number">1,500<span>件+</span></div>
                     <div class="achievement-label">累計鑑定数</div>
                 </div>
-                <div class="achievement-item">
+                <div class="achievement-item animate-on-scroll animate-delay-2">
                     <div class="achievement-number">No.1</div>
                     <div class="achievement-label">名古屋・栄<br>大手占い館での売上</div>
                 </div>
-                <div class="achievement-item">
+                <div class="achievement-item animate-on-scroll animate-delay-3">
                     <div class="achievement-number">No.1</div>
                     <div class="achievement-label">某チャット占いアプリ<br>口コミ数</div>
                 </div>
             </div>
-            <ul class="achievement-list">
+            <ul class="achievement-list animate-on-scroll animate-delay-4">
                 <li>TV出演多数の著名占い師のもとで修行</li>
                 <li>政財界から頼られる四柱推命師籍に師事</li>
                 <li>芸能・経営者など<br>表舞台で活躍する方々のご相談実績</li>
@@ -1092,22 +1089,22 @@
         <section class="profile-section">
             <h2 class="section-title">得意な鑑定内容</h2>
             <div class="specialty-grid">
-                <div class="specialty-item">
+                <div class="specialty-item animate-on-scroll">
                     <div class="specialty-icon">💕</div>
                     <div class="specialty-title">恋愛・結婚</div>
                     <div class="specialty-desc">この人と付き合っていい？／彼と結婚して大丈夫？／復縁できる？</div>
                 </div>
-                <div class="specialty-item">
+                <div class="specialty-item animate-on-scroll animate-delay-1">
                     <div class="specialty-icon">💼</div>
                     <div class="specialty-title">仕事・転職</div>
                     <div class="specialty-desc">今の会社辞めるべき？／向いてる仕事は？／転職先どっち？</div>
                 </div>
-                <div class="specialty-item">
+                <div class="specialty-item animate-on-scroll animate-delay-2">
                     <div class="specialty-icon">🌱</div>
                     <div class="specialty-title">人生の選択</div>
                     <div class="specialty-desc">この選択で後悔しない？／引っ越すべき？／親との距離感</div>
                 </div>
-                <div class="specialty-item">
+                <div class="specialty-item animate-on-scroll animate-delay-3">
                     <div class="specialty-icon">📅</div>
                     <div class="specialty-title">タイミング</div>
                     <div class="specialty-desc">告白するならいつ？／入籍日・引っ越し日／今動くべき？</div>
@@ -1145,7 +1142,7 @@
                     それが原点です。
                 </p>
                 <p class="belief-text">
-                    身内に弁護士がいる環境もあり<br>
+                    家内に弁護士がいる環境もあり<br>
                     形は違えど依頼者さんには<br>
                     <strong>「弁護士並みに味方する」</strong><br>
                     がモットーです。
@@ -1179,24 +1176,27 @@
             <a href="https://lin.ee/SvZ69l0" class="cta-btn">
                 <img src="images/botan.png" alt="LINEでご予約はこちら">
             </a>
+            <p class="cta-sub">
+                ※「料金・予約方法」は<a href="pricing.html" style="color: var(--color-gold); text-decoration: underline;">料金案内</a>へ
+            </p>
         </section>
 
         <!-- ページ導線 -->
         <section class="page-links">
             <div class="page-links-inner">
-                <a href="index.html" class="page-link-card">
+                <a href="index.html" class="page-link-card animate-on-scroll">
                     <span class="page-link-title">ホーム</span>
                     <span class="page-link-desc">トップページ</span>
                 </a>
-                <a href="pricing.html" class="page-link-card">
+                <a href="pricing.html" class="page-link-card animate-on-scroll animate-delay-1">
                     <span class="page-link-title">料金案内</span>
-                    <span class="page-link-desc">コース・料金</span>
+                    <span class="page-link-desc">コース・料金について</span>
                 </a>
-                <a href="testimonials.html" class="page-link-card">
+                <a href="testimonials.html" class="page-link-card animate-on-scroll animate-delay-2">
                     <span class="page-link-title">お客様の声</span>
                     <span class="page-link-desc">実際のご感想</span>
                 </a>
-                <a href="faq.html" class="page-link-card">
+                <a href="faq.html" class="page-link-card animate-on-scroll animate-delay-3">
                     <span class="page-link-title">よくある質問</span>
                     <span class="page-link-desc">Q&A</span>
                 </a>
@@ -1212,11 +1212,8 @@
         </div>
     </footer>
 
-    <script>
-        function toggleMenu() {
-            document.querySelector('.nav-wrapper').classList.toggle('active');
-        }
-    </script>
+    <button type="button" id="back-to-top" class="back-to-top" aria-label="トップへ戻る">↑</button>
 
+    <script src="js/main.js"></script>
 </body>
 </html>
