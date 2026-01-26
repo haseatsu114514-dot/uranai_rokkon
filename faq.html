@@ -418,7 +418,7 @@
         /* ページ導線 */
         .page-links-container {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 16px;
             margin-top: 48px;
         }
@@ -467,7 +467,7 @@
         }
         @media (max-width: 768px) {
             .page-links-container {
-                grid-template-columns: repeat(3, 1fr);
+                grid-template-columns: repeat(2, 1fr);
                 gap: 10px;
                 margin-top: 36px;
             }
@@ -670,15 +670,19 @@
 
             <!-- ページ導線 -->
             <div class="page-links-container">
-                <a href="about.html" class="page-link-card animate-on-scroll">
+                <a href="index.html" class="page-link-card animate-on-scroll">
+                    <span class="page-link-title">ホーム</span>
+                    <span class="page-link-desc">トップページ</span>
+                </a>
+                <a href="about.html" class="page-link-card animate-on-scroll animate-delay-1">
                     <span class="page-link-title">占い師紹介</span>
                     <span class="page-link-desc">鑑定スタイルについて</span>
                 </a>
-                <a href="pricing.html" class="page-link-card animate-on-scroll animate-delay-1">
+                <a href="pricing.html" class="page-link-card animate-on-scroll animate-delay-2">
                     <span class="page-link-title">料金案内</span>
                     <span class="page-link-desc">コース・料金について</span>
                 </a>
-                <a href="testimonials.html" class="page-link-card animate-on-scroll animate-delay-2">
+                <a href="testimonials.html" class="page-link-card animate-on-scroll animate-delay-3">
                     <span class="page-link-title">お客様の声</span>
                     <span class="page-link-desc">実際のご感想</span>
                 </a>
