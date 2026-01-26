@@ -38,7 +38,7 @@
             --color-cream: #f8f6f2;
         }
 
-        /* ========== ヘッダー ========== */
+        /* ========== 共通ヘッダー ========== */
         .header {
             position: fixed;
             top: 0;
@@ -83,7 +83,7 @@
         .nav-wrapper {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 20px;
         }
 
         .nav {
@@ -125,7 +125,7 @@
         .contact-btn {
             background: transparent;
             color: var(--color-text-white);
-            padding: 10px 35px;
+            padding: 10px 28px;
             border-radius: 4px;
             font-size: 0.88rem;
             font-weight: 500;
@@ -137,6 +137,26 @@
         .contact-btn:hover {
             background: rgba(255,255,255,0.1);
             border-color: var(--color-text-white);
+        }
+
+        /* ハンバーガーメニュー */
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            gap: 6px;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            padding: 8px;
+        }
+        .menu-toggle span {
+            display: block;
+            width: 100%;
+            height: 3px;
+            background: #fff;
+            transition: 0.3s;
+            border-radius: 2px;
         }
 
         /* ========== ヒーロー ========== */
@@ -359,10 +379,6 @@
             padding-bottom: 40px;
         }
 
-        .flow-step {
-            padding-bottom: 40px;
-        }
-
         .flow-step:last-child {
             padding-bottom: 0;
         }
@@ -447,7 +463,64 @@
             background: #fff;
         }
 
-        /* ========== フッター ========== */
+        /* ========== ページ導線 ========== */
+        .page-links {
+            background: var(--color-cream);
+            padding: 60px 20px;
+            border-top: 1px solid rgba(0,0,0,0.05);
+        }
+        .page-links-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+        .page-link-card {
+            background: #fff;
+            padding: 24px 16px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            transition: all 0.3s;
+            display: block;
+            border: 2px solid transparent;
+            position: relative;
+        }
+        .page-link-card::after {
+            content: '→';
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--color-gold);
+            font-size: 1rem;
+            opacity: 0;
+            transition: all 0.3s;
+        }
+        .page-link-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border-color: var(--color-gold);
+        }
+        .page-link-card:hover::after {
+            opacity: 1;
+            right: 8px;
+        }
+        .page-link-title {
+            display: block;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--color-primary);
+            margin-bottom: 6px;
+        }
+        .page-link-desc {
+            display: block;
+            font-size: 0.75rem;
+            color: #888;
+        }
+
+        /* ========== 共通フッター ========== */
         .footer {
             background: var(--color-primary);
             color: rgba(255,255,255,0.7);
@@ -575,6 +648,10 @@
             .footer-content {
                 font-size: 0.75rem;
             }
+            .page-links-inner {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
         }
 
         @media (max-width: 600px) {
@@ -593,6 +670,25 @@
             }
             .about-title {
                 font-size: 1.5rem;
+            }
+            .page-links {
+                padding: 40px 16px;
+            }
+            .page-links-inner {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+            .page-link-card {
+                padding: 18px 12px;
+            }
+            .page-link-card::after {
+                display: none;
+            }
+            .page-link-title {
+                font-size: 0.85rem;
+            }
+            .page-link-desc {
+                font-size: 0.7rem;
             }
         }
 
@@ -725,110 +821,8 @@
                 height: 300px;
             }
         }
-
-        /* ハンバーガーメニュー */
-        .menu-toggle {
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            gap: 6px;
-            width: 40px;
-            height: 40px;
-            cursor: pointer;
-            padding: 8px;
-        }
-        .menu-toggle span {
-            display: block;
-            width: 100%;
-            height: 3px;
-            background: #fff;
-            transition: 0.3s;
-            border-radius: 2px;
-        }
-
-        /* ページ導線 */
-        .page-links {
-            background: var(--color-cream);
-            padding: 60px 20px;
-        }
-        .page-links-inner {
-            max-width: 1100px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-        }
-        .page-link-card {
-            background: #fff;
-            padding: 24px 16px;
-            border-radius: 12px;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
-            transition: all 0.3s;
-            display: block;
-            border: 2px solid transparent;
-            position: relative;
-        }
-        .page-link-card::after {
-            content: '→';
-            position: absolute;
-            right: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--color-gold);
-            font-size: 1rem;
-            opacity: 0;
-            transition: all 0.3s;
-        }
-        .page-link-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-            border-color: var(--color-gold);
-        }
-        .page-link-card:hover::after {
-            opacity: 1;
-            right: 8px;
-        }
-        .page-link-title {
-            display: block;
-            font-size: 0.95rem;
-            font-weight: 600;
-            color: var(--color-primary);
-            margin-bottom: 6px;
-        }
-        .page-link-desc {
-            display: block;
-            font-size: 0.75rem;
-            color: #888;
-        }
-        @media (max-width: 900px) {
-            .page-links-inner {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 12px;
-            }
-        }
-        @media (max-width: 600px) {
-            .page-links {
-                padding: 40px 16px;
-            }
-            .page-links-inner {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 10px;
-            }
-            .page-link-card {
-                padding: 18px 12px;
-            }
-            .page-link-card::after {
-                display: none;
-            }
-            .page-link-title {
-                font-size: 0.85rem;
-            }
-            .page-link-desc {
-                font-size: 0.7rem;
-            }
-        }
     </style>
+    <link rel="stylesheet" href="css/animations.css">
 </head>
 <body>
 
@@ -850,7 +844,7 @@
                 </nav>
                 <a href="https://docs.google.com/forms/d/e/1FAIpQLSdG_cRsdXN-z8HUmzwUdAv7exsxFM41qp-WLr6hGORGmQI28w/viewform?usp=header" class="contact-btn" target="_blank">お問い合わせ</a>
             </div>
-            <div class="menu-toggle" onclick="toggleMenu()">
+            <div class="menu-toggle" onclick="toggleMenu();" aria-label="メニュー">
                 <span></span>
                 <span></span>
                 <span></span>
@@ -865,12 +859,12 @@
         </div>
         <div class="hero-overlay"></div>
         <div class="hero-content">
-            <h1 class="hero-title">占い処 六根清浄</h1>
-            <p class="hero-subtitle">
+            <h1 class="hero-title hero-reveal hero-reveal-title">占い処 六根清浄</h1>
+            <p class="hero-subtitle hero-reveal hero-reveal-subtitle">
                 「聞いてもらうだけ」は占いじゃない。<br>
                 「解決する」までが本物の占い。
             </p>
-            <a href="https://lin.ee/SvZ69l0" class="hero-btn">
+            <a href="https://lin.ee/SvZ69l0" class="hero-btn hero-reveal hero-reveal-btn">
                 <img src="images/botan.png" alt="LINEでご予約はこちら">
             </a>
         </div>
@@ -879,11 +873,11 @@
     <!-- 六根清浄とは -->
     <section class="about-section">
         <div class="about-bg">
-            <img src="images/torii.jpeg" alt="">
+            <img src="images/torii.jpeg" alt="" loading="lazy">
         </div>
         <div class="about-overlay"></div>
-        <div class="about-content">
-            <img src="images/rogo.png" alt="" class="about-logo">
+        <div class="about-content animate-on-scroll">
+            <img src="images/rogo.png" alt="" class="about-logo" loading="lazy">
             <div class="about-title-wrap">
                 <h2 class="about-title"><ruby>六<rt>ろっ</rt></ruby><ruby>根<rt>こん</rt></ruby><ruby>清<rt>しょう</rt></ruby><ruby>浄<rt>じょう</rt></ruby>とは</h2>
             </div>
@@ -911,19 +905,15 @@
     <!-- ご予約の流れ -->
     <section class="flow-section">
         <div class="flow-inner">
-            <h2 class="section-title">ご予約の流れ</h2>
-            <p class="section-subtitle">LINEで完結。シンプルで簡単な予約プロセス。</p>
+            <h2 class="section-title animate-on-scroll">ご予約の流れ</h2>
+            <p class="section-subtitle animate-on-scroll animate-delay-1">LINEで完結。シンプルで簡単な予約プロセス。</p>
             <div class="flow-steps">
                 <div class="flow-step">
                     <div class="flow-number">1</div>
                     <div class="flow-line"></div>
                     <div class="flow-content">
                         <div class="flow-title">LINE公式アカウントを友だち追加</div>
-                        <div class="flow-desc">
-                            下のボタンをタップして『六根清浄』公式LINEを友だち追加してください。<br>
-                            ここからすべてのご予約手続きが始まります。<br>
-                            一度友だち追加いただければ、以降のご利用時も同じLINEでやり取りさせていただきます。
-                        </div>
+                        <div class="flow-desc">下のボタンをタップして『六根清浄』公式LINEを友だち追加してください。</div>
                         <div class="flow-cta" style="margin: 20px 0 0 0;">
                             <a href="https://lin.ee/SvZ69l0" class="hero-btn">
                                 <img src="images/botan.png" alt="LINEでご予約はこちら" style="max-width: 280px;">
@@ -936,13 +926,9 @@
                     <div class="flow-line"></div>
                     <div class="flow-content">
                         <div class="flow-title">「鑑定予約」ボタンをタップ</div>
-                        <div class="flow-desc">
-                            友だち追加後、LINEメニューから『鑑定予約』ボタンが表示されます。<br>
-                            このボタンをタップして、ご予約画面へ進みます。<br>
-                            必要な情報のヒアリングが始まります。
-                        </div>
+                        <div class="flow-desc">LINEメニューから『鑑定予約』ボタンをタップします。</div>
                         <div class="flow-screenshot">
-                            <img src="images/flow/step2.png" alt="ステップ2">
+                            <img src="images/flow/step2.png" alt="ステップ2" loading="lazy">
                         </div>
                     </div>
                 </div>
@@ -952,19 +938,14 @@
                     <div class="flow-content">
                         <div class="flow-title">形式・日時・時間を選択</div>
                         <div class="flow-desc">
-                            まず、ご希望の鑑定形式をお選びください。<br>
+                            鑑定形式をお選びください：<br>
+                            <strong>オンライン</strong>（Google Meetでの通話）<br>
+                            <strong>対面</strong>（名駅・栄・金山）<br>
                             <br>
-                            <span style="background: rgba(196, 163, 90, 0.15); padding: 8px 12px; border-radius: 4px; display: inline-block; margin: 8px 0;">【オンライン】</span><br>
-                            Google MeetのURLをLINEでお送りします。URLを開くだけで参加でき、アプリ登録・会員登録は不要です。ご自宅やお好きな場所からお気軽にご受講いただけます。<br>
-                            <br>
-                            <span style="background: rgba(196, 163, 90, 0.15); padding: 8px 12px; border-radius: 4px; display: inline-block; margin: 8px 0;">【対面】</span><br>
-                            名駅・栄・金山の指定駅から徒歩5分のカフェで行います。対面だからこそ感じられる空間の中で、じっくりと鑑定させていただきます。<br>
-                            （店名はご予約確定後にLINEでご案内いたします）<br>
-                            <br>
-                            形式を選んだ後、ご希望の日時と鑑定時間（30分〜120分）をお選びください。
+                            その後、ご希望の日時と鑑定時間（30分〜120分）をお選びください。
                         </div>
                         <div class="flow-screenshot">
-                            <img src="images/flow/step3.png" alt="ステップ3">
+                            <img src="images/flow/step3.png" alt="ステップ3" loading="lazy">
                         </div>
                     </div>
                 </div>
@@ -972,14 +953,14 @@
                     <div class="flow-number">4</div>
                     <div class="flow-line"></div>
                     <div class="flow-content">
-                        <div class="flow-title">フォーム入力（所要時間：約3分）</div>
+                        <div class="flow-title">フォーム入力（約3分）</div>
                         <div class="flow-desc">
                             Googleフォームが自動で送られてきます。<br>
-                            占いに必要な情報などをお聞きします。<br>
-                            フォーム送信をもって、ご予約が確定いたします。
+                            鑑定に必要なご質問内容やお生まれの日時などをお入力ください。<br>
+                            フォーム送信で、予約が確定いたします。
                         </div>
                         <div class="flow-screenshot">
-                            <img src="images/flow/step4.png" alt="ステップ4">
+                            <img src="images/flow/step4.png" alt="ステップ4" loading="lazy">
                         </div>
                     </div>
                 </div>
@@ -987,20 +968,19 @@
                     <div class="flow-number">5</div>
                     <div class="flow-line"></div>
                     <div class="flow-content">
-                        <div class="flow-title">支払情報をLINEで受け取り</div>
+                        <div class="flow-title">お支払い先をLINEで受け取り</div>
                         <div class="flow-desc">
-                            <span style="background: rgba(196, 163, 90, 0.15); padding: 8px 12px; border-radius: 4px; display: inline-block; margin: 8px 0;">【オンライン】</span><br>
-                            予約確定後、フォーム内でお選びいただいたご希望のお支払い方法の詳細情報をLINEでご案内いたします。<br>
-                            ご指定いただいた方法でお手続きください。<br>
-                            お支払い完了で、ご予約が最終確定となります。<br>
+                            予約確定後、お支払い先をLINEでご案内いたします。<br>
                             <br>
-                            <span style="background: rgba(196, 163, 90, 0.15); padding: 8px 12px; border-radius: 4px; display: inline-block; margin: 8px 0;">【対面】</span><br>
-                            当日、待ち合わせ場所で現金またはPayPayでお支払いいただきます。<br>
-                            ステップ6へお進みください。
+                            <strong>オンライン鑑定：</strong>PayPay / 銀行振込<br>
+                            お好きな方法でお手続きください。<br>
+                            <br>
+                            <strong>対面鑑定：</strong>現地払いのためここはスルー<br>
+                            当日、待ち合わせ場所でお支払いいただきます。
                         </div>
                         <div class="flow-note">※ 決済方法は今後増える予定です</div>
                         <div class="flow-screenshot">
-                            <img src="images/flow/step5.png" alt="ステップ5">
+                            <img src="images/flow/step5.png" alt="ステップ5" loading="lazy">
                         </div>
                     </div>
                 </div>
@@ -1019,7 +999,7 @@
                             待ち合わせ場所と時間の詳細をLINEでご案内いたします。
                         </div>
                         <div class="flow-screenshot">
-                            <img src="images/flow/step6.png" alt="ステップ6">
+                            <img src="images/flow/step6.png" alt="ステップ6" loading="lazy">
                         </div>
                     </div>
                 </div>
@@ -1030,19 +1010,19 @@
     <!-- ページ導線 -->
     <section class="page-links">
         <div class="page-links-inner">
-            <a href="about.html" class="page-link-card">
+            <a href="about.html" class="page-link-card animate-on-scroll animate-delay-1">
                 <span class="page-link-title">占い師紹介</span>
                 <span class="page-link-desc">鑑定スタイル</span>
             </a>
-            <a href="pricing.html" class="page-link-card">
+            <a href="pricing.html" class="page-link-card animate-on-scroll animate-delay-2">
                 <span class="page-link-title">料金案内</span>
                 <span class="page-link-desc">コース・料金</span>
             </a>
-            <a href="testimonials.html" class="page-link-card">
+            <a href="testimonials.html" class="page-link-card animate-on-scroll animate-delay-3">
                 <span class="page-link-title">お客様の声</span>
                 <span class="page-link-desc">実際のご感想</span>
             </a>
-            <a href="faq.html" class="page-link-card">
+            <a href="faq.html" class="page-link-card animate-on-scroll animate-delay-4">
                 <span class="page-link-title">よくある質問</span>
                 <span class="page-link-desc">Q&A</span>
             </a>
@@ -1056,11 +1036,8 @@
         </div>
     </footer>
 
-    <script>
-        function toggleMenu() {
-            document.querySelector('.nav-wrapper').classList.toggle('active');
-        }
-    </script>
+    <button type="button" id="back-to-top" class="back-to-top" aria-label="トップへ戻る">↑</button>
 
+    <script src="js/main.js"></script>
 </body>
 </html>
