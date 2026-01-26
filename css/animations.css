@@ -1,0 +1,165 @@
+/* ========== 占い処 六根清浄｜アニメーション用CSS ========== */
+/* 既存styleの後に読み込む */
+
+:root {
+    --color-primary: #2d3d38;
+    --color-gold: #c4a35a;
+}
+
+/* ----- 1. スクロールフェードイン ----- */
+.animate-on-scroll {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.animate-on-scroll.animated {
+    opacity: 1;
+    transform: translateY(0);
+}
+.animate-on-scroll.animate-delay-1 { transition-delay: 0.1s; }
+.animate-on-scroll.animate-delay-2 { transition-delay: 0.2s; }
+.animate-on-scroll.animate-delay-3 { transition-delay: 0.3s; }
+.animate-on-scroll.animate-delay-4 { transition-delay: 0.4s; }
+
+/* ----- 2. ヒーロー初回表示（順番にふわっと） ----- */
+.hero-reveal { opacity: 0; transform: translateY(20px); }
+.hero-reveal.hero-visible { opacity: 1; transform: translateY(0); }
+.hero-reveal-title { transition: opacity 0.7s ease 0.1s, transform 0.7s ease 0.1s; }
+.hero-reveal-subtitle { transition: opacity 0.7s ease 0.4s, transform 0.7s ease 0.4s; }
+.hero-reveal-btn { transition: opacity 0.7s ease 0.7s, transform 0.7s ease 0.7s; }
+
+/* ----- 3. ヘッダー・スクロール挙動 ----- */
+.header {
+    transition: box-shadow 0.3s ease, background 0.3s ease;
+}
+.header.scrolled {
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+
+/* ----- 4. トップへ戻るボタン ----- */
+.back-to-top {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    color: #fff;
+    border: 2px solid var(--color-gold);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(12px);
+    transition: opacity 0.3s, visibility 0.3s, transform 0.3s, background 0.2s, transform 0.2s;
+}
+.back-to-top.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+.back-to-top:hover {
+    background: var(--color-gold);
+    color: var(--color-primary);
+    transform: translateY(-4px);
+}
+.back-to-top:active {
+    transform: translateY(-2px) scale(0.96);
+}
+
+/* ----- 5. LINE・CTA マイクロインタラクション ----- */
+.cta-micro {
+    display: inline-block;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
+}
+.cta-micro:hover {
+    transform: translateY(-4px) scale(1.02);
+    filter: brightness(1.05);
+}
+.cta-micro:active {
+    transform: translateY(-2px) scale(0.98);
+}
+.cta-micro img {
+    display: block;
+    transition: transform 0.25s ease;
+}
+.cta-micro:hover img {
+    filter: drop-shadow(0 6px 16px rgba(196, 163, 90, 0.35));
+}
+
+.contact-btn-extra:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* ----- 6. ご予約の流れ・ステップ＆線アニメ ----- */
+.flow-step {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.flow-step.flow-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+.flow-step .flow-line {
+    transition: opacity 0.5s ease 0.2s;
+    opacity: 0;
+}
+.flow-step.flow-visible .flow-line {
+    opacity: 0.4;
+}
+.flow-step:last-child .flow-line {
+    display: none !important;
+}
+
+/* ----- 7. 料金カード・おすすめの目立たせ ----- */
+.course-card.recommended,
+.course-card.popular {
+    position: relative;
+    animation: card-glow 3s ease-in-out infinite;
+}
+@keyframes card-glow {
+    0%, 100% { box-shadow: 0 4px 20px rgba(0,0,0,0.06), 0 0 0 0 rgba(196, 163, 90, 0.2); }
+    50% { box-shadow: 0 8px 28px rgba(0,0,0,0.08), 0 0 20px 2px rgba(196, 163, 90, 0.15); }
+}
+.course-card.recommended { animation-name: card-glow-pink; }
+@keyframes card-glow-pink {
+    0%, 100% { box-shadow: 0 4px 20px rgba(0,0,0,0.06), 0 0 0 0 rgba(196, 69, 105, 0.2); }
+    50% { box-shadow: 0 8px 28px rgba(0,0,0,0.08), 0 0 20px 2px rgba(196, 69, 105, 0.2); }
+}
+
+/* ----- 8. FAQ アコーディオン ----- */
+.faq-item .question {
+    cursor: pointer;
+    user-select: none;
+    padding-right: 40px;
+    position: relative;
+}
+.faq-item .question::after {
+    content: '+';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.4rem;
+    font-weight: 300;
+    color: var(--color-gold);
+    transition: transform 0.3s ease;
+}
+.faq-item.faq-open .question::after {
+    transform: translateY(-50%) rotate(45deg);
+}
+.faq-item .answer-wrap {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+}
+.faq-item.faq-open .answer-wrap {
+    max-height: 2000px;
+}
