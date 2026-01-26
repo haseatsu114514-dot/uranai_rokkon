@@ -83,7 +83,7 @@
         .nav-wrapper {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 20px;
         }
 
         .nav {
@@ -125,7 +125,7 @@
         .contact-btn {
             background: transparent;
             color: var(--color-text-white);
-            padding: 10px 35px;
+            padding: 10px 28px;
             border-radius: 4px;
             font-size: 0.88rem;
             font-weight: 500;
@@ -148,7 +148,7 @@
 
         .page-header {
             background: linear-gradient(135deg, #3a4a45 0%, #4a5a55 100%);
-            padding: 48px 20px;
+            padding: 60px 20px;
             text-align: center;
         }
 
@@ -479,16 +479,45 @@
             }
         }
 
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
+            .nav-wrapper {
+                display: none;
+                position: fixed;
+                top: 60px;
+                left: 0;
+                width: 100%;
+                background: var(--color-primary);
+                flex-direction: column;
+                padding: 20px;
+                gap: 0;
+                z-index: 999;
+            }
+            .nav-wrapper.active {
+                display: flex;
+            }
             .nav {
-                gap: 8px;
+                flex-direction: column;
+                gap: 0;
+                width: 100%;
             }
             .nav a {
-                font-size: 0.65rem;
+                padding: 15px 0;
+                font-size: 1rem;
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+                width: 100%;
+                text-align: center;
+            }
+            .nav a::after {
+                display: none;
             }
             .contact-btn {
-                padding: 6px 10px;
-                font-size: 0.65rem;
+                margin-top: 15px;
+                padding: 12px 30px;
+                font-size: 1rem;
+                text-align: center;
+            }
+            .menu-toggle {
+                display: flex !important;
             }
             .page-header {
                 padding: 35px 15px;
@@ -546,17 +575,19 @@
             display: none;
             flex-direction: column;
             justify-content: center;
-            gap: 5px;
-            width: 28px;
-            height: 28px;
+            gap: 6px;
+            width: 40px;
+            height: 40px;
             cursor: pointer;
+            padding: 8px;
         }
         .menu-toggle span {
             display: block;
             width: 100%;
-            height: 2px;
+            height: 3px;
             background: #fff;
             transition: 0.3s;
+            border-radius: 2px;
         }
 
         /* ページ導線 */
@@ -574,11 +605,28 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.06);
             transition: all 0.3s;
             display: block;
-            border: 1px solid #eee;
+            border: 2px solid transparent;
+            position: relative;
+        }
+        .page-link-card::after {
+            content: '→';
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--color-gold);
+            font-size: 1rem;
+            opacity: 0;
+            transition: all 0.3s;
         }
         .page-link-card:hover {
             transform: translateY(-4px);
             box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border-color: var(--color-gold);
+        }
+        .page-link-card:hover::after {
+            opacity: 1;
+            right: 8px;
         }
         .page-link-title {
             display: block;
@@ -592,60 +640,17 @@
             font-size: 0.75rem;
             color: #888;
         }
-
-        @media (max-width: 1024px) {
-            .page-links-container {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 12px;
-            }
-        }
-
         @media (max-width: 768px) {
-            .nav-wrapper {
-                display: none;
-                position: fixed;
-                top: 60px;
-                left: 0;
-                width: 100%;
-                background: var(--color-primary);
-                flex-direction: column;
-                padding: 20px;
-                gap: 0;
-                z-index: 999;
-            }
-            .nav-wrapper.active {
-                display: flex;
-            }
-            .nav {
-                flex-direction: column;
-                gap: 0;
-                width: 100%;
-            }
-            .nav a {
-                padding: 15px 0;
-                font-size: 1rem;
-                border-bottom: 1px solid rgba(255,255,255,0.1);
-                width: 100%;
-                text-align: center;
-            }
-            .nav a::after {
-                display: none;
-            }
-            .contact-btn {
-                margin-top: 15px;
-                padding: 12px 30px;
-                font-size: 1rem;
-                text-align: center;
-            }
-            .menu-toggle {
-                display: flex;
-            }
             .page-links-container {
                 grid-template-columns: repeat(2, 1fr);
                 gap: 10px;
+                margin-top: 36px;
             }
             .page-link-card {
                 padding: 18px 10px;
+            }
+            .page-link-card::after {
+                display: none;
             }
             .page-link-title {
                 font-size: 0.82rem;
@@ -655,6 +660,7 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="css/animations.css">
 </head>
 <body>
 
@@ -676,7 +682,7 @@
                 </nav>
                 <a href="https://docs.google.com/forms/d/e/1FAIpQLSdG_cRsdXN-z8HUmzwUdAv7exsxFM41qp-WLr6hGORGmQI28w/viewform?usp=header" class="contact-btn" target="_blank">お問い合わせ</a>
             </div>
-            <div class="menu-toggle" onclick="toggleMenu()">
+            <div class="menu-toggle" onclick="toggleMenu();" aria-label="メニュー">
                 <span></span>
                 <span></span>
                 <span></span>
@@ -694,7 +700,7 @@
         <div class="container">
 
             <!-- 30分コース -->
-            <div class="course-card">
+            <div class="course-card animate-on-scroll">
                 <div class="course-header">
                     <div class="course-duration">30分コース</div>
                     <div class="course-prices">
@@ -725,7 +731,7 @@
             </div>
 
             <!-- 45分コース -->
-            <div class="course-card recommended">
+            <div class="course-card recommended animate-on-scroll animate-delay-1">
                 <span class="course-badge recommended">一番人気</span>
                 <div class="course-header">
                     <div class="course-duration">45分コース</div>
@@ -760,7 +766,7 @@
             </div>
 
             <!-- 60分コース -->
-            <div class="course-card popular">
+            <div class="course-card popular animate-on-scroll animate-delay-2">
                 <span class="course-badge popular">最高峰・悩みの鑑定</span>
                 <div class="course-header">
                     <div class="course-duration">60分コース</div>
@@ -822,19 +828,19 @@
 
             <!-- ページ導線 -->
             <div class="page-links-container">
-                <a href="index.html" class="page-link-card">
+                <a href="index.html" class="page-link-card animate-on-scroll">
                     <span class="page-link-title">ホーム</span>
                     <span class="page-link-desc">トップページ</span>
                 </a>
-                <a href="about.html" class="page-link-card">
+                <a href="about.html" class="page-link-card animate-on-scroll animate-delay-1">
                     <span class="page-link-title">占い師紹介</span>
                     <span class="page-link-desc">鑑定スタイルについて</span>
                 </a>
-                <a href="testimonials.html" class="page-link-card">
+                <a href="testimonials.html" class="page-link-card animate-on-scroll animate-delay-2">
                     <span class="page-link-title">お客様の声</span>
                     <span class="page-link-desc">実際のご感想</span>
                 </a>
-                <a href="faq.html" class="page-link-card">
+                <a href="faq.html" class="page-link-card animate-on-scroll animate-delay-3">
                     <span class="page-link-title">よくある質問</span>
                     <span class="page-link-desc">Q&A</span>
                 </a>
@@ -850,11 +856,8 @@
         </div>
     </footer>
 
-    <script>
-        function toggleMenu() {
-            document.querySelector('.nav-wrapper').classList.toggle('active');
-        }
-    </script>
+    <button type="button" id="back-to-top" class="back-to-top" aria-label="トップへ戻る">↑</button>
 
+    <script src="js/main.js"></script>
 </body>
 </html>
