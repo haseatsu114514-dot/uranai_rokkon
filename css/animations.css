@@ -508,3 +508,69 @@
     right: 20px;
   }
 }
+
+/* 予約状況のスタイル修正（animations.cssに追加する内容） */
+
+/* ヘッダー部分の色修正 */
+.availability-header {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(196, 163, 90, 0.3);
+}
+
+.availability-label {
+    font-size: 1.1rem;
+    color: #2d3d38 !important; /* プライマリカラー */
+    opacity: 1 !important;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+}
+
+.availability-date {
+    font-size: 0.9rem;
+    color: #c4a35a !important; /* ゴールド */
+    margin-left: 0.8rem;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+}
+
+/* 各部の名前と時刻の色修正 */
+.part-name {
+    font-size: 0.9rem;
+    color: #2d3d38 !important; /* プライマリカラー */
+    opacity: 1 !important;
+    letter-spacing: 0.05em;
+    font-weight: 700;
+}
+
+.part-time {
+    font-size: 0.7rem;
+    color: #666 !important;
+    opacity: 1 !important;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+}
+
+/* 注釈の色修正 */
+.availability-note {
+    font-size: 0.8rem;
+    color: #666 !important;
+    opacity: 1 !important;
+    letter-spacing: 0.05em;
+    text-align: center;
+    margin-top: 1rem;
+    line-height: 1.8;
+}
+
+/* 全終了メッセージの色修正 */
+.all-full-message {
+    display: none;
+    font-size: 0.95rem;
+    color: #2d3d38 !important; /* プライマリカラー */
+    opacity: 1 !important;
+    letter-spacing: 0.1em;
+    margin-top: 1rem;
+    padding: 1.2rem;
+    border-top: 1px solid rgba(196, 163, 90, 0.3);
+    font-weight: 600;
+}
