@@ -687,17 +687,12 @@
 
         /* ★★★ 画像表示エリア（改善版） ★★★ */
         .flow-screenshot {
-            width: 100%;
-            margin-top: 15px;
-            background: #fff;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-top: 20px;
         }
 
         .flow-screenshot img {
             display: block;
-            max-width: 100%;
+            max-width: 400px;
             height: auto;
             margin: 0;
         }
@@ -903,8 +898,8 @@
             .flow-desc {
                 font-size: 0.9rem;
             }
-            .flow-screenshot {
-                padding: 15px;
+            .flow-screenshot img {
+                max-width: 350px;
             }
             .footer {
                 height: auto;
@@ -1103,8 +1098,8 @@
                 font-size: 0.75rem;
                 padding: 6px 10px;
             }
-            .flow-screenshot {
-                padding: 10px;
+            .flow-screenshot img {
+                max-width: 280px;
             }
         }
     </style>
@@ -1285,6 +1280,7 @@
                 </div>
                 <div class="flow-step">
                     <div class="flow-number">4</div>
+                    <div class="flow-line"></div>
                     <div class="flow-content">
                         <div class="flow-title">フォーム入力（約3分）</div>
                         <div class="flow-desc">
@@ -1294,6 +1290,39 @@
                         </div>
                         <div class="flow-screenshot">
                             <img src="images/step4.png" alt="ステップ4" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+                <div class="flow-step">
+                    <div class="flow-number">5</div>
+                    <div class="flow-line"></div>
+                    <div class="flow-content">
+                        <div class="flow-title">お支払い先をLINEで受け取り</div>
+                        <div class="flow-desc">
+                            予約確定後、お支払い先をLINEでご案内いたします。<br>
+                            <br>
+                            <strong>オンライン鑑定：</strong>PayPay / 銀行振込<br>
+                            お好きな方法でお手続きください。<br>
+                            <br>
+                            <strong>対面鑑定：</strong>現地払いのためここはスルー<br>
+                            当日、待ち合わせ場所でお支払いいただきます。
+                        </div>
+                        <div class="flow-note">※ 決済方法は今後増える予定です</div>
+                    </div>
+                </div>
+                <div class="flow-step">
+                    <div class="flow-number">6</div>
+                    <div class="flow-content">
+                        <div class="flow-title">当日のご案内をLINEで受け取り</div>
+                        <div class="flow-desc">
+                            鑑定の当日、詳細なご案内がLINEで届きます。<br>
+                            <br>
+                            <strong>【オンライン鑑定の場合】</strong><br>
+                            Google MeetのURLをLINEでお送りします。<br>
+                            URLを開くだけで参加でき、アプリ登録・会員登録は不要です。<br>
+                            <br>
+                            <strong>【対面鑑定の場合】</strong><br>
+                            待ち合わせ場所と時間の詳細をLINEでご案内いたします。
                         </div>
                     </div>
                 </div>
