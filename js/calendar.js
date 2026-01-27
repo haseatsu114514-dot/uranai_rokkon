@@ -1,6 +1,6 @@
 // GAS WebアプリURL設定
 // config.js から読み込む（設定ファイルが存在しない場合はデフォルト値を使用）
-let GAS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbw7D85-8i-AEN1awPLcY0ugs9qZRUVICf0s4Sa5Dbglj0V9mNgsF2ouyubyxw-xxQZPhQ/exec';
+let GAS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbz-Omuk46raJaoSXPAXYGS9OvtZgGWIv1LBUTODPqbUKwJSEDjQbYCq_GAIoyywbemR/exec';
 
 // config.js が存在する場合は読み込む（HTML側で先に読み込む必要があります）
 // <script src="js/config.js"></script> を index.html に追加してください
