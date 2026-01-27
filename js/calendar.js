@@ -216,13 +216,21 @@ async function displayBookingSlots() {
     // 昼の部を表示
     const dayPart = availability.parts['昼の部'] || { status: 'full', count: 0 };
     daySlotsElement.innerHTML = '';
+    const now = new Date();
     TIME_SLOTS.day.slots.forEach(slot => {
-      const isAvailable = dayPart.status !== 'full';
+      // スロットの開始時刻を計算
+      const slotDateTime = new Date(createISODateTime(new Date(), slot.hour, slot.minute));
+      // 5時間前の時刻を計算
+      const bookingDeadline = new Date(slotDateTime.getTime() - 5 * 60 * 60 * 1000);
+      // 現在時刻が5時間前を過ぎているか、または部全体がfullかチェック
+      const isPastDeadline = now > bookingDeadline;
+      const isAvailable = dayPart.status !== 'full' && !isPastDeadline;
+      
       const slotElement = document.createElement('div');
       slotElement.className = `time-slot ${isAvailable ? 'available' : 'unavailable'}`;
       slotElement.textContent = slot.time;
       if (!isAvailable) {
-        slotElement.title = '受付終了';
+        slotElement.title = isPastDeadline ? '受付終了（5時間前を過ぎました）' : '受付終了';
       }
       daySlotsElement.appendChild(slotElement);
       if (isAvailable) hasAvailableSlot = true;
@@ -232,12 +240,19 @@ async function displayBookingSlots() {
     const eveningPart = availability.parts['夕の部'] || { status: 'full', count: 0 };
     eveningSlotsElement.innerHTML = '';
     TIME_SLOTS.evening.slots.forEach(slot => {
-      const isAvailable = eveningPart.status !== 'full';
+      // スロットの開始時刻を計算
+      const slotDateTime = new Date(createISODateTime(new Date(), slot.hour, slot.minute));
+      // 5時間前の時刻を計算
+      const bookingDeadline = new Date(slotDateTime.getTime() - 5 * 60 * 60 * 1000);
+      // 現在時刻が5時間前を過ぎているか、または部全体がfullかチェック
+      const isPastDeadline = now > bookingDeadline;
+      const isAvailable = eveningPart.status !== 'full' && !isPastDeadline;
+      
       const slotElement = document.createElement('div');
       slotElement.className = `time-slot ${isAvailable ? 'available' : 'unavailable'}`;
       slotElement.textContent = slot.time;
       if (!isAvailable) {
-        slotElement.title = '受付終了';
+        slotElement.title = isPastDeadline ? '受付終了（5時間前を過ぎました）' : '受付終了';
       }
       eveningSlotsElement.appendChild(slotElement);
       if (isAvailable) hasAvailableSlot = true;
@@ -247,12 +262,19 @@ async function displayBookingSlots() {
     const nightPart = availability.parts['夜の部'] || { status: 'full', count: 0 };
     nightSlotsElement.innerHTML = '';
     TIME_SLOTS.night.slots.forEach(slot => {
-      const isAvailable = nightPart.status !== 'full';
+      // スロットの開始時刻を計算
+      const slotDateTime = new Date(createISODateTime(new Date(), slot.hour, slot.minute));
+      // 5時間前の時刻を計算
+      const bookingDeadline = new Date(slotDateTime.getTime() - 5 * 60 * 60 * 1000);
+      // 現在時刻が5時間前を過ぎているか、または部全体がfullかチェック
+      const isPastDeadline = now > bookingDeadline;
+      const isAvailable = nightPart.status !== 'full' && !isPastDeadline;
+      
       const slotElement = document.createElement('div');
       slotElement.className = `time-slot ${isAvailable ? 'available' : 'unavailable'}`;
       slotElement.textContent = slot.time;
       if (!isAvailable) {
-        slotElement.title = '受付終了';
+        slotElement.title = isPastDeadline ? '受付終了（5時間前を過ぎました）' : '受付終了';
       }
       nightSlotsElement.appendChild(slotElement);
       if (isAvailable) hasAvailableSlot = true;
