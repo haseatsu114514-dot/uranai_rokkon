@@ -171,7 +171,7 @@
             color: #fff;
             overflow: hidden;
             padding-top: 75px;
-            padding-bottom: 0; /* ★変更: 余白削除 */
+            padding-bottom: 0;
         }
 
         .hero-bg {
@@ -233,7 +233,7 @@
             font-size: 1.35rem;
             font-weight: 400;
             letter-spacing: 0.15em;
-            margin-bottom: 3rem; /* ★調整: 60px → 3rem */
+            margin-bottom: 3rem;
             line-height: 2.2;
             color: var(--color-text-light);
         }
@@ -260,8 +260,8 @@
         /* ========== 予約状況セクション（和モダンデザイン） ========== */
         .availability-section {
             background: linear-gradient(180deg, 
-                #f8f6f2 0%,           /* クリーム色（六根清浄セクションと同じ） */
-                #f0ede7 100%          /* 少し濃いめのクリーム */
+                #f8f6f2 0%,
+                #f0ede7 100%
             );
             padding: 60px 20px;
             position: relative;
@@ -685,24 +685,21 @@
             display: inline-block;
         }
 
+        /* ★★★ 画像表示エリア（改善版） ★★★ */
         .flow-screenshot {
             width: 100%;
-            height: 400px;
-            background: #f0f0f0;
-            border-radius: 8px;
             margin-top: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid #ddd;
-            overflow: hidden;
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
 
         .flow-screenshot img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            background: #fff;
+            display: block;
+            max-width: 100%;
+            height: auto;
+            margin: 0;
         }
 
         /* ========== ページ導線 ========== */
@@ -907,7 +904,7 @@
                 font-size: 0.9rem;
             }
             .flow-screenshot {
-                height: 350px;
+                padding: 15px;
             }
             .footer {
                 height: auto;
@@ -1107,7 +1104,7 @@
                 padding: 6px 10px;
             }
             .flow-screenshot {
-                height: 300px;
+                padding: 10px;
             }
         }
     </style>
@@ -1288,7 +1285,6 @@
                 </div>
                 <div class="flow-step">
                     <div class="flow-number">4</div>
-                    <div class="flow-line"></div>
                     <div class="flow-content">
                         <div class="flow-title">フォーム入力（約3分）</div>
                         <div class="flow-desc">
@@ -1298,45 +1294,6 @@
                         </div>
                         <div class="flow-screenshot">
                             <img src="images/step4.png" alt="ステップ4" loading="lazy">
-                        </div>
-                    </div>
-                </div>
-                <div class="flow-step">
-                    <div class="flow-number">5</div>
-                    <div class="flow-line"></div>
-                    <div class="flow-content">
-                        <div class="flow-title">お支払い先をLINEで受け取り</div>
-                        <div class="flow-desc">
-                            予約確定後、お支払い先をLINEでご案内いたします。<br>
-                            <br>
-                            <strong>オンライン鑑定：</strong>PayPay / 銀行振込<br>
-                            お好きな方法でお手続きください。<br>
-                            <br>
-                            <strong>対面鑑定：</strong>現地払いのためここはスルー<br>
-                            当日、待ち合わせ場所でお支払いいただきます。
-                        </div>
-                        <div class="flow-note">※ 決済方法は今後増える予定です</div>
-                        <div class="flow-screenshot">
-                            <img src="images/step5.png" alt="ステップ5" loading="lazy">
-                        </div>
-                    </div>
-                </div>
-                <div class="flow-step">
-                    <div class="flow-number">6</div>
-                    <div class="flow-content">
-                        <div class="flow-title">当日のご案内をLINEで受け取り</div>
-                        <div class="flow-desc">
-                            鑑定の当日、詳細なご案内がLINEで届きます。<br>
-                            <br>
-                            <strong>【オンライン鑑定の場合】</strong><br>
-                            Google MeetのURLをLINEでお送りします。<br>
-                            URLを開くだけで参加でき、アプリ登録・会員登録は不要です。<br>
-                            <br>
-                            <strong>【対面鑑定の場合】</strong><br>
-                            待ち合わせ場所と時間の詳細をLINEでご案内いたします。
-                        </div>
-                        <div class="flow-screenshot">
-                            <img src="images/step6.png" alt="ステップ6" loading="lazy">
                         </div>
                     </div>
                 </div>
