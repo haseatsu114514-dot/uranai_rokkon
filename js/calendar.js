@@ -18,6 +18,12 @@ const CALENDAR_CONFIG = {
   
   // 時間枠の設定（30分単位）
   slotDuration: 30, // 分
+  
+  // 翌日表示切り替え時刻（21:30）
+  nextDayDisplayTime: {
+    hour: 21,
+    minute: 30
+  }
 };
 
 // 時間帯の定義
@@ -41,6 +47,25 @@ const TIME_SLOTS = {
     slots: []
   }
 };
+
+/**
+ * 表示対象の日付を取得（21:30以降は翌日）
+ */
+function getTargetDate() {
+  const now = new Date();
+  const hour = now.getHours();
+  const minute = now.getMinutes();
+  
+  // 21:30以降（21時30分以降）は翌日を返す
+  if (hour > CALENDAR_CONFIG.nextDayDisplayTime.hour || 
+      (hour === CALENDAR_CONFIG.nextDayDisplayTime.hour && minute >= CALENDAR_CONFIG.nextDayDisplayTime.minute)) {
+    const tomorrow = new Date(now);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow;
+  }
+  
+  return now;
+}
 
 /**
  * 時間枠を生成
@@ -172,8 +197,8 @@ async function fetchTodayAvailability() {
  * 予約済みの時間枠を判定
  */
 function isSlotBooked(slot, events) {
-  const today = new Date();
-  const slotStart = new Date(createISODateTime(today, slot.hour, slot.minute));
+  const targetDate = getTargetDate();
+  const slotStart = new Date(createISODateTime(targetDate, slot.hour, slot.minute));
   const slotEnd = new Date(slotStart.getTime() + CALENDAR_CONFIG.slotDuration * 60 * 1000);
   
   return events.some(event => {
@@ -230,12 +255,12 @@ async function displayBookingSlots() {
       return;
     }
     
-    // 日付を表示（例：1月27日（火））
-    const today = new Date();
-    const dateStr = formatDateJP(today);
+    // 表示対象の日付を取得（21:30以降は翌日）
+    const targetDate = getTargetDate();
+    const dateStr = formatDateJP(targetDate);
     const bookingTitle = document.querySelector('.booking-title');
     if (bookingTitle) {
-      bookingTitle.textContent = `本日の予約状況 ${dateStr}`;
+      bookingTitle.textContent = `直近の予約状況 ${dateStr}`;
     }
     
     // 時間枠を生成
@@ -247,12 +272,12 @@ async function displayBookingSlots() {
     const dayPart = availability.parts['昼の部'] || { status: 'full', count: 0 };
     daySlotsElement.innerHTML = '';
     const now = new Date();
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const displayDate = new Date(targetDate);
+    displayDate.setHours(0, 0, 0, 0);
     
     TIME_SLOTS.day.slots.forEach(slot => {
       // スロットの開始時刻を計算（日本時間）
-      const slotDate = new Date(today);
+      const slotDate = new Date(displayDate);
       slotDate.setHours(slot.hour, slot.minute, 0, 0);
       // 5時間前の時刻を計算
       const bookingDeadline = new Date(slotDate.getTime() - 5 * 60 * 60 * 1000);
@@ -275,7 +300,7 @@ async function displayBookingSlots() {
     eveningSlotsElement.innerHTML = '';
     TIME_SLOTS.evening.slots.forEach(slot => {
       // スロットの開始時刻を計算（日本時間）
-      const slotDate = new Date(today);
+      const slotDate = new Date(displayDate);
       slotDate.setHours(slot.hour, slot.minute, 0, 0);
       // 5時間前の時刻を計算
       const bookingDeadline = new Date(slotDate.getTime() - 5 * 60 * 60 * 1000);
@@ -298,7 +323,7 @@ async function displayBookingSlots() {
     nightSlotsElement.innerHTML = '';
     TIME_SLOTS.night.slots.forEach(slot => {
       // スロットの開始時刻を計算（日本時間）
-      const slotDate = new Date(today);
+      const slotDate = new Date(displayDate);
       slotDate.setHours(slot.hour, slot.minute, 0, 0);
       // 5時間前の時刻を計算
       const bookingDeadline = new Date(slotDate.getTime() - 5 * 60 * 60 * 1000);
@@ -318,10 +343,10 @@ async function displayBookingSlots() {
     
     // ステータスを更新
     if (hasAvailableSlot) {
-      statusElement.textContent = '本日鑑定可能';
+      statusElement.textContent = '鑑定可能';
       statusElement.className = 'booking-status available';
     } else {
-      statusElement.textContent = '本日は受付終了です';
+      statusElement.textContent = '受付終了';
       statusElement.className = 'booking-status unavailable';
     }
     
