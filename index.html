@@ -162,8 +162,8 @@
         /* ========== ヒーロー（余白改善版） ========== */
         .hero {
             position: relative;
-            height: 100vh;
-            min-height: 750px; /* ★変更: 700px → 750px */
+            height: auto; /* ★変更: 100vh → auto（内容に合わせて伸びる） */
+            min-height: 100vh; /* ★変更: 750px → 100vh */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -171,6 +171,7 @@
             color: #fff;
             overflow: hidden;
             padding-top: 75px; /* ★追加: ヘッダー分の余白 */
+            padding-bottom: 60px; /* ★追加: 下部余白 */
         }
 
         .hero-bg {
