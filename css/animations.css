@@ -163,3 +163,176 @@
 .faq-item.faq-open .answer-wrap {
     max-height: 2000px;
 }
+
+/* ========================================================== */
+/* 予約状況表示（新規追加） */
+/* css/animations.css の末尾に以下を追加してください */
+/* ========================================================== */
+
+.availability-inline {
+  display: inline-block;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem 1.5rem;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 8px;
+  font-family: 'Shippori Mincho', serif;
+  animation: fadeInUp 0.8s ease-out 0.4s backwards;
+  text-align: center;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.availability-header {
+  margin-bottom: 0.75rem;
+}
+
+.availability-label {
+  font-size: 0.85rem;
+  color: #f5f5dc;
+  opacity: 0.9;
+  letter-spacing: 0.1em;
+}
+
+.availability-date {
+  font-size: 0.75rem;
+  color: #d4af37;
+  margin-left: 0.5rem;
+  letter-spacing: 0.05em;
+}
+
+.availability-parts {
+  display: flex;
+  gap: 1rem;
+  align-items: stretch;
+  justify-content: center;
+  margin-bottom: 0.75rem;
+}
+
+.part-status-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  min-width: 75px;
+}
+
+.part-name {
+  font-size: 0.75rem;
+  color: #f5f5dc;
+  opacity: 0.7;
+  letter-spacing: 0.05em;
+}
+
+.part-time {
+  font-size: 0.65rem;
+  color: #f5f5dc;
+  opacity: 0.5;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.part-badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.3rem 0.7rem;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+}
+
+/* 受付中（緑ゴールド系） */
+.part-badge.available {
+  background: linear-gradient(135deg, #2d5016, #4a7c2c);
+  color: #d4af37;
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  box-shadow: 0 0 8px rgba(74, 124, 44, 0.3);
+}
+
+/* わずか（朱色系） */
+.part-badge.limited {
+  background: linear-gradient(135deg, #8b3a00, #d35400);
+  color: #fff;
+  border: 1px solid rgba(255, 107, 53, 0.5);
+  box-shadow: 0 0 8px rgba(255, 107, 53, 0.4);
+  animation: pulse-warning 2s ease-in-out infinite;
+}
+
+@keyframes pulse-warning {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(255, 107, 53, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 16px rgba(255, 107, 53, 0.6);
+  }
+}
+
+/* 終了（グレー系） */
+.part-badge.full {
+  background: rgba(60, 60, 60, 0.8);
+  color: #999;
+  border: 1px solid rgba(100, 100, 100, 0.3);
+  opacity: 0.6;
+}
+
+.availability-note {
+  font-size: 0.7rem;
+  color: #f5f5dc;
+  opacity: 0.6;
+  letter-spacing: 0.05em;
+  text-align: center;
+  margin-top: 0.5rem;
+  line-height: 1.6;
+}
+
+/* 全終了時のメッセージ */
+.all-full-message {
+  display: none;
+  font-size: 0.85rem;
+  color: #d4af37;
+  opacity: 0.9;
+  letter-spacing: 0.1em;
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  border-top: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.all-full-message.show {
+  display: block;
+}
+
+/* レスポンシブ */
+@media (max-width: 640px) {
+  .availability-inline {
+    padding: 1rem;
+  }
+
+  .availability-parts {
+    gap: 0.5rem;
+  }
+
+  .part-status-item {
+    min-width: 65px;
+  }
+
+  .part-time {
+    font-size: 0.6rem;
+  }
+
+  .part-badge {
+    font-size: 0.65rem;
+    padding: 0.25rem 0.5rem;
+  }
+}
