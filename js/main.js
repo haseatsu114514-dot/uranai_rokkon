@@ -124,17 +124,36 @@
 })();
 
 // ========================================================== 
-// 予約状況表示機能（新規追加）
-// js/main.js の末尾に以下を追加してください
+// 予約状況表示機能（21:30以降は翌日表示に対応）
 // ========================================================== 
 
-// 日付表示を更新
+/**
+ * 表示対象の日付を取得（21:30以降は翌日）
+ */
+function getTargetDate() {
+  const now = new Date();
+  const hour = now.getHours();
+  const minute = now.getMinutes();
+  
+  // 21:30以降（21時30分以降）は翌日を返す
+  if (hour > 21 || (hour === 21 && minute >= 30)) {
+    const tomorrow = new Date(now);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow;
+  }
+  
+  return now;
+}
+
+/**
+ * 日付表示を更新（21:30以降は翌日表示）
+ */
 function updateTodayDate() {
-  const today = new Date();
-  const month = today.getMonth() + 1;
-  const date = today.getDate();
+  const targetDate = getTargetDate();
+  const month = targetDate.getMonth() + 1;
+  const date = targetDate.getDate();
   const dayNames = ['日', '月', '火', '水', '木', '金', '土'];
-  const day = dayNames[today.getDay()];
+  const day = dayNames[targetDate.getDay()];
   
   const dateElement = document.getElementById('todayDate');
   if (dateElement) {
@@ -142,7 +161,9 @@ function updateTodayDate() {
   }
 }
 
-// 予約状況を取得して表示を更新
+/**
+ * 予約状況を取得して表示を更新
+ */
 async function updateAvailability() {
   // 初期状態：バッジを「読み込み中」状態にする
   setBadgesLoading();
@@ -183,7 +204,9 @@ async function updateAvailability() {
   }
 }
 
-// バッジを「読み込み中」状態にする
+/**
+ * バッジを「読み込み中」状態にする
+ */
 function setBadgesLoading() {
   const badges = document.querySelectorAll('[data-part]');
   badges.forEach(badge => {
@@ -193,6 +216,9 @@ function setBadgesLoading() {
   });
 }
 
+/**
+ * バッジの表示を更新
+ */
 function updateBadge(partKey, status) {
   const badge = document.querySelector(`[data-part="${partKey}"]`);
   if (!badge) return;
@@ -217,6 +243,9 @@ function updateBadge(partKey, status) {
   }
 }
 
+/**
+ * 全部終了の場合のメッセージ表示
+ */
 function checkAllFull(day, evening, night) {
   const allFullMessage = document.getElementById('allFullMessage');
   if (!allFullMessage) return;
