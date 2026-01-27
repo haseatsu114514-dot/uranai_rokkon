@@ -115,6 +115,9 @@ const GAS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbwSF2hFdG_ggXXze
     }
 
     function boot() {
+        // JavaScriptが有効であることを示すクラスを追加
+        document.documentElement.classList.add('js-enabled');
+        
         initScrollAnimate();
         initHeroReveal();
         initHeaderScroll();
@@ -324,6 +327,3 @@ if ('serviceWorker' in navigator) {
       });
   });
 }
-```
-
-**これで一番上の `GAS_WEBAPP_URL` だけ変更すればOKです！** 見つけやすくなりました。
