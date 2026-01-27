@@ -574,3 +574,24 @@
     border-top: 1px solid rgba(196, 163, 90, 0.3);
     font-weight: 600;
 }
+
+/* 予約状況のテキスト色修正 */
+.availability-label {
+    color: #2d3d38 !important;
+}
+
+.availability-date {
+    color: #c4a35a !important;
+}
+
+.part-name {
+    color: #2d3d38 !important;
+}
+
+.part-time {
+    color: #666 !important;
+}
+
+.availability-note {
+    color: #666 !important;
+}
