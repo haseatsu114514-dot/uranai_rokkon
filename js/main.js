@@ -146,6 +146,16 @@ function getTargetDate() {
 }
 
 /**
+ * 日付をYYYY-MM-DD形式でフォーマット（API用）
+ */
+function formatDateForAPI(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+/**
  * 日付表示を更新（21:30以降は翌日表示）
  */
 function updateTodayDate() {
@@ -172,7 +182,12 @@ async function updateAvailability() {
     // ★★★ WebアプリURL（設定済み） ★★★
     const API_URL = 'https://script.google.com/macros/s/AKfycbw7D85-8i-AEN1awPLcY0ugs9qZRUVICf0s4Sa5Dbglj0V9mNgsF2ouyubyxw-xxQZPhQ/exec';
     
-    const response = await fetch(API_URL + '?action=getTodayAvailability');
+    // 表示対象の日付を取得（21:30以降は翌日）
+    const targetDate = getTargetDate();
+    const dateStr = formatDateForAPI(targetDate);
+    
+    // 日付パラメータを追加してAPIを呼び出し
+    const response = await fetch(API_URL + '?action=getTodayAvailability&date=' + dateStr);
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
