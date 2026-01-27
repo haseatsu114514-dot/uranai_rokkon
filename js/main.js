@@ -124,7 +124,7 @@
 })();
 
 // ========================================================== 
-// 予約状況表示機能（タグ対応版）
+// 予約状況表示機能（完全版：タグ対応 + キャッシュ対応 + 読み込み注意書き + 対策1,2）
 // ========================================================== 
 
 // 日付表示を更新（タグ付き）
@@ -162,63 +162,102 @@ function updateTodayDate() {
   }
 }
 
+// バッジを「読み込み中」状態にする
+function setBadgesLoading() {
+  const badges = document.querySelectorAll('[data-part]');
+  badges.forEach(badge => {
+    badge.className = 'part-badge loading';
+    badge.textContent = '確認中...';
+    badge.style.opacity = '0.6';
+  });
+  
+  // ★★★ 追加：読み込み中の注意書き ★★★
+  const normalNote = document.querySelector('.availability-note');
+  if (normalNote) {
+    normalNote.innerHTML = '予約状況を確認しています...<br><span style="font-size: 0.75rem; opacity: 0.8;">（環境により10〜15秒かかる場合があります）</span>';
+    normalNote.style.display = 'block';
+  }
+}
+
 // 予約状況を取得して表示を更新
 async function updateAvailability() {
-  // 初期状態：バッジを「読み込み中」状態にする
   setBadgesLoading();
   
-  try {
-    // ★★★ WebアプリURL（設定済み） ★★★
-    const API_URL = 'https://script.google.com/macros/s/AKfycbyURgu7drpLrnJm5I3uZmwqKRBmU-m7G25K1Iy6jiOOhs5u5EdG4MuMQVXGJQAy6YUApg/exec';
+  // ★★★ 対策1: 深夜1:00〜13:00は静的表示（API呼ばない） ★★★
+  const now = new Date();
+  const currentHour = now.getHours();
+  
+  if (currentHour >= 1 && currentHour < 13) {
+    // 深夜〜午前中は「本日受付終了」を静的表示
+    updateBadge('day', 'full');
+    updateBadge('evening', 'full');
+    updateBadge('night', 'full');
     
-    const response = await fetch(API_URL + '?action=getTodayAvailability');
+    const normalNote = document.querySelector('.availability-note');
+    if (normalNote) {
+      normalNote.innerHTML = '※本日の受付は終了しました<br>※営業時間：14:00〜22:00<br>※21:30以降は翌日の予約状況を表示します';
+      normalNote.style.display = 'block';
+    }
+    
+    console.log('深夜時間帯のため静的表示');
+    return;
+  }
+  
+  try {
+    // ★★★ ここにあなたの新しいWebアプリURLを貼り付け ★★★
+    const API_URL = 'https://script.google.com/macros/s/AKfycbzLxrv8-xJ0q4f4YG0XGi6QPby9pAq61V-8Hq3oi7nE0fW6qraVmAHJxDzzEbLehTndJQ/exec';
+    
+    // ★★★ タイムアウトを15秒に設定 ★★★
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
+    
+    const response = await fetch(API_URL + '?action=getTodayAvailability', {
+      signal: controller.signal
+    });
+    
+    clearTimeout(timeoutId);
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     
-    // JSONを直接取得
     const data = await response.json();
 
     const dayStatus = data.parts['昼の部']?.status || 'full';
     const eveningStatus = data.parts['夕の部']?.status || 'full';
     const nightStatus = data.parts['夜の部']?.status || 'full';
 
-    // データ取得後にバッジを更新
     updateBadge('day', dayStatus);
     updateBadge('evening', eveningStatus);
     updateBadge('night', nightStatus);
 
-    // 全部終了の場合はメッセージを表示
     checkAllFull(dayStatus, eveningStatus, nightStatus);
 
     console.log('予約状況を更新しました:', data);
 
   } catch (error) {
     console.error('予約状況の取得エラー:', error);
-    // エラー時もバッジを更新（デフォルト値）
-    updateBadge('day', 'full');
-    updateBadge('evening', 'full');
-    updateBadge('night', 'full');
+    
+    // ★★★ エラー時はLINE確認を促す ★★★
+    updateBadge('day', 'loading');
+    updateBadge('evening', 'loading');
+    updateBadge('night', 'loading');
+    
+    const normalNote = document.querySelector('.availability-note');
+    if (normalNote) {
+      normalNote.innerHTML = '※詳しい空き時刻は<strong>LINE</strong>でご確認ください<br>（予約可能な時間のみご案内します）<br>※21:30以降は翌日の予約状況を表示します';
+      normalNote.style.display = 'block';
+    }
   }
 }
 
-// バッジを「読み込み中」状態にする
-function setBadgesLoading() {
-  const badges = document.querySelectorAll('[data-part]');
-  badges.forEach(badge => {
-    badge.className = 'part-badge loading';
-    badge.textContent = '読み込み中...';
-    badge.style.opacity = '0.6';
-  });
-}
-
+// ★★★ updateBadgeにloading状態を追加 ★★★
 function updateBadge(partKey, status) {
   const badge = document.querySelector(`[data-part="${partKey}"]`);
   if (!badge) return;
 
   badge.className = 'part-badge';
-  badge.style.opacity = '1'; // 読み込み中から通常表示に戻す
+  badge.style.opacity = '1';
 
   switch (status) {
     case 'available':
@@ -228,6 +267,10 @@ function updateBadge(partKey, status) {
     case 'limited':
       badge.classList.add('limited');
       badge.textContent = 'わずか';
+      break;
+    case 'loading':
+      badge.classList.add('limited');
+      badge.textContent = 'LINE確認';
       break;
     case 'full':
     default:
@@ -251,8 +294,10 @@ function checkAllFull(day, evening, night) {
   } else {
     allFullMessage.classList.remove('show');
     
+    // ★★★ 読み込み完了後は元の注意書きに戻す ★★★
     const normalNote = document.querySelector('.availability-note');
     if (normalNote) {
+      normalNote.innerHTML = '※詳しい空き時刻はLINEでご確認<br>（予約可能な時間のみご案内します）<br>※21:30以降は翌日の予約状況を表示します';
       normalNote.style.display = 'block';
     }
   }
@@ -263,3 +308,16 @@ document.addEventListener('DOMContentLoaded', function() {
   updateTodayDate();
   updateAvailability();
 });
+
+// ========== Service Worker登録（対策2） ==========
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js')
+      .then(registration => {
+        console.log('Service Worker 登録成功:', registration.scope);
+      })
+      .catch(error => {
+        console.log('Service Worker 登録失敗:', error);
+      });
+  });
+}
