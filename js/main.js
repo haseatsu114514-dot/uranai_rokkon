@@ -122,3 +122,104 @@
         boot();
     }
 })();
+
+// ========================================================== 
+// 予約状況表示機能（新規追加）
+// js/main.js の末尾に以下を追加してください
+// ========================================================== 
+
+// 日付表示を更新
+function updateTodayDate() {
+  const today = new Date();
+  const month = today.getMonth() + 1;
+  const date = today.getDate();
+  const dayNames = ['日', '月', '火', '水', '木', '金', '土'];
+  const day = dayNames[today.getDay()];
+  
+  const dateElement = document.getElementById('todayDate');
+  if (dateElement) {
+    dateElement.textContent = `${month}月${date}日（${day}）`;
+  }
+}
+
+// 予約状況を取得して表示を更新
+async function updateAvailability() {
+  try {
+    // ★★★ WebアプリURL（設定済み） ★★★
+    const API_URL = 'https://script.google.com/macros/s/AKfycbzStDbZcSMNaz2S_MjkvmuIg9kWZAeNtu73Ts4_CizunkU1-chr6480fc_HKWnnwwrFsg/exec';
+    
+    const response = await fetch(API_URL + '?action=getTodayAvailability');
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+
+    const dayStatus = data.parts['昼の部']?.status || 'full';
+    const eveningStatus = data.parts['夕の部']?.status || 'full';
+    const nightStatus = data.parts['夜の部']?.status || 'full';
+
+    updateBadge('day', dayStatus);
+    updateBadge('evening', eveningStatus);
+    updateBadge('night', nightStatus);
+
+    // 全部終了の場合はメッセージを表示
+    checkAllFull(dayStatus, eveningStatus, nightStatus);
+
+    console.log('予約状況を更新しました:', data);
+
+  } catch (error) {
+    console.error('予約状況の取得エラー:', error);
+  }
+}
+
+function updateBadge(partKey, status) {
+  const badge = document.querySelector(`[data-part="${partKey}"]`);
+  if (!badge) return;
+
+  badge.className = 'part-badge';
+
+  switch (status) {
+    case 'available':
+      badge.classList.add('available');
+      badge.textContent = '受付中';
+      break;
+    case 'limited':
+      badge.classList.add('limited');
+      badge.textContent = 'わずか';
+      break;
+    case 'full':
+    default:
+      badge.classList.add('full');
+      badge.textContent = '終了';
+      break;
+  }
+}
+
+function checkAllFull(day, evening, night) {
+  const allFullMessage = document.getElementById('allFullMessage');
+  if (!allFullMessage) return;
+
+  if (day === 'full' && evening === 'full' && night === 'full') {
+    allFullMessage.classList.add('show');
+    
+    const normalNote = document.querySelector('.availability-note');
+    if (normalNote) {
+      normalNote.style.display = 'none';
+    }
+  } else {
+    allFullMessage.classList.remove('show');
+    
+    const normalNote = document.querySelector('.availability-note');
+    if (normalNote) {
+      normalNote.style.display = 'block';
+    }
+  }
+}
+
+// ページロード時に実行
+document.addEventListener('DOMContentLoaded', function() {
+  updateTodayDate();
+  updateAvailability();
+});
