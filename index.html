@@ -159,17 +159,18 @@
             border-radius: 2px;
         }
 
-        /* ========== ヒーロー ========== */
+        /* ========== ヒーロー（余白改善版） ========== */
         .hero {
             position: relative;
             height: 100vh;
-            min-height: 700px;
+            min-height: 750px; /* ★変更: 700px → 750px */
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
             color: #fff;
             overflow: hidden;
+            padding-top: 75px; /* ★追加: ヘッダー分の余白 */
         }
 
         .hero-bg {
@@ -188,39 +189,62 @@
         .hero-overlay {
             position: absolute;
             inset: 0;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.55); /* ★変更: 0.5 → 0.55 */
             z-index: -1;
         }
 
-       .hero-content {
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0;
-}
+        .hero-content {
+            padding: 40px 20px; /* ★変更: 20px → 40px */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+            max-width: 900px; /* ★追加 */
+            margin: 0 auto; /* ★追加 */
+        }
 
         .hero-title {
             font-size: 6rem;
             font-weight: 600;
             letter-spacing: 0.08em;
-            margin-bottom: 30px;
+            margin-bottom: 50px; /* ★変更: 30px → 50px */
+            margin-top: 20px; /* ★追加: 上部余白 */
             color: var(--color-text-white);
             text-shadow: 3px 3px 30px rgba(0,0,0,0.7);
+        }
+
+        /* ★★★ 信頼性バッジ（新規追加） ★★★ */
+        .trust-badge {
+            display: inline-block;
+            background: rgba(196, 163, 90, 0.15);
+            border: 1px solid var(--color-gold);
+            color: var(--color-gold);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(5px);
         }
 
         .hero-subtitle {
             font-size: 1.35rem;
             font-weight: 400;
             letter-spacing: 0.15em;
-            margin-bottom: 50px;
+            margin-bottom: 60px; /* ★変更: 50px → 60px */
             line-height: 2.2;
             color: var(--color-text-light);
+        }
+
+        .availability-inline {
+            margin: 40px auto; /* ★変更: 2rem → 40px */
         }
 
         .hero-btn {
             display: inline-block;
             transition: transform 0.3s;
+            margin-top: 30px; /* ★追加 */
         }
 
         .hero-btn:hover {
@@ -230,6 +254,11 @@
         .hero-btn img {
             max-width: 480px;
             height: auto;
+        }
+
+        /* ★★★ アニメーション（バッジ用） ★★★ */
+        .hero-reveal-badge {
+            transition: opacity 0.7s ease 0.2s, transform 0.7s ease 0.2s;
         }
 
         /* ========== 六根清浄とは ========== */
@@ -565,8 +594,20 @@
                 padding: 10px 18px;
                 font-size: 0.8rem;
             }
+            .hero {
+                min-height: 700px;
+            }
             .hero-title {
-                font-size: 4rem;
+                font-size: 4.5rem; /* ★変更: 4rem → 4.5rem */
+                margin-bottom: 40px;
+            }
+            .hero-subtitle {
+                font-size: 1.25rem;
+                margin-bottom: 50px;
+            }
+            .trust-badge {
+                font-size: 0.8rem;
+                padding: 0.45rem 1.3rem;
             }
             .about-title {
                 font-size: 3rem;
@@ -591,17 +632,31 @@
                 font-size: 0.75rem;
             }
             .hero {
-                min-height: 60vh;
+                min-height: 650px;
                 padding-top: 60px;
             }
+            .hero-content {
+                padding: 30px 20px;
+            }
             .hero-title {
-                font-size: 2rem;
+                font-size: 2.5rem; /* ★変更: 2rem → 2.5rem */
+                margin-bottom: 30px;
+                margin-top: 10px;
             }
             .hero-subtitle {
-                font-size: 1rem;
+                font-size: 1.1rem; /* ★変更: 1rem → 1.1rem */
+                margin-bottom: 40px;
+            }
+            .trust-badge {
+                font-size: 0.75rem;
+                padding: 0.4rem 1.2rem;
+                margin-bottom: 1.5rem;
             }
             .hero-btn img {
-                max-width: 320px;
+                max-width: 350px; /* ★変更: 320px → 350px */
+            }
+            .availability-inline {
+                margin: 30px auto;
             }
             .about-section {
                 padding: 50px 20px;
@@ -669,8 +724,20 @@
                 padding: 6px 10px;
                 font-size: 0.65rem;
             }
+            .hero {
+                min-height: 600px;
+            }
             .hero-title {
-                font-size: 1.6rem;
+                font-size: 2rem; /* ★変更: 1.6rem → 2rem */
+                margin-bottom: 25px;
+            }
+            .hero-subtitle {
+                font-size: 1rem;
+                margin-bottom: 35px;
+            }
+            .trust-badge {
+                font-size: 0.72rem;
+                padding: 0.38rem 1.1rem;
             }
             .about-title {
                 font-size: 1.5rem;
@@ -740,24 +807,37 @@
 
             /* ヒーロー */
             .hero {
-                min-height: 80vh;
+                min-height: 700px; /* ★変更: 80vh → 700px */
                 padding-top: 60px;
             }
             .hero-content {
                 padding: 20px;
             }
             .hero-title {
-                font-size: 1.8rem;
+                font-size: 1.9rem; /* ★変更: 1.8rem → 1.9rem */
                 letter-spacing: 0.05em;
                 margin-bottom: 20px;
+                margin-top: 0;
             }
             .hero-subtitle {
-                font-size: 0.9rem;
+                font-size: 0.95rem; /* ★変更: 0.9rem → 0.95rem */
                 line-height: 2;
                 margin-bottom: 30px;
             }
+            .trust-badge {
+                font-size: 0.7rem;
+                padding: 0.35rem 1rem;
+                margin-bottom: 1rem;
+            }
+            .hero-btn {
+                margin-top: 20px;
+            }
             .hero-btn img {
-                max-width: 280px;
+                max-width: 300px; /* ★変更: 280px → 300px */
+            }
+            .availability-inline {
+                margin: 25px auto;
+                padding: 1rem;
             }
 
             /* 六根清浄とは */
@@ -864,45 +944,53 @@
         <div class="hero-overlay"></div>
         <div class="hero-content">
             <h1 class="hero-title hero-reveal hero-reveal-title">占い処 六根清浄</h1>
+            
+            <!-- ★★★ 信頼性バッジ（新規追加） ★★★ -->
+            <div class="trust-badge hero-reveal hero-reveal-badge">
+                名古屋栄チェーン館No.1実績 ｜ 鑑定1,500件+
+            </div>
+            
             <p class="hero-subtitle hero-reveal hero-reveal-subtitle">
                 「聞いてもらうだけ」は占いじゃない。<br>
                 「解決する」までが本物の占い。
             </p>
-            <!-- ★★★ 予約状況表示（新規追加）★★★ -->
-<div class="availability-inline" id="availabilityStatus">
-    <div class="availability-header">
-        <span class="availability-label">本日の予約状況</span>
-        <span class="availability-date" id="todayDate">1月27日</span>
-    </div>
-    
-    <div class="availability-parts">
-        <div class="part-status-item">
-            <span class="part-name">昼の部</span>
-            <span class="part-time">14:00〜16:30</span>
-            <span class="part-badge available" data-part="day">受付中</span>
-        </div>
-        <div class="part-status-item">
-            <span class="part-name">夕の部</span>
-            <span class="part-time">16:30〜19:00</span>
-            <span class="part-badge limited" data-part="evening">わずか</span>
-        </div>
-        <div class="part-status-item">
-            <span class="part-name">夜の部</span>
-            <span class="part-time">19:00〜22:00</span>
-            <span class="part-badge full" data-part="night">終了</span>
-        </div>
-    </div>
-    
-    <div class="availability-note">
-        ※詳しい空き時刻はLINEでご確認<br>
-        （予約可能な時間のみご案内します）
-    </div>
-    
-    <div class="all-full-message" id="allFullMessage">
-        本日の受付は終了しました<br>
-        明日以降のご予約はLINEから可能です
-    </div>
-</div>
+            
+            <!-- 予約状況表示 -->
+            <div class="availability-inline" id="availabilityStatus">
+                <div class="availability-header">
+                    <span class="availability-label">本日の予約状況</span>
+                    <span class="availability-date" id="todayDate">1月27日</span>
+                </div>
+                
+                <div class="availability-parts">
+                    <div class="part-status-item">
+                        <span class="part-name">昼の部</span>
+                        <span class="part-time">14:00〜16:30</span>
+                        <span class="part-badge available" data-part="day">受付中</span>
+                    </div>
+                    <div class="part-status-item">
+                        <span class="part-name">夕の部</span>
+                        <span class="part-time">16:30〜19:00</span>
+                        <span class="part-badge limited" data-part="evening">わずか</span>
+                    </div>
+                    <div class="part-status-item">
+                        <span class="part-name">夜の部</span>
+                        <span class="part-time">19:00〜22:00</span>
+                        <span class="part-badge full" data-part="night">終了</span>
+                    </div>
+                </div>
+                
+                <div class="availability-note">
+                    ※詳しい空き時刻はLINEでご確認<br>
+                    （予約可能な時間のみご案内します）
+                </div>
+                
+                <div class="all-full-message" id="allFullMessage">
+                    本日の受付は終了しました<br>
+                    明日以降のご予約はLINEから可能です
+                </div>
+            </div>
+            
             <a href="https://lin.ee/SvZ69l0" class="hero-btn hero-reveal hero-reveal-btn">
                 <img src="images/botan.png" alt="LINEでご予約はこちら">
             </a>
