@@ -146,7 +146,7 @@ function updateTodayDate() {
 async function updateAvailability() {
   try {
     // ★★★ WebアプリURL（設定済み） ★★★
-    const API_URL = 'https://script.google.com/macros/s/AKfycbxnwFUaqOEqNxcoxkLS9MEyIDxAUyldnctXZ1uVJVZ5QBd4QlTcXoD1gO51HwAxEeX_Ew/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyCSDzuLjYCYieIDlgNWYGK5OKCWmLPssNpAF71ZX_ImKwALvI5Cy0kwpL5q7OhXDq8rw/exec';
     
     const response = await fetch(API_URL + '?action=getTodayAvailability');
     
