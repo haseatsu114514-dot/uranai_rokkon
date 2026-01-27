@@ -165,14 +165,15 @@
 }
 
 /* ========================================================== */
-/* 予約状況表示（修正版・視認性向上） */
-/* css/animations.css の予約状況部分を以下に差し替えてください */
+/* animations.css - 完全版 */
+/* 予約状況表示を含む全アニメーションCSS */
 /* ========================================================== */
 
+/* ========== 予約状況表示 ========== */
 .availability-inline {
-  display: inline-block;
-  margin-top: 2rem;
-  margin-bottom: 2rem;
+  display: block;
+  margin: 2rem auto;
+  max-width: 600px;
   padding: 1.5rem 2rem;
   background: rgba(0, 0, 0, 0.85);
   backdrop-filter: blur(12px);
@@ -320,12 +321,19 @@
   display: block;
 }
 
-/* レスポンシブ */
+/* ========== レスポンシブ ========== */
+@media (max-width: 768px) {
+  .availability-inline {
+    max-width: 90%;
+    padding: 1.25rem 1.5rem;
+    margin: 1.5rem auto;
+  }
+}
+
 @media (max-width: 640px) {
   .availability-inline {
     padding: 1.25rem 1.5rem;
-    margin-top: 1.5rem;
-    margin-bottom: 1.5rem;
+    margin: 1.5rem auto;
   }
 
   .availability-parts {
@@ -353,8 +361,8 @@
 @media (max-width: 480px) {
   .availability-inline {
     padding: 1rem;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
+    margin: 1rem auto;
+    max-width: 95%;
   }
 
   .availability-label {
@@ -388,5 +396,115 @@
 
   .availability-note {
     font-size: 0.7rem;
+  }
+}
+
+/* ========== その他のアニメーション（既存） ========== */
+/* ここに既存のアニメーションCSSがあれば追加してください */
+
+/* フェードイン */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* スライドイン */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* スクロールアニメーション用 */
+.animate-on-scroll {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.animate-on-scroll.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.animate-delay-1 {
+  transition-delay: 0.1s;
+}
+
+.animate-delay-2 {
+  transition-delay: 0.2s;
+}
+
+.animate-delay-3 {
+  transition-delay: 0.3s;
+}
+
+.animate-delay-4 {
+  transition-delay: 0.4s;
+}
+
+/* ヒーローアニメーション */
+.hero-reveal {
+  opacity: 0;
+  animation: fadeInUp 1s ease-out forwards;
+}
+
+.hero-reveal-title {
+  animation-delay: 0.2s;
+}
+
+.hero-reveal-subtitle {
+  animation-delay: 0.4s;
+}
+
+.hero-reveal-btn {
+  animation-delay: 0.6s;
+}
+
+/* トップへ戻るボタン */
+.back-to-top {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 50px;
+  height: 50px;
+  background: rgba(45, 61, 56, 0.8);
+  color: #d4af37;
+  border: 2px solid #d4af37;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 999;
+}
+
+.back-to-top.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.back-to-top:hover {
+  background: rgba(45, 61, 56, 1);
+  transform: translateY(-5px);
+}
+
+@media (max-width: 768px) {
+  .back-to-top {
+    width: 45px;
+    height: 45px;
+    font-size: 1.3rem;
+    bottom: 20px;
+    right: 20px;
   }
 }
