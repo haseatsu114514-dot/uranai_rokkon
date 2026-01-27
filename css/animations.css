@@ -6,10 +6,16 @@
 }
 
 /* ----- 1. スクロールフェードイン ----- */
+/* ★修正: JavaScriptが動かなくてもコンテンツが見えるように */
 .animate-on-scroll {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+/* JavaScriptが有効な場合のみアニメーション */
+.js-enabled .animate-on-scroll:not(.animated) {
     opacity: 0;
     transform: translateY(24px);
-    transition: opacity 0.6s ease, transform 0.6s ease;
 }
 .animate-on-scroll.animated {
     opacity: 1;
@@ -22,7 +28,6 @@
 
 /* ----- 2. ヒーロー初回表示 ----- */
 .hero-reveal {
-    /* ★変更: 初期状態を visible に */
     opacity: 1;
     transform: translateY(0);
 }
@@ -265,10 +270,16 @@
 }
 
 /* ----- ご予約の流れ ----- */
+/* ★修正: JavaScriptが動かなくてもコンテンツが見えるように */
 .flow-step {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+/* JavaScriptが有効な場合のみアニメーション */
+.js-enabled .flow-step:not(.flow-visible) {
     opacity: 0;
     transform: translateY(16px);
-    transition: opacity 0.5s ease, transform 0.5s ease;
 }
 .flow-step.flow-visible {
     opacity: 1;
@@ -276,6 +287,9 @@
 }
 .flow-step .flow-line {
     transition: opacity 0.5s ease 0.2s;
+    opacity: 0.4;
+}
+.js-enabled .flow-step:not(.flow-visible) .flow-line {
     opacity: 0;
 }
 .flow-step.flow-visible .flow-line {
