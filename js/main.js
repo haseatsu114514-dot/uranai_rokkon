@@ -192,19 +192,19 @@ function setBadgesLoading() {
 async function updateAvailability() {
   setBadgesLoading();
   
-  // ★★★ 対策1: 深夜1:00〜13:00は静的表示（API呼ばない） ★★★
+  // ★★★ 修正：深夜1:00〜6:00のみ静的表示 ★★★
   const now = new Date();
   const currentHour = now.getHours();
   
-  if (currentHour >= 1 && currentHour < 13) {
-    // 深夜〜午前中は「本日受付終了」を静的表示
-    updateBadge('day', 'full');
-    updateBadge('evening', 'full');
-    updateBadge('night', 'full');
+  if (currentHour >= 1 && currentHour < 6) {
+    // 深夜のみ「準備中」を静的表示
+    updateBadge('day', 'preparing');
+    updateBadge('evening', 'preparing');
+    updateBadge('night', 'preparing');
     
     const normalNote = document.querySelector('.availability-note');
     if (normalNote) {
-      normalNote.innerHTML = '※本日の受付は終了しました<br>※営業時間：14:00〜22:00<br>※21:30以降は翌日の予約状況を表示します';
+      normalNote.innerHTML = '※準備中です<br>※営業時間：14:00〜22:00<br>※ご予約はLINEから24時間受付中';
       normalNote.style.display = 'block';
     }
     
@@ -257,7 +257,7 @@ async function updateAvailability() {
   }
 }
 
-// ★★★ updateBadgeにloading状態を追加 ★★★
+// ★★★ updateBadgeに preparing 状態を追加 ★★★
 function updateBadge(partKey, status) {
   const badge = document.querySelector(`[data-part="${partKey}"]`);
   if (!badge) return;
@@ -273,6 +273,10 @@ function updateBadge(partKey, status) {
     case 'limited':
       badge.classList.add('limited');
       badge.textContent = 'わずか';
+      break;
+    case 'preparing':
+      badge.classList.add('preparing');
+      badge.textContent = '準備中';
       break;
     case 'loading':
       badge.classList.add('limited');
