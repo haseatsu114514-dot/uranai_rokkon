@@ -6,7 +6,7 @@
 // ========================================================== 
 // ★★★ 設定：WebアプリURL（ここだけ変更すればOK） ★★★
 // ========================================================== 
-const GAS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbw7D85-8i-AEN1awPLcY0ugs9qZRUVICf0s4Sa5Dbglj0V9mNgsF2ouyubyxw-xxQZPhQ/exec';
+const GAS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbwSF2hFdG_ggXXze0y6f2u9k1MAz9MLF7HMDJQw9PvJ4JbjHQMS_5FzkOWR3RjWV8s_TA/exec';
 
 (function () {
     'use strict';
