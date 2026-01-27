@@ -144,9 +144,12 @@ function updateTodayDate() {
 
 // 予約状況を取得して表示を更新
 async function updateAvailability() {
+  // 初期状態：バッジを「読み込み中」状態にする
+  setBadgesLoading();
+  
   try {
     // ★★★ WebアプリURL（設定済み） ★★★
-    const API_URL = 'https://script.google.com/macros/s/AKfycbw7D85-8i-AEN1awPLcY0ugs9qZRUVICf0s4Sa5Dbglj0V9mNgsF2ouyubyxw-xxQZPhQ/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbxJrXwq1d0LsbIbcruZG-VL3kqZ1s1HjjNKL0KxYcKGo1DitAO9GjeshEMTBvWz5nZmQQ/exec';
     
     const response = await fetch(API_URL + '?action=getTodayAvailability');
     
@@ -161,6 +164,7 @@ async function updateAvailability() {
     const eveningStatus = data.parts['夕の部']?.status || 'full';
     const nightStatus = data.parts['夜の部']?.status || 'full';
 
+    // データ取得後にバッジを更新
     updateBadge('day', dayStatus);
     updateBadge('evening', eveningStatus);
     updateBadge('night', nightStatus);
@@ -172,7 +176,21 @@ async function updateAvailability() {
 
   } catch (error) {
     console.error('予約状況の取得エラー:', error);
+    // エラー時もバッジを更新（デフォルト値）
+    updateBadge('day', 'full');
+    updateBadge('evening', 'full');
+    updateBadge('night', 'full');
   }
+}
+
+// バッジを「読み込み中」状態にする
+function setBadgesLoading() {
+  const badges = document.querySelectorAll('[data-part]');
+  badges.forEach(badge => {
+    badge.className = 'part-badge loading';
+    badge.textContent = '読み込み中...';
+    badge.style.opacity = '0.6';
+  });
 }
 
 function updateBadge(partKey, status) {
@@ -180,6 +198,7 @@ function updateBadge(partKey, status) {
   if (!badge) return;
 
   badge.className = 'part-badge';
+  badge.style.opacity = '1'; // 読み込み中から通常表示に戻す
 
   switch (status) {
     case 'available':
