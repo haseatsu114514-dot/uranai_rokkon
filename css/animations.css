@@ -21,12 +21,27 @@
 .animate-on-scroll.animate-delay-4 { transition-delay: 0.4s; }
 
 /* ----- 2. ヒーロー初回表示 ----- */
-.hero-reveal { opacity: 0; transform: translateY(20px); }
-.hero-reveal.hero-visible { opacity: 1; transform: translateY(0); }
-.hero-reveal-title { transition: opacity 0.7s ease 0.1s, transform 0.7s ease 0.1s; }
-.hero-reveal-badge { transition: opacity 0.7s ease 0.2s, transform 0.7s ease 0.2s; }
-.hero-reveal-subtitle { transition: opacity 0.7s ease 0.4s, transform 0.7s ease 0.4s; }
-.hero-reveal-btn { transition: opacity 0.7s ease 0.7s, transform 0.7s ease 0.7s; }
+.hero-reveal {
+    /* ★変更: 初期状態を visible に */
+    opacity: 1;
+    transform: translateY(0);
+}
+.hero-reveal.hero-visible { 
+    opacity: 1; 
+    transform: translateY(0); 
+}
+.hero-reveal-title { 
+    transition: opacity 0.7s ease 0.1s, transform 0.7s ease 0.1s; 
+}
+.hero-reveal-badge { 
+    transition: opacity 0.7s ease 0.2s, transform 0.7s ease 0.2s; 
+}
+.hero-reveal-subtitle { 
+    transition: opacity 0.7s ease 0.4s, transform 0.7s ease 0.4s; 
+}
+.hero-reveal-btn { 
+    transition: opacity 0.7s ease 0.7s, transform 0.7s ease 0.7s; 
+}
 
 /* ----- 3. ヘッダー ----- */
 .header {
