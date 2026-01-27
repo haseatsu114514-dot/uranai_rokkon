@@ -114,7 +114,7 @@ function isBookingAvailable(slotDateTime) {
 }
 
 /**
- * GAS APIから本日の予約状況を取得
+ * GAS APIから本日の予約状況を取得（CORS対応版：HTMLからJSONを抽出）
  */
 async function fetchTodayAvailability() {
   if (!GAS_WEBAPP_URL || GAS_WEBAPP_URL === 'YOUR_GAS_WEBAPP_URL_HERE') {
@@ -124,16 +124,46 @@ async function fetchTodayAvailability() {
   
   try {
     const url = `${GAS_WEBAPP_URL}?action=getTodayAvailability`;
+    
+    // CORSエラーを回避するため、HTMLとして取得してからJSONを抽出
     const response = await fetch(url);
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     
-    const data = await response.json();
-    return data;
+    // HTMLテキストとして取得
+    const htmlText = await response.text();
+    
+    // HTMLからJSONを抽出（<pre id="json-data">タグから）
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlText, 'text/html');
+    const jsonElement = doc.getElementById('json-data');
+    
+    if (jsonElement && jsonElement.textContent) {
+      const data = JSON.parse(jsonElement.textContent);
+      return data;
+    }
+    
+    // フォールバック：正規表現でJSONを抽出
+    const jsonMatch = htmlText.match(/<pre[^>]*id=["']json-data["'][^>]*>([\s\S]*?)<\/pre>/i);
+    if (jsonMatch && jsonMatch[1]) {
+      const jsonText = jsonMatch[1].trim();
+      const data = JSON.parse(jsonText);
+      return data;
+    }
+    
+    // 最後の手段：直接JSONを探す
+    const directJsonMatch = htmlText.match(/\{[\s\S]*"date"[\s\S]*"parts"[\s\S]*\}/);
+    if (directJsonMatch) {
+      const data = JSON.parse(directJsonMatch[0]);
+      return data;
+    }
+    
+    throw new Error('レスポンスからJSONを抽出できませんでした');
   } catch (error) {
     console.error('予約状況取得エラー:', error);
+    console.error('エラー詳細:', error.message);
     return null;
   }
 }
