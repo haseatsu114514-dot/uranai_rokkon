@@ -338,27 +338,103 @@
     }
 }
 
-/* ========== 予約状況表示の日付タグ（追加） ========== */
+/* ========== 予約状況表示の日付タグ（配色改善版） ========== */
+.availability-header {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(196, 163, 90, 0.3);
+}
+
+.availability-label {
+    font-size: 1.1rem;
+    color: #2d3d38 !important;
+    opacity: 1 !important;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 0.8rem;
+}
+
+/* タグのスタイル（読みやすい配色） */
 .availability-tag {
     display: inline-block;
-    font-size: 0.75rem;
-    color: #c4a35a !important;
+    font-size: 0.85rem;
+    color: #2d3d38 !important;
+    background: linear-gradient(135deg, #f0e6d2 0%, #e8ddc8 100%);
     opacity: 1 !important;
     font-weight: 700;
     letter-spacing: 0.1em;
-    padding: 0.2rem 0.5rem;
-    border: 1.5px solid #c4a35a;
-    border-radius: 4px;
-    margin-right: 0.5rem;
+    padding: 0.35rem 0.7rem;
+    border: 2px solid #c4a35a;
+    border-radius: 6px;
+    margin-right: 0.6rem;
     vertical-align: middle;
+    box-shadow: 0 2px 4px rgba(196, 163, 90, 0.2);
 }
 
-/* 日付部分のスタイル調整 */
+/* 日付を大きく */
 .availability-date {
-    font-size: 0.9rem;
+    font-size: 1.3rem;
     color: #2d3d38 !important;
     opacity: 1 !important;
     letter-spacing: 0.05em;
-    font-weight: 600;
+    font-weight: 700;
     vertical-align: middle;
 }
+
+/* スマホ対応 */
+@media (max-width: 600px) {
+    .availability-label {
+        font-size: 1rem;
+    }
+    
+    .availability-tag {
+        font-size: 0.75rem;
+        padding: 0.3rem 0.6rem;
+    }
+    
+    .availability-date {
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .availability-label {
+        font-size: 0.9rem;
+    }
+    
+    .availability-tag {
+        font-size: 0.7rem;
+        padding: 0.25rem 0.5rem;
+    }
+    
+    .availability-date {
+        font-size: 1rem;
+    }
+}
+```
+
+---
+
+## ファイル構成（最終版）
+```
+/
+├── index.html
+├── animations.css（末尾に追加）
+├── main.js（完全版に差し替え）
+└── service-worker.js（新規作成）★重要★
+```
+
+---
+
+## 確認方法
+
+1. **全ファイルをアップロード**
+2. **サイトを開く**
+3. **F12キー → Console タブ**で以下が表示されればOK：
+```
+   Service Worker 登録成功: https://あなたのドメイン/
+```
+4. **2回目のアクセス時**にConsoleで以下が出れば成功：
+```
+   Service Worker: キャッシュから返却
