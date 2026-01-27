@@ -1,7 +1,18 @@
+**できます！定数として一番上に持ってきましょう。**
+
+## main.js - 修正版（URL定数を上部に）
+
+```javascript
 /**
  * 占い処 六根清浄｜共通JS
  * スクロールフェードイン・ヘッダー・トップへ戻る・CTA・ハンバーガーメニュー など
  */
+
+// ========================================================== 
+// ★★★ 設定：WebアプリURL（ここだけ変更すればOK） ★★★
+// ========================================================== 
+const GAS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbw7D85-8i-AEN1awPLcY0ugs9qZRUVICf0s4Sa5Dbglj0V9mNgsF2ouyubyxw-xxQZPhQ/exec';
+
 (function () {
     'use strict';
 
@@ -124,10 +135,10 @@
 })();
 
 // ========================================================== 
-// 予約状況表示機能（完全版：タグ対応 + キャッシュ対応 + 読み込み注意書き + 対策1,2）
+// 予約状況表示機能（完全版：タグ対応 + キャッシュ対応 + 読み込み注意書き + 対策1,2 + 0時対応）
 // ========================================================== 
 
-// 日付表示を更新（タグ付き）
+// 日付表示を更新（タグ付き・0時対応版）
 function updateTodayDate() {
   const today = new Date();
   const month = today.getMonth() + 1;
@@ -135,10 +146,10 @@ function updateTodayDate() {
   const dayNames = ['日', '月', '火', '水', '木', '金', '土'];
   const day = dayNames[today.getDay()];
   
-  // ★★★ 21:30以降は翌日のタグと日付を計算 ★★★
+  // ★★★ 21:30〜23:59のみ翌日（0:00以降は本日） ★★★
   const currentHour = today.getHours();
   const currentMinute = today.getMinutes();
-  const isAfter2130 = (currentHour === 21 && currentMinute >= 30) || currentHour >= 22;
+  const isAfter2130 = (currentHour === 21 && currentMinute >= 30) || (currentHour >= 22 && currentHour <= 23);
   
   let displayDate, displayTag;
   
@@ -204,14 +215,11 @@ async function updateAvailability() {
   }
   
   try {
-    // ★★★ ここにあなたの新しいWebアプリURLを貼り付け ★★★
-    const API_URL = 'https://script.google.com/macros/s/AKfycbzLxrv8-xJ0q4f4YG0XGi6QPby9pAq61V-8Hq3oi7nE0fW6qraVmAHJxDzzEbLehTndJQ/exec';
-    
-    // ★★★ タイムアウトを15秒に設定 ★★★
+    // ★★★ 上部で定義したURLを使用 ★★★
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 15000);
     
-    const response = await fetch(API_URL + '?action=getTodayAvailability', {
+    const response = await fetch(GAS_WEBAPP_URL + '?action=getTodayAvailability', {
       signal: controller.signal
     });
     
@@ -321,3 +329,6 @@ if ('serviceWorker' in navigator) {
       });
   });
 }
+```
+
+**これで一番上の `GAS_WEBAPP_URL` だけ変更すればOKです！** 見つけやすくなりました。
