@@ -154,7 +154,32 @@ async function updateAvailability() {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     
-    const data = await response.json();
+    // HTMLテキストとして取得
+    const htmlText = await response.text();
+    
+    // HTMLからJSONを抽出（<pre id="json-data">タグから）
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlText, 'text/html');
+    const jsonElement = doc.getElementById('json-data');
+    
+    let data;
+    if (jsonElement && jsonElement.textContent) {
+      data = JSON.parse(jsonElement.textContent);
+    } else {
+      // フォールバック：正規表現でJSONを抽出
+      const jsonMatch = htmlText.match(/<pre[^>]*id=["']json-data["'][^>]*>([\s\S]*?)<\/pre>/i);
+      if (jsonMatch && jsonMatch[1]) {
+        data = JSON.parse(jsonMatch[1].trim());
+      } else {
+        // 最後の手段：直接JSONを探す
+        const directJsonMatch = htmlText.match(/\{[\s\S]*"date"[\s\S]*"parts"[\s\S]*\}/);
+        if (directJsonMatch) {
+          data = JSON.parse(directJsonMatch[0]);
+        } else {
+          throw new Error('レスポンスからJSONを抽出できませんでした');
+        }
+      }
+    }
 
     const dayStatus = data.parts['昼の部']?.status || 'full';
     const eveningStatus = data.parts['夕の部']?.status || 'full';
