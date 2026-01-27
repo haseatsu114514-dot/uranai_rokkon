@@ -653,13 +653,14 @@
                 padding: 10px 18px;
                 font-size: 0.8rem;
             }
-            /* iPad表示: 写真をもっと小さくして引きで全身を見せる */
+            /* iPad表示: クロップ解除して全体表示、引きのアングル */
             .profile-hero-inner {
                 grid-template-columns: 320px 1fr;
-                min-height: 480px;
+                min-height: 560px;
             }
             .profile-hero-photo {
-                object-position: center 20%;
+                object-fit: contain;
+                object-position: center center;
             }
         }
 
@@ -693,13 +694,14 @@
             .footer-content {
                 font-size: 0.75rem;
             }
-            /* iPad Pro / タブレット: さらに引きで見せる */
+            /* iPad Pro / タブレット: クロップ解除して全体表示 */
             .profile-hero-inner {
                 grid-template-columns: 300px 1fr;
-                min-height: 460px;
+                min-height: 540px;
             }
             .profile-hero-photo {
-                object-position: center 20%;
+                object-fit: contain;
+                object-position: center center;
             }
         }
 
