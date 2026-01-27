@@ -1,5 +1,4 @@
 /* ========== 占い処 六根清浄｜アニメーション用CSS ========== */
-/* 既存styleの後に読み込む */
 
 :root {
     --color-primary: #2d3d38;
@@ -21,14 +20,15 @@
 .animate-on-scroll.animate-delay-3 { transition-delay: 0.3s; }
 .animate-on-scroll.animate-delay-4 { transition-delay: 0.4s; }
 
-/* ----- 2. ヒーロー初回表示（順番にふわっと） ----- */
+/* ----- 2. ヒーロー初回表示 ----- */
 .hero-reveal { opacity: 0; transform: translateY(20px); }
 .hero-reveal.hero-visible { opacity: 1; transform: translateY(0); }
 .hero-reveal-title { transition: opacity 0.7s ease 0.1s, transform 0.7s ease 0.1s; }
+.hero-reveal-badge { transition: opacity 0.7s ease 0.2s, transform 0.7s ease 0.2s; }
 .hero-reveal-subtitle { transition: opacity 0.7s ease 0.4s, transform 0.7s ease 0.4s; }
 .hero-reveal-btn { transition: opacity 0.7s ease 0.7s, transform 0.7s ease 0.7s; }
 
-/* ----- 3. ヘッダー・スクロール挙動 ----- */
+/* ----- 3. ヘッダー ----- */
 .header {
     transition: box-shadow 0.3s ease, background 0.3s ease;
 }
@@ -56,7 +56,7 @@
     opacity: 0;
     visibility: hidden;
     transform: translateY(12px);
-    transition: opacity 0.3s, visibility 0.3s, transform 0.3s, background 0.2s, transform 0.2s;
+    transition: opacity 0.3s, visibility 0.3s, transform 0.3s;
 }
 .back-to-top.visible {
     opacity: 1;
@@ -68,36 +68,168 @@
     color: var(--color-primary);
     transform: translateY(-4px);
 }
-.back-to-top:active {
-    transform: translateY(-2px) scale(0.96);
+
+/* ========== 予約状況表示（完全版） ========== */
+.availability-inline {
+  display: block;
+  margin: 2rem auto;
+  max-width: 600px;
+  padding: 2rem 2.5rem;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  border: 2px solid var(--color-gold);
+  box-shadow: 0 8px 32px rgba(45, 61, 56, 0.12),
+              0 2px 8px rgba(196, 163, 90, 0.15),
+              inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  font-family: 'Shippori Mincho', serif;
+  text-align: center;
+  position: relative;
+  z-index: 1;
 }
 
-/* ----- 5. LINE・CTA マイクロインタラクション ----- */
-.cta-micro {
-    display: inline-block;
-    transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
+.availability-header {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(196, 163, 90, 0.3);
 }
-.cta-micro:hover {
-    transform: translateY(-4px) scale(1.02);
-    filter: brightness(1.05);
+
+.availability-label {
+    font-size: 1.1rem;
+    color: #2d3d38 !important;
+    opacity: 1 !important;
+    letter-spacing: 0.1em;
+    font-weight: 700;
 }
-.cta-micro:active {
-    transform: translateY(-2px) scale(0.98);
+
+.availability-date {
+    font-size: 0.9rem;
+    color: #c4a35a !important;
+    opacity: 1 !important;
+    margin-left: 0.8rem;
+    letter-spacing: 0.05em;
+    font-weight: 600;
 }
-.cta-micro img {
+
+.availability-parts {
+  display: flex;
+  gap: 1rem;
+  align-items: stretch;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.part-status-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 100px;
+    flex: 1;
+    padding: 0.8rem 0.5rem;
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.9) 0%, 
+        rgba(248, 246, 242, 0.95) 100%
+    );
+    border-radius: 12px;
+    border: 1px solid rgba(196, 163, 90, 0.25);
+}
+
+.part-name {
+    font-size: 0.9rem;
+    color: #2d3d38 !important;
+    opacity: 1 !important;
+    letter-spacing: 0.05em;
+    font-weight: 700;
+}
+
+.part-time {
+    font-size: 0.7rem;
+    color: #666 !important;
+    opacity: 1 !important;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+}
+
+.part-badge {
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 0.45rem 1rem;
+  border-radius: 8px;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+  min-width: 70px;
+}
+
+/* 受付中（グリーン系） */
+.part-badge.available {
+    background: linear-gradient(135deg, #4a7c59, #5a9c6c);
+    color: #fff;
+    border: 2px solid #6db87f;
+    box-shadow: 0 4px 12px rgba(74, 124, 89, 0.3),
+                0 0 20px rgba(93, 156, 108, 0.2);
+}
+
+/* わずか（オレンジ系） */
+.part-badge.limited {
+    background: linear-gradient(135deg, #d97634, #ff8c42);
+    color: #fff;
+    border: 2px solid #ffaa5a;
+    box-shadow: 0 4px 12px rgba(217, 118, 52, 0.3),
+                0 0 20px rgba(255, 140, 66, 0.2);
+    animation: pulse-warning 2s ease-in-out infinite;
+}
+
+@keyframes pulse-warning {
+    0%, 100% {
+        box-shadow: 0 4px 12px rgba(217, 118, 52, 0.3),
+                    0 0 20px rgba(255, 140, 66, 0.2);
+        transform: scale(1);
+    }
+    50% {
+        box-shadow: 0 4px 16px rgba(217, 118, 52, 0.4),
+                    0 0 24px rgba(255, 140, 66, 0.3);
+        transform: scale(1.03);
+    }
+}
+
+/* 終了（グレー系） */
+.part-badge.full {
+    background: linear-gradient(135deg, #888, #999);
+    color: #fff;
+    border: 2px solid #aaa;
+    opacity: 0.7;
+}
+
+.availability-note {
+    font-size: 0.8rem;
+    color: #666 !important;
+    opacity: 1 !important;
+    letter-spacing: 0.05em;
+    text-align: center;
+    margin-top: 1rem;
+    line-height: 1.8;
+}
+
+.all-full-message {
+    display: none;
+    font-size: 0.95rem;
+    color: #2d3d38 !important;
+    opacity: 1 !important;
+    letter-spacing: 0.1em;
+    margin-top: 1rem;
+    padding: 1.2rem;
+    border-top: 1px solid rgba(196, 163, 90, 0.3);
+    font-weight: 600;
+}
+
+.all-full-message.show {
     display: block;
-    transition: transform 0.25s ease;
-}
-.cta-micro:hover img {
-    filter: drop-shadow(0 6px 16px rgba(196, 163, 90, 0.35));
 }
 
-.contact-btn-extra:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-}
-
-/* ----- 6. ご予約の流れ・ステップ＆線アニメ ----- */
+/* ----- ご予約の流れ ----- */
 .flow-step {
     opacity: 0;
     transform: translateY(16px);
@@ -114,484 +246,79 @@
 .flow-step.flow-visible .flow-line {
     opacity: 0.4;
 }
-.flow-step:last-child .flow-line {
-    display: none !important;
-}
-
-/* ----- 7. 料金カード・おすすめの目立たせ ----- */
-.course-card.recommended,
-.course-card.popular {
-    position: relative;
-    animation: card-glow 3s ease-in-out infinite;
-}
-@keyframes card-glow {
-    0%, 100% { box-shadow: 0 4px 20px rgba(0,0,0,0.06), 0 0 0 0 rgba(196, 163, 90, 0.2); }
-    50% { box-shadow: 0 8px 28px rgba(0,0,0,0.08), 0 0 20px 2px rgba(196, 163, 90, 0.15); }
-}
-.course-card.recommended { animation-name: card-glow-pink; }
-@keyframes card-glow-pink {
-    0%, 100% { box-shadow: 0 4px 20px rgba(0,0,0,0.06), 0 0 0 0 rgba(196, 69, 105, 0.2); }
-    50% { box-shadow: 0 8px 28px rgba(0,0,0,0.08), 0 0 20px 2px rgba(196, 69, 105, 0.2); }
-}
-
-/* ----- 8. FAQ アコーディオン ----- */
-.faq-item .question {
-    cursor: pointer;
-    user-select: none;
-    padding-right: 40px;
-    position: relative;
-}
-.faq-item .question::after {
-    content: '+';
-    position: absolute;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 1.4rem;
-    font-weight: 300;
-    color: var(--color-gold);
-    transition: transform 0.3s ease;
-}
-.faq-item.faq-open .question::after {
-    transform: translateY(-50%) rotate(45deg);
-}
-.faq-item .answer-wrap {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.4s ease;
-}
-.faq-item.faq-open .answer-wrap {
-    max-height: 2000px;
-}
-
-/* ========================================================== */
-/* animations.css - 完全版 */
-/* 予約状況表示を含む全アニメーションCSS */
-/* ========================================================== */
-
-/* ========== 予約状況表示 ========== */
-.availability-inline {
-  display: block;
-  margin: 2rem auto;
-  max-width: 600px;
-  padding: 1.5rem 2rem;
-  background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(12px);
-  border: 2px solid rgba(212, 175, 55, 0.6);
-  border-radius: 12px;
-  font-family: 'Shippori Mincho', serif;
-  animation: fadeInUp 0.8s ease-out 0.4s backwards;
-  text-align: center;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.availability-header {
-  margin-bottom: 1rem;
-}
-
-.availability-label {
-  font-size: 1rem;
-  color: #f5f5dc;
-  opacity: 1;
-  letter-spacing: 0.1em;
-  font-weight: 600;
-}
-
-.availability-date {
-  font-size: 0.85rem;
-  color: #d4af37;
-  margin-left: 0.5rem;
-  letter-spacing: 0.05em;
-  font-weight: 500;
-}
-
-.availability-parts {
-  display: flex;
-  gap: 1.5rem;
-  align-items: stretch;
-  justify-content: center;
-  margin-bottom: 1rem;
-}
-
-.part-status-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.4rem;
-  min-width: 85px;
-}
-
-.part-name {
-  font-size: 0.85rem;
-  color: #f5f5dc;
-  opacity: 0.9;
-  letter-spacing: 0.05em;
-  font-weight: 600;
-}
-
-.part-time {
-  font-size: 0.7rem;
-  color: #d4af37;
-  opacity: 0.8;
-  letter-spacing: 0.02em;
-  white-space: nowrap;
-}
-
-.part-badge {
-  font-size: 0.8rem;
-  font-weight: 700;
-  padding: 0.4rem 0.9rem;
-  border-radius: 6px;
-  letter-spacing: 0.05em;
-  white-space: nowrap;
-  transition: all 0.3s ease;
-}
-
-/* 受付中（緑ゴールド系） */
-.part-badge.available {
-  background: linear-gradient(135deg, #3d6b1f, #5a9c2c);
-  color: #fff;
-  border: 2px solid #d4af37;
-  box-shadow: 0 0 12px rgba(74, 124, 44, 0.5);
-}
-
-/* わずか（朱色系） */
-.part-badge.limited {
-  background: linear-gradient(135deg, #d35400, #ff6b35);
-  color: #fff;
-  border: 2px solid #ffa500;
-  box-shadow: 0 0 12px rgba(255, 107, 53, 0.6);
-  animation: pulse-warning 2s ease-in-out infinite;
-}
-
-@keyframes pulse-warning {
-  0%, 100% {
-    box-shadow: 0 0 12px rgba(255, 107, 53, 0.6);
-    transform: scale(1);
-  }
-  50% {
-    box-shadow: 0 0 20px rgba(255, 107, 53, 0.8);
-    transform: scale(1.05);
-  }
-}
-
-/* 終了（グレー系） */
-.part-badge.full {
-  background: rgba(80, 80, 80, 0.9);
-  color: #aaa;
-  border: 2px solid rgba(120, 120, 120, 0.5);
-  opacity: 0.7;
-}
-
-.availability-note {
-  font-size: 0.75rem;
-  color: #f5f5dc;
-  opacity: 0.8;
-  letter-spacing: 0.05em;
-  text-align: center;
-  margin-top: 0.75rem;
-  line-height: 1.7;
-}
-
-/* 全終了時のメッセージ */
-.all-full-message {
-  display: none;
-  font-size: 0.9rem;
-  color: #d4af37;
-  opacity: 1;
-  letter-spacing: 0.1em;
-  margin-top: 0.75rem;
-  padding: 1rem;
-  border-top: 1px solid rgba(212, 175, 55, 0.4);
-  font-weight: 600;
-}
-
-.all-full-message.show {
-  display: block;
-}
 
 /* ========== レスポンシブ ========== */
-@media (max-width: 768px) {
-  .availability-inline {
-    max-width: 90%;
-    padding: 1.25rem 1.5rem;
-    margin: 1.5rem auto;
-  }
+@media (max-width: 900px) {
+    .availability-inline {
+        padding: 1.5rem 2rem;
+    }
 }
 
-@media (max-width: 640px) {
-  .availability-inline {
-    padding: 1.25rem 1.5rem;
-    margin: 1.5rem auto;
-  }
-
-  .availability-parts {
-    gap: 1rem;
-  }
-
-  .part-status-item {
-    min-width: 70px;
-  }
-
-  .part-name {
-    font-size: 0.75rem;
-  }
-
-  .part-time {
-    font-size: 0.65rem;
-  }
-
-  .part-badge {
-    font-size: 0.7rem;
-    padding: 0.35rem 0.7rem;
-  }
+@media (max-width: 600px) {
+    .availability-inline {
+        padding: 1.25rem 1.5rem;
+        margin: 1.5rem auto;
+    }
+    
+    .availability-parts {
+        gap: 0.75rem;
+    }
+    
+    .part-status-item {
+        min-width: 70px;
+    }
+    
+    .part-name {
+        font-size: 0.75rem;
+    }
+    
+    .part-time {
+        font-size: 0.65rem;
+    }
+    
+    .part-badge {
+        font-size: 0.7rem;
+        padding: 0.35rem 0.7rem;
+    }
 }
 
 @media (max-width: 480px) {
-  .availability-inline {
-    padding: 1rem;
-    margin: 1rem auto;
-    max-width: 95%;
-  }
-
-  .availability-label {
-    font-size: 0.9rem;
-  }
-
-  .availability-date {
-    font-size: 0.75rem;
-  }
-
-  .availability-parts {
-    gap: 0.75rem;
-  }
-
-  .part-status-item {
-    min-width: 60px;
-  }
-
-  .part-name {
-    font-size: 0.7rem;
-  }
-
-  .part-time {
-    font-size: 0.6rem;
-  }
-
-  .part-badge {
-    font-size: 0.65rem;
-    padding: 0.3rem 0.6rem;
-  }
-
-  .availability-note {
-    font-size: 0.7rem;
-  }
-}
-
-/* ========== その他のアニメーション（既存） ========== */
-/* ここに既存のアニメーションCSSがあれば追加してください */
-
-/* フェードイン */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-/* スライドイン */
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-/* スクロールアニメーション用 */
-.animate-on-scroll {
-  opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
-}
-
-.animate-on-scroll.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.animate-delay-1 {
-  transition-delay: 0.1s;
-}
-
-.animate-delay-2 {
-  transition-delay: 0.2s;
-}
-
-.animate-delay-3 {
-  transition-delay: 0.3s;
-}
-
-.animate-delay-4 {
-  transition-delay: 0.4s;
-}
-
-/* ヒーローアニメーション */
-.hero-reveal {
-  opacity: 0;
-  animation: fadeInUp 1s ease-out forwards;
-}
-
-.hero-reveal-title {
-  animation-delay: 0.2s;
-}
-
-.hero-reveal-subtitle {
-  animation-delay: 0.4s;
-}
-
-.hero-reveal-btn {
-  animation-delay: 0.6s;
-}
-
-/* トップへ戻るボタン */
-.back-to-top {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  width: 50px;
-  height: 50px;
-  background: rgba(45, 61, 56, 0.8);
-  color: #d4af37;
-  border: 2px solid #d4af37;
-  border-radius: 50%;
-  font-size: 1.5rem;
-  cursor: pointer;
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.3s ease;
-  z-index: 999;
-}
-
-.back-to-top.show {
-  opacity: 1;
-  visibility: visible;
-}
-
-.back-to-top:hover {
-  background: rgba(45, 61, 56, 1);
-  transform: translateY(-5px);
-}
-
-@media (max-width: 768px) {
-  .back-to-top {
-    width: 45px;
-    height: 45px;
-    font-size: 1.3rem;
-    bottom: 20px;
-    right: 20px;
-  }
-}
-
-/* 予約状況のスタイル修正（animations.cssに追加する内容） */
-
-/* ヘッダー部分の色修正 */
-.availability-header {
-    margin-bottom: 1.5rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid rgba(196, 163, 90, 0.3);
-}
-
-.availability-label {
-    font-size: 1.1rem;
-    color: #2d3d38 !important; /* プライマリカラー */
-    opacity: 1 !important;
-    letter-spacing: 0.1em;
-    font-weight: 700;
-}
-
-.availability-date {
-    font-size: 0.9rem;
-    color: #c4a35a !important; /* ゴールド */
-    margin-left: 0.8rem;
-    letter-spacing: 0.05em;
-    font-weight: 600;
-}
-
-/* 各部の名前と時刻の色修正 */
-.part-name {
-    font-size: 0.9rem;
-    color: #2d3d38 !important; /* プライマリカラー */
-    opacity: 1 !important;
-    letter-spacing: 0.05em;
-    font-weight: 700;
-}
-
-.part-time {
-    font-size: 0.7rem;
-    color: #666 !important;
-    opacity: 1 !important;
-    letter-spacing: 0.02em;
-    white-space: nowrap;
-}
-
-/* 注釈の色修正 */
-.availability-note {
-    font-size: 0.8rem;
-    color: #666 !important;
-    opacity: 1 !important;
-    letter-spacing: 0.05em;
-    text-align: center;
-    margin-top: 1rem;
-    line-height: 1.8;
-}
-
-/* 全終了メッセージの色修正 */
-.all-full-message {
-    display: none;
-    font-size: 0.95rem;
-    color: #2d3d38 !important; /* プライマリカラー */
-    opacity: 1 !important;
-    letter-spacing: 0.1em;
-    margin-top: 1rem;
-    padding: 1.2rem;
-    border-top: 1px solid rgba(196, 163, 90, 0.3);
-    font-weight: 600;
-}
-
-/* 予約状況のテキスト色修正 */
-.availability-label {
-    color: #2d3d38 !important;
-}
-
-.availability-date {
-    color: #c4a35a !important;
-}
-
-.part-name {
-    color: #2d3d38 !important;
-}
-
-.part-time {
-    color: #666 !important;
-}
-
-.availability-note {
-    color: #666 !important;
+    .availability-inline {
+        padding: 1rem;
+        margin: 1rem auto;
+        max-width: 95%;
+    }
+    
+    .availability-label {
+        font-size: 0.9rem;
+    }
+    
+    .availability-date {
+        font-size: 0.75rem;
+    }
+    
+    .availability-parts {
+        gap: 0.5rem;
+    }
+    
+    .part-status-item {
+        min-width: 60px;
+    }
+    
+    .part-name {
+        font-size: 0.7rem;
+    }
+    
+    .part-time {
+        font-size: 0.6rem;
+    }
+    
+    .part-badge {
+        font-size: 0.65rem;
+        padding: 0.3rem 0.6rem;
+    }
+    
+    .availability-note {
+        font-size: 0.7rem;
+    }
 }
