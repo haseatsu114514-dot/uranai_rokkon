@@ -148,7 +148,12 @@ async function fetchTodayAvailability() {
   }
   
   try {
-    const url = `${GAS_WEBAPP_URL}?action=getTodayAvailability`;
+    // 表示対象の日付を取得（21:30以降は翌日）
+    const targetDate = getTargetDate();
+    const dateStr = formatDate(targetDate);
+    
+    // 日付パラメータを追加してAPIを呼び出し
+    const url = `${GAS_WEBAPP_URL}?action=getTodayAvailability&date=${dateStr}`;
     
     // CORSエラーを回避するため、HTMLとして取得してからJSONを抽出
     const response = await fetch(url);
