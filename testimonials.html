@@ -24,19 +24,126 @@
             --color-work: #d0f0e0;
             --color-life: #f0e8d0;
         }
-        .header { position: fixed; top: 0; left: 0; width: 100%; background: var(--color-primary); z-index: 1000; padding: 0 40px; }
-        .header-inner { max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; height: 75px; }
-        .logo { color: var(--color-text-white); text-align: center; }
-        .logo-main { font-size: 1.4rem; font-weight: 600; letter-spacing: 0.1em; display: block; line-height: 1; }
-        .logo-sub { display: block; font-size: 0.65rem; color: var(--color-text-white); letter-spacing: 0.02em; margin-top: 3px; font-weight: 400; }
-        .nav-wrapper { display: flex; align-items: center; gap: 20px; }
-        .nav { display: flex; gap: 35px; align-items: center; }
-        .nav a { color: var(--color-text-light); font-size: 0.92rem; letter-spacing: 0.05em; transition: all 0.3s; font-weight: 600; position: relative; padding-bottom: 5px; }
-        .nav a::after { content: ''; position: absolute; bottom: 0; left: 50%; width: 0; height: 1px; background: var(--color-gold); transition: all 0.3s; transform: translateX(-50%); }
-        .nav a:hover::after { width: 100%; }
-        .nav a:hover { color: var(--color-gold); }
-        .contact-btn { background: transparent; color: var(--color-text-white); padding: 10px 28px; border-radius: 4px; font-size: 0.88rem; font-weight: 500; letter-spacing: 0.08em; transition: all 0.3s; border: 1px solid rgba(255,255,255,0.6); }
-        .contact-btn:hover { background: rgba(255,255,255,0.1); border-color: var(--color-text-white); }
+        /* ========== 共通ヘッダー ========== */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: var(--color-primary);
+            z-index: 1000;
+            padding: 0 40px;
+        }
+
+        .header-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 75px;
+        }
+
+        .logo {
+            color: var(--color-text-white);
+            text-align: center;
+        }
+
+        .logo-main {
+            font-size: 1.4rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            display: block;
+            line-height: 1;
+        }
+
+        .logo-sub {
+            display: block;
+            font-size: 0.65rem;
+            color: var(--color-text-white);
+            letter-spacing: 0.02em;
+            margin-top: 3px;
+            font-weight: 400;
+        }
+
+        .nav-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav {
+            display: flex;
+            gap: 35px;
+            align-items: center;
+        }
+
+        .nav a {
+            color: var(--color-text-light);
+            font-size: 0.92rem;
+            letter-spacing: 0.05em;
+            transition: all 0.3s;
+            font-weight: 600;
+            position: relative;
+            padding-bottom: 5px;
+        }
+
+        .nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 1px;
+            background: var(--color-gold);
+            transition: all 0.3s;
+            transform: translateX(-50%);
+        }
+
+        .nav a:hover::after {
+            width: 100%;
+        }
+
+        .nav a:hover {
+            color: var(--color-gold);
+        }
+
+        .contact-btn {
+            background: transparent;
+            color: var(--color-text-white);
+            padding: 10px 28px;
+            border-radius: 4px;
+            font-size: 0.88rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            transition: all 0.3s;
+            border: 1px solid rgba(255,255,255,0.6);
+        }
+
+        .contact-btn:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: var(--color-text-white);
+        }
+
+        /* ハンバーガーメニュー */
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            gap: 6px;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            padding: 8px;
+        }
+        .menu-toggle span {
+            display: block;
+            width: 100%;
+            height: 3px;
+            background: #fff;
+            transition: 0.3s;
+            border-radius: 2px;
+        }
         .main-content { padding-top: 75px; }
         .page-header { background: linear-gradient(135deg, #3a4a45 0%, #4a5a55 100%); padding: 60px 20px; text-align: center; position: relative; }
         .page-title { font-size: 2.2rem; color: var(--color-text-white); letter-spacing: 0.15em; font-weight: 600; margin-bottom: 15px; }
@@ -97,53 +204,165 @@
         .page-link-card:hover::after { opacity: 1; right: 8px; }
         .page-link-title { display: block; font-size: 0.95rem; font-weight: 600; color: var(--color-primary); margin-bottom: 6px; }
         .page-link-desc { display: block; font-size: 0.75rem; color: #888; }
+
+        /* ========== 共通フッター ========== */
         .footer { background: var(--color-primary); color: rgba(255,255,255,0.7); text-align: center; padding: 25px 20px; height: 75px; display: flex; align-items: center; justify-content: center; }
         .footer-content { font-size: 0.85rem; }
-        .footer-content a { margin-right: 20px; transition: color 0.3s; }
+        .footer-content a { color: rgba(255,255,255,0.7); margin-right: 20px; transition: color 0.3s; }
         .footer-content a:hover { color: var(--color-gold); }
-        .menu-toggle { display: none; flex-direction: column; justify-content: center; gap: 6px; width: 40px; height: 40px; cursor: pointer; padding: 8px; }
-        .menu-toggle span { display: block; width: 100%; height: 3px; background: #fff; transition: 0.3s; border-radius: 2px; }
+
+        /* レスポンシブ */
         @media (max-width: 900px) {
-            .header { padding: 0 20px; }
-            .header-inner { height: 60px; }
-            .logo-main { font-size: 1.1rem; }
-            .nav { gap: 15px; }
-            .nav a { font-size: 0.75rem; }
-            .contact-btn { padding: 8px 14px; font-size: 0.75rem; }
-            .main-content { padding-top: 60px; }
-            .page-links-inner { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .header {
+                padding: 0 20px;
+            }
+            .header-inner {
+                height: 60px;
+            }
+            .logo-main {
+                font-size: 1.1rem;
+            }
+            .logo-sub {
+                font-size: 0.6rem;
+            }
+            .nav {
+                gap: 15px;
+            }
+            .nav a {
+                font-size: 0.75rem;
+            }
+            .contact-btn {
+                padding: 8px 14px;
+                font-size: 0.75rem;
+            }
+            .main-content {
+                padding-top: 60px;
+            }
+            .page-links-inner {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
         }
+
         @media (max-width: 600px) {
-            .page-links { padding: 40px 16px; }
-            .page-links-inner { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-            .page-link-card { padding: 18px 12px; }
-            .page-link-card::after { display: none; }
-            .page-link-title { font-size: 0.85rem; }
-            .page-link-desc { font-size: 0.7rem; }
+            .page-links {
+                padding: 40px 16px;
+            }
+            .page-links-inner {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+            .page-link-card {
+                padding: 18px 12px;
+            }
+            .page-link-card::after {
+                display: none;
+            }
+            .page-link-title {
+                font-size: 0.85rem;
+            }
+            .page-link-desc {
+                font-size: 0.7rem;
+            }
         }
+
         @media (max-width: 480px) {
-            .nav-wrapper { display: none; position: fixed; top: 60px; left: 0; width: 100%; background: var(--color-primary); flex-direction: column; padding: 20px; gap: 0; z-index: 999; }
-            .nav-wrapper.active { display: flex; }
-            .nav { flex-direction: column; gap: 0; width: 100%; }
-            .nav a { padding: 15px 0; font-size: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); width: 100%; text-align: center; }
-            .nav a::after { display: none; }
-            .contact-btn { margin-top: 15px; padding: 12px 30px; font-size: 1rem; text-align: center; }
-            .menu-toggle { display: flex; }
-            .page-header { padding: 36px 16px; }
-            .page-title { font-size: 1.35rem; }
-            .testimonials-section { padding: 24px 14px 36px; }
-            .genre-tabs { gap: 6px; margin-bottom: 18px; }
-            .genre-tab { padding: 8px 12px; font-size: 0.73rem; }
-            .testimonial-card { padding: 22px 16px 20px; border-radius: 12px; }
-            .testimonial-quote { font-size: 2rem; margin-bottom: 10px; }
-            .testimonial-content { font-size: 0.82rem; line-height: 1.95; margin-bottom: 14px; }
-            .testimonial-author { font-size: 0.75rem; }
-            .slider-nav { margin-top: 16px; gap: 10px; }
-            .slider-dot { width: 7px; height: 7px; }
-            .slider-arrow { width: 26px; height: 26px; font-size: 0.75rem; }
-            .review-cta { padding: 22px 16px; margin-top: 22px; }
-            .cta-section { padding: 32px 16px; }
-            .cta-btn img { max-width: 300px; }
+            .nav-wrapper {
+                display: none;
+                position: fixed;
+                top: 60px;
+                left: 0;
+                width: 100%;
+                background: var(--color-primary);
+                flex-direction: column;
+                padding: 20px;
+                gap: 0;
+                z-index: 999;
+            }
+            .nav-wrapper.active {
+                display: flex;
+            }
+            .nav {
+                flex-direction: column;
+                gap: 0;
+                width: 100%;
+            }
+            .nav a {
+                padding: 15px 0;
+                font-size: 1rem;
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+                width: 100%;
+                text-align: center;
+            }
+            .nav a::after {
+                display: none;
+            }
+            .contact-btn {
+                margin-top: 10px;
+                padding: 12px 30px;
+                font-size: 1rem;
+                text-align: center;
+            }
+            .menu-toggle {
+                display: flex !important;
+            }
+
+            .page-header {
+                padding: 36px 16px;
+            }
+            .page-title {
+                font-size: 1.35rem;
+            }
+            .testimonials-section {
+                padding: 24px 14px 36px;
+            }
+            .genre-tabs {
+                gap: 6px;
+                margin-bottom: 18px;
+            }
+            .genre-tab {
+                padding: 8px 12px;
+                font-size: 0.73rem;
+            }
+            .testimonial-card {
+                padding: 22px 16px 20px;
+                border-radius: 12px;
+            }
+            .testimonial-quote {
+                font-size: 2rem;
+                margin-bottom: 10px;
+            }
+            .testimonial-content {
+                font-size: 0.82rem;
+                line-height: 1.95;
+                margin-bottom: 14px;
+            }
+            .testimonial-author {
+                font-size: 0.75rem;
+            }
+            .slider-nav {
+                margin-top: 16px;
+                gap: 10px;
+            }
+            .slider-dot {
+                width: 7px;
+                height: 7px;
+            }
+            .slider-arrow {
+                width: 26px;
+                height: 26px;
+                font-size: 0.75rem;
+            }
+            .review-cta {
+                padding: 22px 16px;
+                margin-top: 22px;
+            }
+            .cta-section {
+                padding: 32px 16px;
+            }
+            .cta-btn img {
+                max-width: 300px;
+            }
         }
     </style>
     <link rel="stylesheet" href="css/animations.css">
@@ -454,19 +673,19 @@
         <!-- ページ導線 -->
         <section class="page-links">
             <div class="page-links-inner">
-                <a href="about.html" class="page-link-card animate-on-scroll">
+                <a href="about.html" class="page-link-card animate-on-scroll animate-delay-1">
                     <span class="page-link-title">占い師紹介</span>
                     <span class="page-link-desc">鑑定スタイル</span>
                 </a>
-                <a href="pricing.html" class="page-link-card animate-on-scroll animate-delay-1">
+                <a href="pricing.html" class="page-link-card animate-on-scroll animate-delay-2">
                     <span class="page-link-title">料金案内</span>
                     <span class="page-link-desc">コース・料金</span>
                 </a>
-                <a href="index.html" class="page-link-card animate-on-scroll animate-delay-2">
-                    <span class="page-link-title">ホーム</span>
-                    <span class="page-link-desc">トップページ</span>
+                <a href="testimonials.html" class="page-link-card animate-on-scroll animate-delay-3">
+                    <span class="page-link-title">お客様の声</span>
+                    <span class="page-link-desc">実際のご感想</span>
                 </a>
-                <a href="faq.html" class="page-link-card animate-on-scroll animate-delay-3">
+                <a href="faq.html" class="page-link-card animate-on-scroll animate-delay-4">
                     <span class="page-link-title">よくある質問</span>
                     <span class="page-link-desc">Q&A</span>
                 </a>
