@@ -205,7 +205,7 @@
         }
 
         .hero-title {
-            font-size: 6.5rem;
+            font-size: 7rem;
             font-weight: 600;
             letter-spacing: 0.08em;
             margin-bottom: 50px;
@@ -220,9 +220,9 @@
             background: rgba(196, 163, 90, 0.15);
             border: 1px solid var(--color-gold);
             color: var(--color-gold);
-            padding: 0.6rem 1.8rem;
+            padding: 0.7rem 2rem;
             border-radius: 50px;
-            font-size: 1rem;
+            font-size: 1.1rem;
             font-weight: 500;
             letter-spacing: 0.08em;
             margin-bottom: 2rem;
@@ -230,7 +230,7 @@
         }
 
         .hero-subtitle {
-            font-size: 1.5rem;
+            font-size: 1.65rem;
             font-weight: 400;
             letter-spacing: 0.15em;
             margin-bottom: 3rem;
@@ -1205,46 +1205,6 @@
             transition: width 0.1s ease;
         }
 
-        /* 5. 六根清浄セクションに桜エフェクト */
-        .about-section {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .sakura-container {
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
-            overflow: hidden;
-        }
-
-        .sakura {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background: radial-gradient(circle, rgba(255, 192, 203, 0.6), rgba(255, 182, 193, 0.3));
-            border-radius: 50%;
-            animation: fall linear infinite;
-            opacity: 0;
-        }
-
-        @keyframes fall {
-            0% {
-                opacity: 0;
-                transform: translateY(-10px) translateX(0) rotate(0deg);
-            }
-            10% {
-                opacity: 1;
-            }
-            90% {
-                opacity: 1;
-            }
-            100% {
-                opacity: 0;
-                transform: translateY(100vh) translateX(50px) rotate(360deg);
-            }
-        }
-
         /* 6. 予約の流れの番号強調 */
         .flow-number {
             position: relative;
@@ -1405,7 +1365,6 @@
 
     <!-- 六根清浄とは -->
     <section class="about-section">
-        <div class="sakura-container" id="sakuraContainer"></div>
         <div class="about-bg">
             <img src="images/torii.jpeg" alt="" loading="lazy">
         </div>
@@ -1472,11 +1431,9 @@
                     <div class="flow-content">
                         <div class="flow-title">形式・日時・時間などを自動ヒアリング</div>
                         <div class="flow-desc">
-                            鑑定形式をお選びください：<br>
-                            <strong>オンライン</strong>（Google Meetでの通話）<br>
-                            <strong>対面</strong>（名駅・栄・金山）<br>
-                            <br>
-                            その後、ご希望の日時と鑑定時間（30分〜）をお選びください。
+                            鑑定形式がオンラインか対面か、<br>
+                            ご希望の日時と鑑定時間（30分〜）などを<br>
+                            ヒアリングするのでボタンで簡単回答。
                         </div>
                         <div class="flow-screenshot larger">
                             <img src="images/step3.png" alt="ステップ3" loading="lazy">
@@ -1587,46 +1544,6 @@
             
             window.addEventListener('scroll', updateProgress, { passive: true });
             updateProgress();
-        })();
-        
-        // 5. 六根清浄セクションに桜エフェクト
-        (function() {
-            const container = document.getElementById('sakuraContainer');
-            if (!container) return;
-            
-            function createSakura() {
-                const sakura = document.createElement('div');
-                sakura.className = 'sakura';
-                
-                // ランダムな位置とアニメーション時間
-                const leftPosition = Math.random() * 100;
-                const animationDuration = 10 + Math.random() * 10; // 10-20秒
-                const animationDelay = Math.random() * 5; // 0-5秒
-                const size = 8 + Math.random() * 6; // 8-14px
-                
-                sakura.style.left = leftPosition + '%';
-                sakura.style.animationDuration = animationDuration + 's';
-                sakura.style.animationDelay = animationDelay + 's';
-                sakura.style.width = size + 'px';
-                sakura.style.height = size + 'px';
-                
-                container.appendChild(sakura);
-                
-                // アニメーション終了後に削除
-                setTimeout(() => {
-                    if (sakura.parentNode) {
-                        sakura.parentNode.removeChild(sakura);
-                    }
-                }, (animationDuration + animationDelay) * 1000);
-            }
-            
-            // 初期桜を生成
-            for (let i = 0; i < 8; i++) {
-                setTimeout(createSakura, i * 1500);
-            }
-            
-            // 定期的に桜を追加
-            setInterval(createSakura, 3000);
         })();
     </script>
 </body>
