@@ -4,7 +4,7 @@
  */
 
 // ========================================================== 
-// ★★★ 設定：WebアプリURL（ここだけ変更すればOK） ★★★
+// ★★★ 設定:WebアプリURL（ここだけ変更すればOK） ★★★
 // ========================================================== 
 const GAS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbwSF2hFdG_ggXXze0y6f2u9k1MAz9MLF7HMDJQw9PvJ4JbjHQMS_5FzkOWR3RjWV8s_TA/exec';
 
@@ -133,7 +133,7 @@ const GAS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbwSF2hFdG_ggXXze
 })();
 
 // ========================================================== 
-// 予約状況表示機能（完全版：タグ対応 + キャッシュ対応 + 読み込み注意書き + 対策1,2 + 0時対応）
+// 予約状況表示機能（キャッシュなし版）
 // ========================================================== 
 
 // 日付表示を更新（タグ付き・0時対応版）
@@ -180,7 +180,6 @@ function setBadgesLoading() {
     badge.style.opacity = '0.6';
   });
   
-  // ★★★ 追加：読み込み中の注意書き ★★★
   const normalNote = document.querySelector('.availability-note');
   if (normalNote) {
     normalNote.innerHTML = '予約状況を確認しています...<br><span style="font-size: 0.75rem; opacity: 0.8;">（環境により10〜15秒かかる場合があります）</span>';
@@ -192,33 +191,35 @@ function setBadgesLoading() {
 async function updateAvailability() {
   setBadgesLoading();
   
-  // ★★★ 修正：深夜1:00〜6:00のみ静的表示 ★★★
+  // ★★★ システムメンテナンス時間：深夜1:00〜6:00 ★★★
   const now = new Date();
   const currentHour = now.getHours();
   
   if (currentHour >= 1 && currentHour < 6) {
-    // 深夜のみ「準備中」を静的表示
-    updateBadge('day', 'preparing');
-    updateBadge('evening', 'preparing');
-    updateBadge('night', 'preparing');
+    // メンテナンス時間帯の静的表示
+    updateBadge('day', 'maintenance');
+    updateBadge('evening', 'maintenance');
+    updateBadge('night', 'maintenance');
     
     const normalNote = document.querySelector('.availability-note');
     if (normalNote) {
-      normalNote.innerHTML = '※準備中です<br>※営業時間：14:00〜22:00<br>※ご予約はLINEから24時間受付中';
+      normalNote.innerHTML = '<strong style="color: #c4a35a;">システムメンテナンス中</strong><br>※メンテナンス時間：1:00〜6:00<br>※6:00より自動で予約状況が表示されます<br>※ご予約はLINEから24時間受付中';
       normalNote.style.display = 'block';
     }
     
-    console.log('深夜時間帯のため静的表示');
+    console.log('メンテナンス時間帯のため静的表示');
     return;
   }
   
   try {
-    // ★★★ 上部で定義したURLを使用 ★★★
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 15000);
     
-    const response = await fetch(GAS_WEBAPP_URL + '?action=getTodayAvailability', {
-      signal: controller.signal
+    // キャッシュ無効化のためタイムスタンプを追加
+    const timestamp = new Date().getTime();
+    const response = await fetch(GAS_WEBAPP_URL + `?action=getTodayAvailability&_t=${timestamp}`, {
+      signal: controller.signal,
+      cache: 'no-store' // キャッシュを使用しない
     });
     
     clearTimeout(timeoutId);
@@ -244,20 +245,20 @@ async function updateAvailability() {
   } catch (error) {
     console.error('予約状況の取得エラー:', error);
     
-    // ★★★ エラー時はLINE確認を促す ★★★
-    updateBadge('day', 'loading');
-    updateBadge('evening', 'loading');
-    updateBadge('night', 'loading');
+    // エラー時はLINE確認を促す
+    updateBadge('day', 'error');
+    updateBadge('evening', 'error');
+    updateBadge('night', 'error');
     
     const normalNote = document.querySelector('.availability-note');
     if (normalNote) {
-      normalNote.innerHTML = '※詳しい空き時刻は<strong>LINE</strong>でご確認ください<br>（予約可能な時間のみご案内します）<br>※21:30以降は翌日の予約状況を表示します';
+      normalNote.innerHTML = '※詳しい空き時刻は<strong>LINE</strong>でご確認ください<br>（予約可能な時間のみご案内します）<br><span style="font-size: 0.75rem; color: #999;">※21:30以降は翌日の予約状況を表示します</span>';
       normalNote.style.display = 'block';
     }
   }
 }
 
-// ★★★ updateBadgeに preparing 状態を追加 ★★★
+// バッジ更新（maintenance と error 状態を追加）
 function updateBadge(partKey, status) {
   const badge = document.querySelector(`[data-part="${partKey}"]`);
   if (!badge) return;
@@ -274,11 +275,11 @@ function updateBadge(partKey, status) {
       badge.classList.add('limited');
       badge.textContent = 'わずか';
       break;
-    case 'preparing':
-      badge.classList.add('preparing');
-      badge.textContent = '準備中';
+    case 'maintenance':
+      badge.classList.add('full');
+      badge.textContent = 'メンテ中';
       break;
-    case 'loading':
+    case 'error':
       badge.classList.add('limited');
       badge.textContent = 'LINE確認';
       break;
@@ -304,10 +305,10 @@ function checkAllFull(day, evening, night) {
   } else {
     allFullMessage.classList.remove('show');
     
-    // ★★★ 読み込み完了後は元の注意書きに戻す ★★★
+    // 読み込み完了後は元の注意書きに戻す
     const normalNote = document.querySelector('.availability-note');
     if (normalNote) {
-      normalNote.innerHTML = '※詳しい空き時刻はLINEでご確認<br>（予約可能な時間のみご案内します）<br>※21:30以降は翌日の予約状況を表示します';
+      normalNote.innerHTML = '※詳しい空き時刻はLINEでご確認<br>（予約可能な時間のみご案内します）<br><span style="font-size: 0.75rem; color: #999;">※21:30以降は翌日の予約状況を表示します</span>';
       normalNote.style.display = 'block';
     }
   }
@@ -318,16 +319,3 @@ document.addEventListener('DOMContentLoaded', function() {
   updateTodayDate();
   updateAvailability();
 });
-
-// ========== Service Worker登録（対策2） ==========
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js')
-      .then(registration => {
-        console.log('Service Worker 登録成功:', registration.scope);
-      })
-      .catch(error => {
-        console.log('Service Worker 登録失敗:', error);
-      });
-  });
-}
