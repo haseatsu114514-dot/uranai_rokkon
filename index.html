@@ -205,7 +205,7 @@
         }
 
         .hero-title {
-            font-size: 6rem;
+            font-size: 6.5rem;
             font-weight: 600;
             letter-spacing: 0.08em;
             margin-bottom: 50px;
@@ -220,9 +220,9 @@
             background: rgba(196, 163, 90, 0.15);
             border: 1px solid var(--color-gold);
             color: var(--color-gold);
-            padding: 0.5rem 1.5rem;
+            padding: 0.6rem 1.8rem;
             border-radius: 50px;
-            font-size: 0.85rem;
+            font-size: 1rem;
             font-weight: 500;
             letter-spacing: 0.08em;
             margin-bottom: 2rem;
@@ -230,7 +230,7 @@
         }
 
         .hero-subtitle {
-            font-size: 1.35rem;
+            font-size: 1.5rem;
             font-weight: 400;
             letter-spacing: 0.15em;
             margin-bottom: 3rem;
@@ -700,9 +700,14 @@
 
         .flow-screenshot img {
             display: block;
-            max-width: 240px;  /* ★60%に縮小（400px → 240px） */
+            max-width: 200px;  /* ★さらに縮小（240px → 200px） */
             height: auto;
             margin: 0;
+        }
+
+        /* STEP3と4の画像を少し大きく */
+        .flow-screenshot.larger img {
+            max-width: 280px;
         }
 
         /* ========== ページ導線 ========== */
@@ -1273,15 +1278,15 @@
                     <div class="flow-number">3</div>
                     <div class="flow-line"></div>
                     <div class="flow-content">
-                        <div class="flow-title">形式・日時・時間を選択</div>
+                        <div class="flow-title">形式・日時・時間などを自動ヒアリング</div>
                         <div class="flow-desc">
                             鑑定形式をお選びください：<br>
                             <strong>オンライン</strong>（Google Meetでの通話）<br>
                             <strong>対面</strong>（名駅・栄・金山）<br>
                             <br>
-                            その後、ご希望の日時と鑑定時間（30分〜120分）をお選びください。
+                            その後、ご希望の日時と鑑定時間（30分〜）をお選びください。
                         </div>
-                        <div class="flow-screenshot">
+                        <div class="flow-screenshot larger">
                             <img src="images/step3.png" alt="ステップ3" loading="lazy">
                         </div>
                     </div>
@@ -1296,7 +1301,7 @@
                             鑑定に必要なご質問内容やお生まれの日時などをお入力ください。<br>
                             フォーム送信で、予約が確定いたします。
                         </div>
-                        <div class="flow-screenshot">
+                        <div class="flow-screenshot larger">
                             <img src="images/step4.png" alt="ステップ4" loading="lazy">
                         </div>
                     </div>
@@ -1311,6 +1316,7 @@
                             <br>
                             <strong>オンライン鑑定：</strong>PayPay / 銀行振込<br>
                             お好きな方法でお手続きください。<br>
+                            支払い完了後は「支払い報告ボタン」を押してください。<br>
                             <br>
                             <strong>対面鑑定：</strong>現地払いのためここはスルー<br>
                             当日、待ち合わせ場所でお支払いいただきます。
