@@ -144,27 +144,6 @@
       border-color: var(--color-text-white);
     }
 
-    /* ハンバーガーメニュー */
-    .menu-toggle {
-      display: none;
-      flex-direction: column;
-      justify-content: center;
-      gap: 6px;
-      width: 40px;
-      height: 40px;
-      cursor: pointer;
-      padding: 8px;
-    }
-
-    .menu-toggle span {
-      display: block;
-      width: 100%;
-      height: 3px;
-      background: #fff;
-      transition: 0.3s;
-      border-radius: 2px;
-    }
-
     /* ========== メインコンテンツ ========== */
     .main-content {
       padding-top: 75px;
@@ -252,7 +231,7 @@
       display: none;
       background: #fff;
       border-radius: 14px;
-      padding: 28px 22px 24px;
+      padding: 24px 16px 20px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.06);
       text-align: center;
       animation: fadeIn 0.4s ease;
@@ -272,11 +251,11 @@
 
     .testimonial-genre-tag {
       display: inline-block;
-      padding: 4px 12px;
+      padding: 5px 14px;
       border-radius: 14px;
-      font-size: 0.75rem;
+      font-size: 0.85rem;
       font-weight: 600;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
     }
 
     #love .testimonial-genre-tag {
@@ -352,21 +331,17 @@
     }
 
     .testimonial-quote {
-      color: var(--color-gold);
-      font-size: 2.4rem;
-      font-family: 'Shippori Mincho', serif;
-      line-height: 1;
-      opacity: 0.4;
-      margin-bottom: 14px;
-      font-weight: 600;
+      display: none;
     }
 
     .testimonial-content {
-      font-size: 0.88rem;
-      line-height: 2;
+      font-size: 0.9rem;
+      line-height: 1.95;
       color: #444;
-      margin-bottom: 18px;
+      margin-bottom: 14px;
       text-align: center;
+      padding: 0 8px;
+      max-height: none;
     }
 
     .testimonial-author {
@@ -436,14 +411,48 @@
       margin-top: 28px;
     }
 
+    .review-cta-section {
+      background: linear-gradient(135deg, #e8dcc8 0%, #d4c4a8 100%);
+      padding: 60px 20px;
+      border-top: 1px solid var(--color-gold);
+      border-bottom: 1px solid var(--color-gold);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .review-cta-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: 
+        repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(196, 163, 90, 0.03) 10px, rgba(196, 163, 90, 0.03) 20px),
+        repeating-linear-gradient(-45deg, transparent, transparent 10px, rgba(196, 163, 90, 0.03) 10px, rgba(196, 163, 90, 0.03) 20px);
+      pointer-events: none;
+    }
+
     .review-cta {
+      max-width: 680px;
+      margin: 0 auto;
       background: #fff;
-      border-radius: 14px;
-      padding: 28px 20px;
-      margin-top: 28px;
-      text-align: center;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.05);
       border: 2px solid var(--color-gold);
+      border-radius: 20px;
+      padding: 40px 32px;
+      text-align: center;
+      box-shadow: 0 8px 32px rgba(45, 61, 56, 0.2),
+                  0 0 0 8px rgba(196, 163, 90, 0.1);
+      position: relative;
+      z-index: 1;
+    }
+
+    .review-cta::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(196, 163, 90, 0.08) 0%, transparent 70%);
+      pointer-events: none;
     }
 
     .review-cta-badge {
@@ -458,47 +467,52 @@
     }
 
     .review-cta-title {
-      font-size: 1rem;
+      font-size: 1.3rem;
       font-weight: 600;
       color: var(--color-primary);
-      margin-bottom: 10px;
+      margin-bottom: 12px;
+      letter-spacing: 0.05em;
     }
 
     .review-cta-text {
-      font-size: 0.82rem;
+      font-size: 0.9rem;
       color: #666;
-      line-height: 1.75;
-      margin-bottom: 16px;
+      line-height: 1.9;
+      margin-bottom: 20px;
     }
 
     .review-cta-btn {
       display: inline-block;
       background: var(--color-gold);
       color: #fff;
-      padding: 12px 28px;
-      border-radius: 28px;
-      font-size: 0.85rem;
+      padding: 14px 36px;
+      border-radius: 30px;
+      font-size: 0.95rem;
       font-weight: 600;
+      letter-spacing: 0.05em;
       transition: all 0.3s;
+      box-shadow: 0 4px 12px rgba(196, 163, 90, 0.3);
     }
 
     .review-cta-btn:hover {
       background: #d4b36a;
       transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(196, 163, 90, 0.4);
     }
 
     .cta-section {
-      background: linear-gradient(135deg, #4a5a55 0%, #5a6a65 100%);
+      background: var(--color-cream);
       position: relative;
-      padding: 44px 20px;
+      padding: 50px 20px;
       text-align: center;
     }
 
     .cta-text {
-      color: rgba(255,255,255,0.88);
-      font-size: 0.88rem;
+      color: #333;
+      font-size: 0.95rem;
       line-height: 1.85;
-      margin-bottom: 18px;
+      margin-bottom: 20px;
+      font-weight: 500;
     }
 
     .cta-btn {
@@ -671,44 +685,15 @@
     }
 
     @media (max-width: 768px) {
-      .nav-wrapper {
-        display: none;
-        position: fixed;
-        top: 60px;
-        left: 0;
-        width: 100%;
-        background: var(--color-primary);
-        flex-direction: column;
-        padding: 20px;
-        gap: 0;
-        z-index: 999;
-      }
-      .nav-wrapper.active {
-        display: flex;
-      }
       .nav {
-        flex-direction: column;
-        gap: 0;
-        width: 100%;
+        gap: 12px;
       }
       .nav a {
-        padding: 15px 0;
-        font-size: 1rem;
-        border-bottom: 1px solid rgba(255,255,255,0.1);
-        width: 100%;
-        text-align: center;
-      }
-      .nav a::after {
-        display: none;
+        font-size: 0.7rem;
       }
       .contact-btn {
-        margin-top: 15px;
-        padding: 12px 30px;
-        font-size: 1rem;
-        text-align: center;
-      }
-      .menu-toggle {
-        display: flex !important;
+        padding: 8px 12px;
+        font-size: 0.7rem;
       }
       .page-header {
         padding: 35px 15px;
@@ -827,14 +812,9 @@
           <a href="pricing.html">料金案内</a>
           <a href="testimonials.html">お客様の声</a>
           <a href="faq.html">よくある質問</a>
-          <a href="#">SHOP</a>
+          <a href="https://uranairokkon.base.shop" target="_blank">SHOP</a>
         </nav>
-        <a href="#" class="contact-btn">お問い合わせ</a>
-      </div>
-      <div class="menu-toggle" id="menuToggle">
-        <span></span>
-        <span></span>
-        <span></span>
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSdG_cRsdXN-z8HUmzwUdAv7exsxFM41qp-WLr6hGORGmQI28w/viewform?usp=header" class="contact-btn" target="_blank">お問い合わせ</a>
       </div>
     </div>
   </header>
@@ -854,7 +834,7 @@
         <div class="genre-tabs">
           <button class="genre-tab active" data-genre="all">すべて</button>
           <button class="genre-tab" data-genre="love">恋愛</button>
-          <button class="genre-tab" data-genre="app">マッチングアプリ</button>
+          <button class="genre-tab" data-genre="app">出会い</button>
           <button class="genre-tab" data-genre="marriage">結婚・婚活</button>
           <button class="genre-tab" data-genre="work">仕事</button>
           <button class="genre-tab" data-genre="life">人生・家族</button>
@@ -866,65 +846,49 @@
             <div class="testimonial-card active">
               <span class="testimonial-genre-tag">恋愛</span>
               <div class="testimonial-quote">❝</div>
-              <div class="testimonial-content">
-                別れて半年、未練タラタラで 周りには「執着だよ」「次行きな」って 何回言われたことか。 でも先生は「相性見る限り、 別れる組み合わせじゃない。 彼、今運気落ちてるから ◯月以降にこういう内容で連絡して 」 って超具体的で。 言われた通りにしたら長文返信きて泣きました。 今は復縁して同棲してます。
-              </div>
+              <div class="testimonial-content">別れて半年、未練タラタラで周りには「執着だよ」「次行きな」って何回言われたことか。でも先生は「相性見る限り、別れる組み合わせじゃない。彼、今運気落ちてるから◯月以降にこういう内容で連絡して」って超具体的で。言われた通りにしたら長文返信きて泣きました。今は復縁して同棲してます。</div>
               <div class="testimonial-author">みなみさん（26歳・女性）／恋愛</div>
             </div>
             <div class="testimonial-card">
-              <span class="testimonial-genre-tag">マッチングアプリ</span>
+              <span class="testimonial-genre-tag">出会い</span>
               <div class="testimonial-quote">❝</div>
-              <div class="testimonial-content">
-                アプリで何人かいい人がいて、 友達に相談したら 「気持ち次第じゃない？」って。 いや、それが分からないから 困ってるんだけど…って（笑） 占ってもらったら、 今まで選んでた彼氏が たまたま相性悪かった ってわかって。 占い通りの人を選んだら 結婚まで進みました。
-              </div>
-              <div class="testimonial-author">M.Tさん（29歳・女性）／マッチングアプリ</div>
+              <div class="testimonial-content">アプリで何人かいい人がいて、友達に相談したら「気持ち次第じゃない？」って。いや、それが分からないから困ってるんだけど…って（笑）長谷川さんに占ってもらったら、今まで選んでた彼氏がたまたま相性悪かったってわかって。占い通りの人を選んだら結婚まで進みました。</div>
+              <div class="testimonial-author">M.Tさん（29歳・女性）／出会い</div>
             </div>
             <div class="testimonial-card">
               <span class="testimonial-genre-tag">結婚・婚活</span>
               <div class="testimonial-quote">❝</div>
-              <div class="testimonial-content">
-                32歳、婚活3年目。 何十人と会って全部ダメで 「私に問題があるのかも」って 本気で病んでました。 先生に「 今年は縁がない年。 来年の春から動いて 」って。 言われた通りにしたら 3人目で今の彼に出会えて、 しかも 先生が言ってた特徴そのままの人。
-              </div>
+              <div class="testimonial-content">32歳、婚活3年目。何十人と会って全部ダメで「私に問題があるのかも」って本気で病んでました。長谷川さんに「今年は縁がない年。来年の春から動いて」って。言われた通りにしたら3人目で今の彼に出会えて、しかも長谷川さんが言ってた特徴そのままの人。</div>
               <div class="testimonial-author">さくらさん（33歳・女性）／結婚・婚活</div>
             </div>
             <div class="testimonial-card">
               <span class="testimonial-genre-tag">結婚・婚活</span>
               <div class="testimonial-quote">❝</div>
-              <div class="testimonial-content">
-                彼女と5年付き合ってるけど なかなかプロポーズする勇気が出なくて。 鑑定で「 相性は抜群。 ◯月に動けば、向こうも覚悟決めてる 」 って言われてプロポーズしたら 泣いて喜んでくれました。 背中押してもらえて本当に感謝です。
-              </div>
+              <div class="testimonial-content">彼女と5年付き合ってるけど、なかなかプロポーズする勇気が出なくて。鑑定で「相性は抜群。◯月に動けば、向こうも覚悟決めてる」って言われてプロポーズしたら泣いて喜んでくれました。背中押してもらえて本当に感謝です。</div>
               <div class="testimonial-author">大輔さん（34歳・男性）／結婚・婚活</div>
             </div>
             <div class="testimonial-card">
               <span class="testimonial-genre-tag">仕事</span>
               <div class="testimonial-quote">❝</div>
-              <div class="testimonial-content">
-                仕事がしんどいけど 辞めていいのか分からなくて。 まだ3年目だし頑張らないと って余計モヤモヤして。 鑑定してもらったら、 私が 素質的に苦手なことを 無理に頑張ってた ことが分かりました。 向いてる分野を教えてもらって 転職活動したら、 すぐ内定もらえて。 今は毎日楽しく働けてます。
-              </div>
+              <div class="testimonial-content">仕事がしんどいけど辞めていいのか分からなくて。まだ3年目だし頑張らないとって余計モヤモヤして。長谷川さんに鑑定してもらったら、私が素質的に苦手なことを無理に頑張ってたことが分かりました。向いてる分野を教えてもらって転職活動したら、すぐ内定もらえて。今は毎日楽しく働けてます。</div>
               <div class="testimonial-author">川田さん（27歳・女性）／仕事</div>
             </div>
             <div class="testimonial-card">
               <span class="testimonial-genre-tag">仕事</span>
               <div class="testimonial-quote">❝</div>
-              <div class="testimonial-content">
-                会社員しながら週末起業したくて。 でも先生に 「あなたは 人前に立つより裏方タイプ 。 表に出ると消耗する命式」 って言われてハッとして。 Webライターに切り替えたら 半年で月10万超えました。 「向いてないことで成功しても続かない」 って言葉が刺さりました。
-              </div>
+              <div class="testimonial-content">会社員しながら週末起業したくて。でも先生に「あなたは人前に立つより裏方タイプ。表に出ると消耗する命式」って言われてハッとして。Webライターに切り替えたら半年で月10万超えました。「向いてないことで成功しても続かない」って言葉が刺さりました。</div>
               <div class="testimonial-author">たくやさん（31歳・男性）／仕事</div>
             </div>
             <div class="testimonial-card">
               <span class="testimonial-genre-tag">人生・家族</span>
               <div class="testimonial-quote">❝</div>
-              <div class="testimonial-content">
-                母との関係がずっと苦しくて。 何を言っても否定、姉と比較、 私の選択は全部ダメ出し。 「お母さんの命式見ると、 本人も苦しんでるタイプ 。 愛情はあるけど表現が下手」 って言われて涙が止まらなくなって。 「 あなたは実家出た方がいい命式 」 って背中押されて一人暮らし始めたら 本当に楽になりました。
-              </div>
+              <div class="testimonial-content">母との関係がずっと苦しくて。何を言っても否定、姉と比較、私の選択は全部ダメ出し。「お母さんの命式見ると、本人も苦しんでるタイプ。愛情はあるけど表現が下手」って言われて涙が止まらなくなって。「あなたは実家出た方がいい命式」って背中押されて一人暮らし始めたら本当に楽になりました。</div>
               <div class="testimonial-author">A.Kさん（28歳・女性）／人生・家族</div>
             </div>
             <div class="testimonial-card">
               <span class="testimonial-genre-tag">人生・家族</span>
               <div class="testimonial-quote">❝</div>
-              <div class="testimonial-content">
-                転勤で関西から関東へ。 どうせ引っ越すなら 運気上がる場所がいいなと思って相談。 「あなたの場合は ◯◯区より◯◯区。 駅でいうとこの辺り 」 ってめちゃくちゃ具体的で。 言われたエリアで探したら 相場より安くて日当たり良い物件が見つかって、 引っ越してから半年で昇進しました。
-              </div>
+              <div class="testimonial-content">転勤で関西から関東へ。どうせ引っ越すなら運気上がる場所がいいなと思って相談。「あなたの場合は◯◯区より◯◯区。駅でいうとこの辺り」ってめちゃくちゃ具体的で。言われたエリアで探したら相場より安くて日当たり良い物件が見つかって、引っ越してから半年で昇進しました。</div>
               <div class="testimonial-author">健太さん（35歳・男性）／人生・家族</div>
             </div>
             <div class="slider-nav">
@@ -941,41 +905,31 @@
             <div class="testimonial-card active">
               <span class="testimonial-genre-tag">恋愛</span>
               <div class="testimonial-quote">❝</div>
-              <div class="testimonial-content">
-                彼氏との関係で悩んでて。 好きだけど噛み合わないというか…。 友達は「別れたら？」って言うし、 親は「まだ若いんだから」って。 鑑定で 相性とか、どう接すればいいか、 地雷ワード とかを教えてもらえて 本当に関係が良くなりました。 別れなくてよかったです！
-              </div>
+              <div class="testimonial-content">彼氏との関係で悩んでて。好きだけど噛み合わないというか…。友達は「別れたら？」って言うし、親は「まだ若いんだから」って。鑑定で相性とか、どう接すればいいか、地雷ワードとかを教えてもらえて本当に関係が良くなりました。別れなくてよかったです！</div>
               <div class="testimonial-author">りおさん（21歳・女性）</div>
             </div>
             <div class="testimonial-card">
               <span class="testimonial-genre-tag">恋愛</span>
               <div class="testimonial-quote">❝</div>
-              <div class="testimonial-content">
-                別れて半年、未練タラタラで 周りには「執着だよ」「次行きな」って 何回言われたことか。 でも先生は「相性見る限り、 別れる組み合わせじゃない。 彼、今運気落ちてるから ◯月以降にこういう内容で連絡して 」 って超具体的で。 言われた通りにしたら長文返信きて泣きました。 今は復縁して同棲してます。
-              </div>
+              <div class="testimonial-content">別れて半年、未練タラタラで周りには「執着だよ」「次行きな」って何回言われたことか。でも先生は「相性見る限り、別れる組み合わせじゃない。彼、今運気落ちてるから◯月以降にこういう内容で連絡して」って超具体的で。言われた通りにしたら長文返信きて泣きました。今は復縁して同棲してます。</div>
               <div class="testimonial-author">みなみさん(26歳・女性)</div>
             </div>
             <div class="testimonial-card">
               <span class="testimonial-genre-tag">恋愛</span>
               <div class="testimonial-quote">❝</div>
-              <div class="testimonial-content">
-                片思いの相手がいて、 告白するか悩んでました。 「この人とは相性いいけど、 今はタイミングじゃない。 ◯月に向こうから来るから待って 」って。 半信半疑だったけど 本当に向こうから食事に誘われて、 今付き合ってます。 焦らなくてよかった！
-              </div>
+              <div class="testimonial-content">片思いの相手がいて、告白するか悩んでました。「この人とは相性いいけど、今はタイミングじゃない。◯月に向こうから来るから待って」って。半信半疑だったけど本当に向こうから食事に誘われて、今付き合ってます。焦らなくてよかった！</div>
               <div class="testimonial-author">ゆいさん（23歳・女性）</div>
             </div>
             <div class="testimonial-card">
               <span class="testimonial-genre-tag">恋愛</span>
               <div class="testimonial-quote">❝</div>
-              <div class="testimonial-content">
-                彼がなかなか会ってくれなくて 不安で仕方なかったんです。 「彼は 一人の時間が必要なタイプ 。 束縛すると逃げるから、 連絡頻度より質を大事にして」 ってアドバイスもらって実践したら 向こうから連絡くるようになりました。
-              </div>
+              <div class="testimonial-content">彼がなかなか会ってくれなくて不安で仕方なかったんです。「彼は一人の時間が必要なタイプ。束縛すると逃げるから、連絡頻度より質を大事にして」ってアドバイスもらって実践したら向こうから連絡くるようになりました。</div>
               <div class="testimonial-author">なつきさん（24歳・女性）</div>
             </div>
             <div class="testimonial-card">
               <span class="testimonial-genre-tag">恋愛</span>
               <div class="testimonial-quote">❝</div>
-              <div class="testimonial-content">
-                好きな人がいるけど、 脈ありかどうか全然わからなくて。 「相手は好意持ってるけど 表現が下手なタイプ 。 あなたから一歩踏み込んで大丈夫」 って背中押されて連絡したら 「ずっと気になってた」 って言われました！
-              </div>
+              <div class="testimonial-content">好きな人がいるけど、脈ありかどうか全然わからなくて。「相手は好意持ってるけど表現が下手なタイプ。あなたから一歩踏み込んで大丈夫」って背中押されて連絡したら「ずっと気になってた」って言われました！</div>
               <div class="testimonial-author">さきさん（22歳・女性）</div>
             </div>
             <div class="slider-nav">
@@ -990,43 +944,33 @@
         <div class="genre-content" id="app">
           <div class="testimonial-slider" id="slider-app">
             <div class="testimonial-card active">
-              <span class="testimonial-genre-tag">マッチングアプリ</span>
+              <span class="testimonial-genre-tag">出会い</span>
               <div class="testimonial-quote">❝</div>
-              <div class="testimonial-content">
-                アプリで何人かいい人がいて、 友達に相談したら 「気持ち次第じゃない？」って。 いや、それが分からないから 困ってるんだけど…って（笑） 占ってもらったら、 今まで選んでた彼氏が たまたま相性悪かった ってわかって。 占い通りの人を選んだら 結婚まで進みました。
-              </div>
+              <div class="testimonial-content">アプリで何人かいい人がいて、友達に相談したら「気持ち次第じゃない？」って。いや、それが分からないから困ってるんだけど…って（笑）長谷川さんに占ってもらったら、今まで選んでた彼氏がたまたま相性悪かったってわかって。占い通りの人を選んだら結婚まで進みました。</div>
               <div class="testimonial-author">M.Tさん（29歳・女性）</div>
             </div>
             <div class="testimonial-card">
-              <span class="testimonial-genre-tag">マッチングアプリ</span>
+              <span class="testimonial-genre-tag">出会い</span>
               <div class="testimonial-quote">❝</div>
-              <div class="testimonial-content">
-                マッチングアプリで出会った彼が 本気なのかわからなくて相談。 生年月日だけで 「この人は 慎重だけど誠実 。 焦らず待てば大丈夫」って言われて 信じて待ったら 3ヶ月後に告白されました！ あの時焦って離れなくてよかったです。
-              </div>
+              <div class="testimonial-content">マッチングアプリで出会った彼が本気なのかわからなくて相談。生年月日だけで「この人は慎重だけど誠実。焦らず待てば大丈夫」って言われて信じて待ったら3ヶ月後に告白されました！あの時焦って離れなくてよかったです。</div>
               <div class="testimonial-author">あやかさん（25歳・女性）</div>
             </div>
             <div class="testimonial-card">
-              <span class="testimonial-genre-tag">マッチングアプリ</span>
+              <span class="testimonial-genre-tag">出会い</span>
               <div class="testimonial-quote">❝</div>
-              <div class="testimonial-content">
-                アプリで知り合った人と 2回目のデート後に音信不通に。 「この人は悪い人じゃないけど、 あなたとは相性が合わない。 次はこういう特徴の人を探して 」 って具体的に教えてもらって。 言われた通りの人を選んだら 今度はトントン拍子で進んでます！
-              </div>
+              <div class="testimonial-content">アプリで知り合った人と2回目のデート後に音信不通に。「この人は悪い人じゃないけど、あなたとは相性が合わない。次はこういう特徴の人を探して」って具体的に教えてもらって。言われた通りの人を選んだら今度はトントン拍子で進んでます！</div>
               <div class="testimonial-author">ことねさん（27歳・女性）</div>
             </div>
             <div class="testimonial-card">
-              <span class="testimonial-genre-tag">マッチングアプリ</span>
+              <span class="testimonial-genre-tag">出会い</span>
               <div class="testimonial-quote">❝</div>
-              <div class="testimonial-content">
-                アプリで50人以上会っても 全然ピンとくる人がいなくて。 「あなたは 直感より相性で選んだ方がいい 。 第一印象は悪くても、 この条件の人と会ってみて」 って言われて。 正直「えー」と思ったけど その通りにしたら 今の彼氏に出会えました。
-              </div>
+              <div class="testimonial-content">アプリで50人以上会っても全然ピンとくる人がいなくて。「あなたは直感より相性で選んだ方がいい。第一印象は悪くても、この条件の人と会ってみて」って言われて。正直「えー」と思ったけどその通りにしたら今の彼氏に出会えました。</div>
               <div class="testimonial-author">えみさん（30歳・女性）</div>
             </div>
             <div class="testimonial-card">
-              <span class="testimonial-genre-tag">マッチングアプリ</span>
+              <span class="testimonial-genre-tag">出会い</span>
               <div class="testimonial-quote">❝</div>
-              <div class="testimonial-content">
-                アプリで会った女性と いい感じだったのに 急に連絡が減って。 「彼女は 仕事が忙しい時期に入った だけ。 今は追いかけず、◯週間後に 軽い感じで連絡して」って言われて。 その通りにしたら向こうから 「会いたかった」って連絡きました。 今は真剣交際中です。
-              </div>
+              <div class="testimonial-content">アプリで会った女性といい感じだったのに急に連絡が減って。「彼女は仕事が忙しい時期に入っただけ。今は追いかけず、◯週間後に軽い感じで連絡して」って言われて。その通りにしたら向こうから「会いたかった」って連絡きました。今は真剣交際中です。</div>
               <div class="testimonial-author">健一さん（32歳・男性）</div>
             </div>
             <div class="slider-nav">
@@ -1043,25 +987,19 @@
             <div class="testimonial-card active">
               <span class="testimonial-genre-tag">結婚・婚活</span>
               <div class="testimonial-quote">❝</div>
-              <div class="testimonial-content">
-                32歳、婚活3年目。 何十人と会って全部ダメで 「私に問題があるのかも」って 本気で病んでました。 先生に「 今年は縁がない年。 来年の春から動いて 」って。 言われた通りにしたら 3人目で今の彼に出会えて、 しかも 先生が言ってた特徴そのままの人。 焦って変な人と結婚してたらと思うと ゾッとします。
-              </div>
+              <div class="testimonial-content">32歳、婚活3年目。何十人と会って全部ダメで「私に問題があるのかも」って本気で病んでました。長谷川さんに「今年は縁がない年。来年の春から動いて」って。言われた通りにしたら3人目で今の彼に出会えて、しかも長谷川さんが言ってた特徴そのままの人。焦って変な人と結婚してたらと思うとゾッとします。</div>
               <div class="testimonial-author">さくらさん（33歳・女性）</div>
             </div>
             <div class="testimonial-card">
               <span class="testimonial-genre-tag">結婚・婚活</span>
               <div class="testimonial-quote">❝</div>
-              <div class="testimonial-content">
-                彼女と5年付き合ってるけど なかなかプロポーズする勇気が出なくて。 「この人とは結婚していいのか」 「今のタイミングでいいのか」 ずっと迷って。 鑑定で「 相性は抜群。 ◯月に動けば、向こうも覚悟決めてる 」 って言われてプロポーズしたら 泣いて喜んでくれました。 背中押してもらえて本当に感謝です。
-              </div>
+              <div class="testimonial-content">彼女と5年付き合ってるけどなかなかプロポーズする勇気が出なくて。「この人とは結婚していいのか」「今のタイミングでいいのか」ずっと迷って。鑑定で「相性は抜群。◯月に動けば、向こうも覚悟決めてる」って言われてプロポーズしたら泣いて喜んでくれました。背中押してもらえて本当に感謝です。</div>
               <div class="testimonial-author">大輔さん（34歳・男性）</div>
             </div>
             <div class="testimonial-card">
               <span class="testimonial-genre-tag">結婚・婚活</span>
               <div class="testimonial-quote">❝</div>
-              <div class="testimonial-content">
-                彼氏と5年付き合ってるけど プロポーズしてくれなくて。 「この人と結婚していいのか」 「待ってていいのか」 ずっとモヤモヤして。 鑑定で「彼は 慎重なタイプ 。 あなたから具体的な話を振った方がいい」 「 ◯月頃が動きやすい 」って言われて その通りにしたら、 年内に婚約できました。
-              </div>
+              <div class="testimonial-content">彼氏と5年付き合ってるけどプロポーズしてくれなくて。「この人と結婚していいのか」「待ってていいのか」ずっとモヤモヤして。鑑定で「彼は慎重なタイプ。あなたから具体的な話を振った方がいい」「◯月頃が動きやすい」って言われてその通りにしたら、年内に婚約できました。</div>
               <div class="testimonial-author">ゆかさん（30歳・女性）</div>
             </div>
             <div class="slider-nav">
@@ -1078,33 +1016,25 @@
             <div class="testimonial-card active">
               <span class="testimonial-genre-tag">仕事</span>
               <div class="testimonial-quote">❝</div>
-              <div class="testimonial-content">
-                仕事がしんどいけど 辞めていいのか分からなくて。 まだ3年目だし頑張らないと って余計モヤモヤして。 鑑定してもらったら、 私が 素質的に苦手なことを 無理に頑張ってた ことが分かりました。 向いてる分野を教えてもらって 転職活動したら、 すぐ内定もらえて。 今は毎日楽しく働けてます。
-              </div>
+              <div class="testimonial-content">仕事がしんどいけど辞めていいのか分からなくて。まだ3年目だし頑張らないとって余計モヤモヤして。長谷川さんに鑑定してもらったら、私が素質的に苦手なことを無理に頑張ってたことが分かりました。向いてる分野を教えてもらって転職活動したら、すぐ内定もらえて。今は毎日楽しく働けてます。</div>
               <div class="testimonial-author">川田さん（27歳・女性）</div>
             </div>
             <div class="testimonial-card">
               <span class="testimonial-genre-tag">仕事</span>
               <div class="testimonial-quote">❝</div>
-              <div class="testimonial-content">
-                会社員しながら週末起業したくて、 コンサルとかコーチングとか 始めようかなって。 でも先生に 「あなたは 人前に立つより裏方タイプ 。 表に出ると消耗する命式」 って言われてハッとして。 Webライターに切り替えたら 半年で月10万超えました。 「向いてないことで成功しても続かない」 って言葉が刺さりました。
-              </div>
+              <div class="testimonial-content">会社員しながら週末起業したくて、コンサルとかコーチングとか始めようかなって。でも先生に「あなたは人前に立つより裏方タイプ。表に出ると消耗する命式」って言われてハッとして。Webライターに切り替えたら半年で月10万超えました。「向いてないことで成功しても続かない」って言葉が刺さりました。</div>
               <div class="testimonial-author">たくやさん（31歳・男性）</div>
             </div>
             <div class="testimonial-card">
               <span class="testimonial-genre-tag">仕事</span>
               <div class="testimonial-quote">❝</div>
-              <div class="testimonial-content">
-                仕事で精神的に追い詰められて、 休職か悩んでました。 具体的にどうすればいいか分からなくて。 先生は人生経験が豊富で、 選択肢を真剣に考えてくれました。 利用できそうな制度とか すごく具体的に教えてくれて。 おかげで冷静に判断できて、 今は休みながら復帰の準備をしています。
-              </div>
+              <div class="testimonial-content">仕事で精神的に追い詰められて、休職か悩んでました。具体的にどうすればいいか分からなくて。先生は人生経験が豊富で、選択肢を真剣に考えてくれました。利用できそうな制度とかすごく具体的に教えてくれて。おかげで冷静に判断できて、今は休みながら復帰の準備をしています。</div>
               <div class="testimonial-author">Y.Nさん（42歳・女性）</div>
             </div>
             <div class="testimonial-card">
               <span class="testimonial-genre-tag">仕事</span>
               <div class="testimonial-quote">❝</div>
-              <div class="testimonial-content">
-                スタッフとの接し方で悩んでて、 従業員全員の素質を見てもらいました。 そしたらスタッフが 特定の属性に偏ってた みたいで 笑っちゃいました（笑） どんな人がいるとバランスが取れるか 教えてもらって、それ以降、 採用するときも参考にしてます。 おかげで職場の雰囲気が良くなりました。
-              </div>
+              <div class="testimonial-content">スタッフとの接し方で悩んでて、従業員全員の素質を見てもらいました。そしたらスタッフが特定の属性に偏ってたみたいで笑っちゃいました（笑）どんな人がいるとバランスが取れるか教えてもらって、それ以降、採用するときも参考にしてます。おかげで職場の雰囲気が良くなりました。</div>
               <div class="testimonial-author">よっしーさん（38歳・男性）</div>
             </div>
             <div class="slider-nav">
@@ -1121,25 +1051,19 @@
             <div class="testimonial-card active">
               <span class="testimonial-genre-tag">人生・家族</span>
               <div class="testimonial-quote">❝</div>
-              <div class="testimonial-content">
-                母との関係がずっと苦しくて。 何を言っても否定、姉と比較、 私の選択は全部ダメ出し。 「お母さんの命式見ると、 本人も苦しんでるタイプ 。 愛情はあるけど表現が下手で、 心配が攻撃になっちゃう人」 って言われて涙が止まらなくなって。 「 あなたは実家出た方がいい命式 」 って背中押されて一人暮らし始めたら 本当に楽になりました。
-              </div>
+              <div class="testimonial-content">母との関係がずっと苦しくて。何を言っても否定、姉と比較、私の選択は全部ダメ出し。「お母さんの命式見ると、本人も苦しんでるタイプ。愛情はあるけど表現が下手で、心配が攻撃になっちゃう人」って言われて涙が止まらなくなって。「あなたは実家出た方がいい命式」って背中押されて一人暮らし始めたら本当に楽になりました。</div>
               <div class="testimonial-author">A.Kさん（28歳・女性）</div>
             </div>
             <div class="testimonial-card">
               <span class="testimonial-genre-tag">人生・家族</span>
               <div class="testimonial-quote">❝</div>
-              <div class="testimonial-content">
-                転勤で関西から関東へ。 どうせ引っ越すなら 運気上がる場所がいいなと思って相談。 「今年は南東がいいけど、 あなたの場合は ◯◯区より◯◯区。 駅でいうとこの辺り 」 ってめちゃくちゃ具体的で。 言われたエリアで探したら 相場より安くて日当たり良い物件が見つかって、 引っ越してから半年で昇進しました。
-              </div>
+              <div class="testimonial-content">転勤で関西から関東へ。どうせ引っ越すなら運気上がる場所がいいなと思って相談。長谷川さんに「今年は南東がいいけど、あなたの場合は◯◯区より◯◯区。駅でいうとこの辺り」ってめちゃくちゃ具体的に教えてもらって。言われたエリアで探したら相場より安くて日当たり良い物件が見つかって、引っ越してから半年で昇進しました。</div>
               <div class="testimonial-author">健太さん（35歳・男性）</div>
             </div>
             <div class="testimonial-card">
               <span class="testimonial-genre-tag">人生・家族</span>
               <div class="testimonial-quote">❝</div>
-              <div class="testimonial-content">
-                「このまま今の生活続けていいのかな」 ってずっとモヤモヤしてて。 特に大きな不満はないけど、 何か違う気がして。 先生に 「あなたは 30代後半から運気が変わる 。 今は準備期間だから焦らなくていい。 ただ、 ◯◯だけは始めておいた方がいい 」 って言われて、すごく腑に落ちました。 漠然とした不安が消えて、 今やるべきことが明確になりました。
-              </div>
+              <div class="testimonial-content">「このまま今の生活続けていいのかな」ってずっとモヤモヤしてて。特に大きな不満はないけど、何か違う気がして。先生に「あなたは30代後半から運気が変わる。今は準備期間だから焦らなくていい。ただ、◯◯だけは始めておいた方がいい」って言われて、すごく腑に落ちました。漠然とした不安が消えて、今やるべきことが明確になりました。</div>
               <div class="testimonial-author">まいさん（32歳・女性）</div>
             </div>
             <div class="slider-nav">
@@ -1151,25 +1075,28 @@
         </div>
 
         <p class="testimonials-note">※ 掲載にあたり、ご本人様の許可をいただいております。</p>
-
-        <!-- レビューCTA -->
-        <div class="review-cta">
-          <span class="review-cta-badge">🎁 特典あり</span>
-          <h3 class="review-cta-title">口コミを書いてくださる方へ</h3>
-          <p class="review-cta-text">
-            サイト掲載OKの口コミを送っていただいた方に <strong>次回使える500円OFFクーポン</strong> をプレゼント！<br>
-            ※事務局で内容を拝見し、掲載させていただいた方へ、後日メールにてクーポンをお送りいたします。
-          </p>
-          <a href="#" class="review-cta-btn">口コミ投稿はこちら</a>
-        </div>
       </div>
     </section>
 
     <!-- CTAセクション -->
     <section class="cta-section">
       <p class="cta-text">あなたの悩みも、解決の糸口が見つかるかもしれません。<br>まずはお気軽にご相談ください。</p>
-      <div class="cta-btn">
-        <img src="images/line-button.png" alt="LINEで予約">
+      <a href="https://lin.ee/SvZ69l0" class="cta-btn">
+        <img src="images/botan.png" alt="LINEで予約">
+      </a>
+    </section>
+
+    <!-- レビューCTA -->
+    <section class="review-cta-section">
+      <div class="review-cta">
+        <span class="review-cta-badge">🎁 特典あり</span>
+        <h3 class="review-cta-title">口コミを書いてくださる方へ</h3>
+        <p class="review-cta-text">
+          サイト掲載OKの口コミを送っていただいた方で<br>
+          事務局で内容を確認して掲載が決定した場合は、<br>
+          <strong>次回使える500円OFFクーポン</strong>をプレゼント!
+        </p>
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSdG_cRsdXN-z8HUmzwUdAv7exsxFM41qp-WLr6hGORGmQI28w/viewform?usp=header" class="review-cta-btn" target="_blank">口コミ投稿はこちら</a>
       </div>
     </section>
 
