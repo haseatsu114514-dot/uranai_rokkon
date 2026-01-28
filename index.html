@@ -1115,6 +1115,194 @@
                 max-width: 180px;  /* ★スマホサイズも調整 */
             }
         }
+
+        /* ========== 改善提案の追加スタイル ========== */
+        
+        /* 1. 予約状況カードの脈打つアニメーション */
+        @keyframes pulse-glow {
+            0%, 100% {
+                box-shadow: 0 4px 12px rgba(74, 124, 89, 0.3),
+                            0 0 20px rgba(93, 156, 108, 0.2);
+            }
+            50% {
+                box-shadow: 0 4px 16px rgba(74, 124, 89, 0.5),
+                            0 0 30px rgba(93, 156, 108, 0.4);
+            }
+        }
+
+        .part-badge.available {
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+
+        /* 2. LINEボタンの強調エフェクト */
+        .hero-btn, .line-button-wrapper a {
+            position: relative;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .hero-btn::before, .line-button-wrapper a::before {
+            content: '';
+            position: absolute;
+            inset: -8px;
+            background: radial-gradient(circle, rgba(196, 163, 90, 0.3) 0%, transparent 70%);
+            border-radius: 12px;
+            opacity: 0;
+            animation: btn-glow 3s ease-in-out infinite;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        @keyframes btn-glow {
+            0%, 100% {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+        }
+
+        .hero-btn:hover, .line-button-wrapper a:hover {
+            transform: scale(1.05);
+        }
+
+        /* 3. ページ遷移カードの強化 */
+        .page-link-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-link-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(196, 163, 90, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .page-link-card:hover::before {
+            left: 100%;
+        }
+
+        .page-link-card:hover {
+            transform: translateY(-8px) scale(1.02);
+        }
+
+        /* 4. スクロール進捗バー */
+        .scroll-progress {
+            position: fixed;
+            top: 75px;
+            left: 0;
+            width: 0%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--color-gold), var(--color-primary));
+            z-index: 1001;
+            transition: width 0.1s ease;
+        }
+
+        /* 5. 六根清浄セクションに桜エフェクト */
+        .about-section {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sakura-container {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .sakura {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: radial-gradient(circle, rgba(255, 192, 203, 0.6), rgba(255, 182, 193, 0.3));
+            border-radius: 50%;
+            animation: fall linear infinite;
+            opacity: 0;
+        }
+
+        @keyframes fall {
+            0% {
+                opacity: 0;
+                transform: translateY(-10px) translateX(0) rotate(0deg);
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(100vh) translateX(50px) rotate(360deg);
+            }
+        }
+
+        /* 6. 予約の流れの番号強調 */
+        .flow-number {
+            position: relative;
+            box-shadow: 0 0 0 0 rgba(196, 163, 90, 0.4);
+            animation: number-pulse 2s ease-in-out infinite;
+        }
+
+        .flow-step.flow-visible .flow-number {
+            animation: number-pulse 2s ease-in-out infinite, number-pop 0.5s ease-out;
+        }
+
+        @keyframes number-pulse {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(196, 163, 90, 0.4);
+            }
+            50% {
+                box-shadow: 0 0 0 10px rgba(196, 163, 90, 0);
+            }
+        }
+
+        @keyframes number-pop {
+            0% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.15);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* 7. FAQアコーディオンのスムーズ化（FAQ用） */
+        .answer-wrap {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .faq-item.faq-open .answer-wrap {
+            max-height: 1000px;
+        }
+
+        .question::after {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .faq-item.faq-open .question::after {
+            transform: rotate(45deg);
+        }
+
+        /* 10. お客様の声カードのシャドウ強化（testimonials用） */
+        .testimonial-card:hover {
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+            transform: translateY(-4px);
+        }
     </style>
     <link rel="stylesheet" href="css/animations.css">
 </head>
@@ -1145,6 +1333,9 @@
             </div>
         </div>
     </header>
+
+    <!-- スクロール進捗バー -->
+    <div class="scroll-progress" id="scrollProgress"></div>
 
     <!-- ヒーロー（コンパクト版） -->
     <section class="hero">
@@ -1214,6 +1405,7 @@
 
     <!-- 六根清浄とは -->
     <section class="about-section">
+        <div class="sakura-container" id="sakuraContainer"></div>
         <div class="about-bg">
             <img src="images/torii.jpeg" alt="" loading="lazy">
         </div>
@@ -1376,5 +1568,66 @@
     <button type="button" id="back-to-top" class="back-to-top" aria-label="トップへ戻る">↑</button>
 
     <script src="js/main.js"></script>
+    
+    <script>
+        // ========== 改善提案の追加JavaScript ==========
+        
+        // 4. スクロール進捗バー
+        (function() {
+            const progressBar = document.getElementById('scrollProgress');
+            if (!progressBar) return;
+            
+            function updateProgress() {
+                const windowHeight = window.innerHeight;
+                const documentHeight = document.documentElement.scrollHeight;
+                const scrollTop = window.scrollY || window.pageYOffset;
+                const scrollPercent = (scrollTop / (documentHeight - windowHeight)) * 100;
+                progressBar.style.width = Math.min(scrollPercent, 100) + '%';
+            }
+            
+            window.addEventListener('scroll', updateProgress, { passive: true });
+            updateProgress();
+        })();
+        
+        // 5. 六根清浄セクションに桜エフェクト
+        (function() {
+            const container = document.getElementById('sakuraContainer');
+            if (!container) return;
+            
+            function createSakura() {
+                const sakura = document.createElement('div');
+                sakura.className = 'sakura';
+                
+                // ランダムな位置とアニメーション時間
+                const leftPosition = Math.random() * 100;
+                const animationDuration = 10 + Math.random() * 10; // 10-20秒
+                const animationDelay = Math.random() * 5; // 0-5秒
+                const size = 8 + Math.random() * 6; // 8-14px
+                
+                sakura.style.left = leftPosition + '%';
+                sakura.style.animationDuration = animationDuration + 's';
+                sakura.style.animationDelay = animationDelay + 's';
+                sakura.style.width = size + 'px';
+                sakura.style.height = size + 'px';
+                
+                container.appendChild(sakura);
+                
+                // アニメーション終了後に削除
+                setTimeout(() => {
+                    if (sakura.parentNode) {
+                        sakura.parentNode.removeChild(sakura);
+                    }
+                }, (animationDuration + animationDelay) * 1000);
+            }
+            
+            // 初期桜を生成
+            for (let i = 0; i < 8; i++) {
+                setTimeout(createSakura, i * 1500);
+            }
+            
+            // 定期的に桜を追加
+            setInterval(createSakura, 3000);
+        })();
+    </script>
 </body>
 </html>
