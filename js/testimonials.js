@@ -1,133 +1,104 @@
-/**
- * 占い処 六根清浄｜お客様の声スライダー
- * タブ切替・スライド・スワイプ・自動再生・キーボード対応
- */
-(function () {
-    'use strict';
+// スライダーの状態を管理
+const sliderStates = {};
 
-    var currentSlides = { all: 0, love: 0, app: 0, marriage: 0, work: 0, life: 0 };
-    var autoplayTimer = null;
-    var AUTOPLAY_MS = 6000;
+// スライダーを初期化
+function initSlider(genre) {
+    const slider = document.getElementById(`slider-${genre}`);
+    if (!slider) return;
 
-    function showGenre(genre) {
-        document.querySelectorAll('.genre-tab').forEach(function (t) { t.classList.remove('active'); });
-        var tab = document.querySelector('.genre-tab[data-genre="' + genre + '"]');
-        if (tab) tab.classList.add('active');
-        document.querySelectorAll('.genre-content').forEach(function (c) { c.classList.remove('active'); });
-        var panel = document.getElementById(genre);
-        if (panel) panel.classList.add('active');
-        resetAutoplay(genre);
+    const cards = slider.querySelectorAll('.testimonial-card');
+    const dotsContainer = document.getElementById(`dots-${genre}`);
+
+    if (!dotsContainer) return;
+
+    // ドットを作成
+    dotsContainer.innerHTML = '';
+    cards.forEach((_, index) => {
+        const dot = document.createElement('button');
+        dot.className = 'slider-dot' + (index === 0 ? ' active' : '');
+        dot.onclick = () => goToSlide(genre, index);
+        dotsContainer.appendChild(dot);
+    });
+
+    // 状態を初期化
+    sliderStates[genre] = 0;
+}
+
+// スライダーを変更
+function changeSlide(genre, direction) {
+    const slider = document.getElementById(`slider-${genre}`);
+    if (!slider) return;
+
+    const cards = slider.querySelectorAll('.testimonial-card');
+    if (cards.length === 0) return;
+
+    if (!sliderStates.hasOwnProperty(genre)) {
+        sliderStates[genre] = 0;
     }
 
-    function showSlide(genre, index) {
-        var container = document.getElementById(genre);
-        if (!container) return;
-        var cards = container.querySelectorAll('.testimonial-card');
-        var dots = container.querySelectorAll('.slider-dot');
-        var n = cards.length;
-        if (!n) return;
-        index = (index % n + n) % n;
-        currentSlides[genre] = index;
-        cards.forEach(function (c, i) { c.classList.toggle('active', i === index); });
-        dots.forEach(function (d, i) { d.classList.toggle('active', i === index); });
-        resetAutoplay(genre);
+    sliderStates[genre] += direction;
+
+    if (sliderStates[genre] < 0) {
+        sliderStates[genre] = cards.length - 1;
+    } else if (sliderStates[genre] >= cards.length) {
+        sliderStates[genre] = 0;
     }
 
-    function nextSlide(genre) {
-        var container = document.getElementById(genre);
-        if (!container) return;
-        var cards = container.querySelectorAll('.testimonial-card');
-        var n = cards.length;
-        if (!n) return;
-        showSlide(genre, currentSlides[genre] + 1);
-    }
+    goToSlide(genre, sliderStates[genre]);
+    window.changeSlide = changeSlide;
+}
 
-    function prevSlide(genre) {
-        var container = document.getElementById(genre);
-        if (!container) return;
-        var cards = container.querySelectorAll('.testimonial-card');
-        var n = cards.length;
-        if (!n) return;
-        showSlide(genre, currentSlides[genre] - 1);
-    }
+// 特定のスライドに移動
+function goToSlide(genre, index) {
+    const slider = document.getElementById(`slider-${genre}`);
+    if (!slider) return;
 
-    function getActiveGenre() {
-        var t = document.querySelector('.genre-tab.active');
-        return t ? t.getAttribute('data-genre') : 'love';
-    }
+    const cards = slider.querySelectorAll('.testimonial-card');
+    const dots = document.querySelectorAll(`#dots-${genre} .slider-dot`);
 
-    function tick() {
-        var g = getActiveGenre();
-        nextSlide(g);
-    }
+    if (index < 0 || index >= cards.length) return;
 
-    function stopAutoplay() {
-        if (autoplayTimer) {
-            clearInterval(autoplayTimer);
-            autoplayTimer = null;
-        }
-    }
+    // カードを更新
+    cards.forEach((card, i) => {
+        card.classList.toggle('active', i === index);
+    });
 
-    function resetAutoplay(genre) {
-        stopAutoplay();
-        autoplayTimer = setInterval(tick, AUTOPLAY_MS);
-    }
+    // ドットを更新
+    dots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === index);
+    });
 
-    function bindSlider() {
-        var genres = ['love', 'app', 'marriage', 'work', 'life', 'all'];
-        genres.forEach(function (genre) {
-            var tab = document.querySelector('.genre-tab[data-genre="' + genre + '"]');
-            if (tab) tab.addEventListener('click', function () { showGenre(genre); });
+    sliderStates[genre] = index;
+}
 
-            var container = document.getElementById(genre);
-            if (!container) return;
-            var nav = container.querySelector('.slider-nav');
-            if (!nav) return;
-            var arrows = nav.querySelectorAll('.slider-arrow');
-            var prev = arrows[0], next = arrows[1];
-            var dots = nav.querySelectorAll('.slider-dot');
-            if (prev) prev.addEventListener('click', function () { prevSlide(genre); });
-            if (next) next.addEventListener('click', function () { nextSlide(genre); });
-            dots.forEach(function (d, i) {
-                d.addEventListener('click', function () { showSlide(genre, i); });
-            });
+// グローバルスコープに公開（HTMLのonclickから呼ぶため）
+window.changeSlide = changeSlide;
 
-            var slider = container.querySelector('.testimonial-slider');
-            if (slider) {
-                var startX = 0, endX = 0;
-                slider.addEventListener('touchstart', function (e) {
-                    startX = e.changedTouches[0].screenX;
-                });
-                slider.addEventListener('touchend', function (e) {
-                    endX = e.changedTouches[0].screenX;
-                    var diff = startX - endX;
-                    if (Math.abs(diff) > 50) {
-                        if (diff > 0) nextSlide(genre);
-                        else prevSlide(genre);
-                    }
-                });
-                slider.addEventListener('mouseenter', stopAutoplay);
-                slider.addEventListener('mouseleave', function () { resetAutoplay(genre); });
+// ジャンルタブの切り替え
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.genre-tab').forEach(tab => {
+        tab.addEventListener('click', function () {
+            const genre = this.getAttribute('data-genre');
+
+            // タブのアクティブ状態を更新
+            document.querySelectorAll('.genre-tab').forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+
+            // コンテンツの表示を切り替え
+            document.querySelectorAll('.genre-content').forEach(c => c.classList.remove('active'));
+            const content = document.getElementById(genre);
+            if (content) {
+                content.classList.add('active');
+                // スライダーを初期化
+                initSlider(genre);
+                // 最初のスライドに戻す
+                goToSlide(genre, 0);
             }
         });
+    });
 
-        document.addEventListener('keydown', function (e) {
-            if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
-            var g = getActiveGenre();
-            if (e.key === 'ArrowLeft') { e.preventDefault(); prevSlide(g); }
-            else { e.preventDefault(); nextSlide(g); }
-        });
-    }
-
-    function init() {
-        if (!document.querySelector('.genre-tab')) return;
-        bindSlider();
-        resetAutoplay('love');
-    }
-
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
-    } else {
-        init();
-    }
-})();
+    // 全てのスライダーを初期化
+    ['all', 'love', 'app', 'marriage', 'work', 'life'].forEach(genre => {
+        initSlider(genre);
+    });
+});
