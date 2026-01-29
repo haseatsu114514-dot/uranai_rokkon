@@ -266,24 +266,43 @@ function updateBadge(partKey, status) {
   badge.className = 'part-badge';
   badge.style.opacity = '1';
 
+  // LINE URL
+  const LINE_URL = 'https://lin.ee/SvZ69l0';
+
+  // 共通のクリック設定関数
+  const setClickable = (isClickable) => {
+    if (isClickable) {
+      badge.style.cursor = 'pointer';
+      badge.setAttribute('title', 'LINEで予約する');
+      badge.onclick = function () { window.location.href = LINE_URL; };
+    } else {
+      badge.style.cursor = 'default';
+      badge.removeAttribute('title');
+      badge.onclick = null;
+    }
+  };
+
   switch (status) {
     case 'available':
       badge.classList.add('available');
       badge.textContent = '受付中';
+      setClickable(true);
       break;
     case 'limited':
       badge.classList.add('limited');
       badge.textContent = 'わずか';
+      setClickable(true);
       break;
-
     case 'error':
       badge.classList.add('limited');
       badge.textContent = 'LINE確認';
+      setClickable(true);
       break;
     case 'full':
     default:
       badge.classList.add('full');
       badge.textContent = '終了';
+      setClickable(false);
       break;
   }
 }
