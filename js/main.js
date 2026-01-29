@@ -209,25 +209,7 @@ function setBadgesLoading() {
 async function updateAvailability() {
   setBadgesLoading();
 
-  // ★★★ システムメンテナンス時間：深夜1:00〜6:00 ★★★
-  const now = new Date();
-  const currentHour = now.getHours();
 
-  if (currentHour >= 1 && currentHour < 6) {
-    // メンテナンス時間帯の静的表示
-    updateBadge('day', 'maintenance');
-    updateBadge('evening', 'maintenance');
-    updateBadge('night', 'maintenance');
-
-    const normalNote = document.querySelector('.availability-note');
-    if (normalNote) {
-      normalNote.innerHTML = '<strong style="color: #c4a35a;">システムメンテナンス中</strong><br>※メンテナンス時間：1:00〜6:00<br>※6:00より自動で予約状況が表示されます<br>※ご予約はLINEから24時間受付中';
-      normalNote.style.display = 'block';
-    }
-
-    console.log('メンテナンス時間帯のため静的表示');
-    return;
-  }
 
   try {
     const controller = new AbortController();
@@ -276,7 +258,7 @@ async function updateAvailability() {
   }
 }
 
-// バッジ更新（maintenance と error 状態を追加）
+// バッジ更新（error 状態を追加）
 function updateBadge(partKey, status) {
   const badge = document.querySelector(`[data-part="${partKey}"]`);
   if (!badge) return;
@@ -293,10 +275,7 @@ function updateBadge(partKey, status) {
       badge.classList.add('limited');
       badge.textContent = 'わずか';
       break;
-    case 'maintenance':
-      badge.classList.add('full');
-      badge.textContent = 'メンテ中';
-      break;
+
     case 'error':
       badge.classList.add('limited');
       badge.textContent = 'LINE確認';
