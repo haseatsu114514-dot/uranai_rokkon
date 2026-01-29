@@ -200,7 +200,7 @@ function setBadgesLoading() {
 
   const normalNote = document.querySelector('.availability-note');
   if (normalNote) {
-    normalNote.innerHTML = '予約状況を確認しています...<br><span style="font-size: 0.75rem; opacity: 0.8;">（環境により10〜15秒かかる場合があります）</span>';
+    normalNote.innerHTML = '予約状況を確認しています...<br><span style="font-size: 0.75rem; opacity: 0.8;">（環境により5〜10秒程かかる場合があります）</span>';
     normalNote.style.display = 'block';
   }
 }
