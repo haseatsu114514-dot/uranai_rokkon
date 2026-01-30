@@ -29,9 +29,13 @@ a {
 }
 
 /* 和紙テクスチャ（背景） */
+body {
+    position: relative;
+}
+
 body::before {
     content: "";
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
