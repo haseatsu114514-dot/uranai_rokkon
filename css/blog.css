@@ -1,7 +1,7 @@
 /* ========== ブログページ専用スタイル ========== */
 
 /* ブログメインコンテンツ */
-.blog-main {
+.main-content {
     padding-top: 75px;
     background: var(--color-cream);
     min-height: 100vh;
