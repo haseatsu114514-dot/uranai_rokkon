@@ -1,0 +1,332 @@
+/* ========== ブログページ専用スタイル ========== */
+
+/* ブログヒーロー */
+.blog-hero {
+    position: relative;
+    padding: 140px 20px 80px;
+    text-align: center;
+    background: linear-gradient(135deg, 
+        var(--color-primary) 0%, 
+        var(--color-primary-dark) 100%
+    );
+    overflow: hidden;
+}
+
+.blog-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        repeating-linear-gradient(45deg, 
+            transparent, 
+            transparent 10px, 
+            rgba(196, 163, 90, 0.03) 10px, 
+            rgba(196, 163, 90, 0.03) 11px
+        );
+    pointer-events: none;
+}
+
+.blog-hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.blog-hero-title {
+    font-size: 3rem;
+    font-weight: 600;
+    color: var(--color-text-white);
+    letter-spacing: 0.15em;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 20px rgba(0,0,0,0.3);
+}
+
+.blog-hero-subtitle {
+    font-size: 1.1rem;
+    color: var(--color-gold);
+    letter-spacing: 0.1em;
+    font-weight: 500;
+}
+
+/* ブログセクション */
+.blog-section {
+    background: var(--color-cream);
+    padding: 80px 20px;
+    min-height: 60vh;
+}
+
+.blog-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+/* 記事グリッド */
+.blog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 30px;
+}
+
+/* 記事カード */
+.article-card {
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 
+        0 4px 20px rgba(0,0,0,0.06),
+        0 1px 3px rgba(0,0,0,0.04);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 2px solid transparent;
+    display: flex;
+    flex-direction: column;
+}
+
+.article-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 
+        0 16px 40px rgba(0,0,0,0.12),
+        0 8px 16px rgba(196, 163, 90, 0.15);
+    border-color: var(--color-gold);
+}
+
+/* カード画像 */
+.article-image {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+    background: linear-gradient(135deg, 
+        var(--color-primary) 0%, 
+        var(--color-primary-dark) 100%
+    );
+}
+
+.article-image::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: 
+        repeating-linear-gradient(45deg, 
+            transparent, 
+            transparent 8px, 
+            rgba(196, 163, 90, 0.08) 8px, 
+            rgba(196, 163, 90, 0.08) 9px
+        );
+    z-index: 1;
+}
+
+.article-image-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4rem;
+    opacity: 0.3;
+    color: var(--color-gold);
+}
+
+/* カテゴリーバッジ */
+.article-category {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    background: var(--color-gold);
+    color: #fff;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    z-index: 2;
+    box-shadow: 0 2px 8px rgba(196, 163, 90, 0.4);
+}
+
+/* カードコンテンツ */
+.article-content {
+    padding: 28px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.article-date {
+    font-size: 0.8rem;
+    color: #888;
+    margin-bottom: 12px;
+    letter-spacing: 0.05em;
+}
+
+.article-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--color-primary-dark);
+    line-height: 1.6;
+    margin-bottom: 16px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.article-excerpt {
+    font-size: 0.9rem;
+    color: #666;
+    line-height: 1.8;
+    margin-bottom: 20px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    flex: 1;
+}
+
+/* 続きを読むリンク */
+.article-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--color-gold);
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    transition: all 0.3s;
+    text-decoration: none;
+}
+
+.article-link::after {
+    content: '→';
+    transition: transform 0.3s;
+}
+
+.article-link:hover {
+    color: var(--color-primary);
+}
+
+.article-link:hover::after {
+    transform: translateX(4px);
+}
+
+/* note.comバッジ */
+.note-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(65, 199, 100, 0.1);
+    color: #41c764;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: auto;
+}
+
+/* 空状態 */
+.blog-empty {
+    text-align: center;
+    padding: 80px 20px;
+    color: #888;
+}
+
+.blog-empty-icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    opacity: 0.3;
+}
+
+.blog-empty-text {
+    font-size: 1.1rem;
+}
+
+/* noteリンクセクション */
+.blog-note-link {
+    text-align: center;
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(196, 163, 90, 0.2);
+}
+
+.blog-note-link-text {
+    font-size: 0.95rem;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.blog-note-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: linear-gradient(135deg, #41c764 0%, #38b058 100%);
+    color: #fff;
+    padding: 14px 32px;
+    border-radius: 50px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-decoration: none;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(65, 199, 100, 0.3);
+}
+
+.blog-note-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(65, 199, 100, 0.4);
+}
+
+/* ========== レスポンシブ ========== */
+@media (max-width: 768px) {
+    .blog-hero {
+        padding: 120px 20px 60px;
+    }
+    
+    .blog-hero-title {
+        font-size: 2rem;
+        letter-spacing: 0.1em;
+    }
+    
+    .blog-hero-subtitle {
+        font-size: 0.95rem;
+    }
+    
+    .blog-section {
+        padding: 50px 15px;
+    }
+    
+    .blog-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+    
+    .article-image {
+        height: 160px;
+    }
+    
+    .article-content {
+        padding: 22px;
+    }
+    
+    .article-title {
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .blog-hero-title {
+        font-size: 1.8rem;
+    }
+    
+    .article-content {
+        padding: 18px;
+    }
+    
+    .article-title {
+        font-size: 1rem;
+    }
+    
+    .article-excerpt {
+        font-size: 0.85rem;
+        -webkit-line-clamp: 2;
+    }
+}
