@@ -28,6 +28,67 @@ a {
     --color-cream: #f8f6f2;
 }
 
+/* 和紙テクスチャ（背景） */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('../images/washi_bg.png');
+    background-repeat: repeat;
+    background-size: 500px;
+    opacity: 0.25;
+    z-index: 2000;
+    pointer-events: none;
+    mix-blend-mode: multiply;
+}
+
+/* スマホ追従予約ボタン */
+.sticky-reservation-btn {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    width: 90%;
+    max-width: 400px;
+    background: #06c755;
+    /* LINE Green */
+    color: #fff;
+    padding: 14px;
+    border-radius: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    z-index: 3000;
+    text-decoration: none;
+    font-weight: bold;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sticky-reservation-btn:hover {
+    box-shadow: 0 6px 20px rgba(0, 199, 85, 0.4);
+    transform: translateX(-50%) translateY(-2px);
+}
+
+.sticky-text {
+    font-size: 1rem;
+    letter-spacing: 0.05em;
+}
+
+@media (max-width: 768px) {
+    .sticky-reservation-btn {
+        opacity: 1;
+        visibility: visible;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
 /* ========== 共通ヘッダー ========== */
 .header {
     position: fixed;
