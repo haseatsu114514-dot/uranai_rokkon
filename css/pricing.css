@@ -24,7 +24,7 @@
             --color-primary-dark: #232d2a;
             --color-gold: #c4a35a;
             --color-text-white: #ffffff;
-            --color-text-light: rgba(255,255,255,0.9);
+            --color-text-light: rgba(255, 255, 255, 0.9);
             --color-cream: #f8f6f2;
         }
 
@@ -121,11 +121,11 @@
             font-weight: 500;
             letter-spacing: 0.08em;
             transition: all 0.3s;
-            border: 1px solid rgba(255,255,255,0.6);
+            border: 1px solid rgba(255, 255, 255, 0.6);
         }
 
         .contact-btn:hover {
-            background: rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.1);
             border-color: var(--color-text-white);
         }
 
@@ -181,14 +181,14 @@
             border-radius: 12px;
             padding: 30px;
             margin-bottom: 30px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
             border-left: 4px solid var(--color-gold);
             transition: transform 0.3s, box-shadow 0.3s;
         }
 
         .course-card:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
         }
 
         .course-card.popular {
@@ -343,7 +343,7 @@
             border-radius: 12px;
             padding: 25px 30px;
             margin-bottom: 20px;
-            box-shadow: 0 2px 15px rgba(0,0,0,0.04);
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.04);
         }
 
         .info-title {
@@ -382,7 +382,7 @@
         /* ========== フッター ========== */
         .footer {
             background: var(--color-primary);
-            color: rgba(255,255,255,0.7);
+            color: rgba(255, 255, 255, 0.7);
             text-align: center;
             padding: 25px 20px;
             height: 75px;
@@ -396,7 +396,7 @@
         }
 
         .footer-content a {
-            color: rgba(255,255,255,0.7);
+            color: rgba(255, 255, 255, 0.7);
             margin-right: 20px;
             transition: color 0.3s;
         }
@@ -410,12 +410,15 @@
             .header {
                 padding: 0 20px;
             }
+
             .nav {
                 gap: 20px;
             }
+
             .nav a {
                 font-size: 0.8rem;
             }
+
             .contact-btn {
                 padding: 10px 18px;
                 font-size: 0.8rem;
@@ -426,44 +429,57 @@
             .header-inner {
                 height: 60px;
             }
+
             .logo-main {
                 font-size: 1.1rem;
             }
+
             .nav {
                 gap: 15px;
             }
+
             .nav a {
                 font-size: 0.75rem;
             }
+
             .contact-btn {
                 padding: 8px 14px;
                 font-size: 0.75rem;
             }
+
             .main-content {
                 padding-top: 60px;
             }
+
             .page-header {
                 padding: 40px 20px;
             }
+
             .page-title {
                 font-size: 1.6rem;
             }
+
             .container {
                 padding: 40px 15px;
             }
+
             .course-card {
                 padding: 25px 20px;
             }
+
             .course-duration {
                 font-size: 1.6rem;
             }
+
             .discount-price {
                 font-size: 1.5rem;
             }
+
             .footer {
                 height: auto;
                 padding: 20px;
             }
+
             .footer-content {
                 font-size: 0.75rem;
             }
@@ -482,79 +498,100 @@
                 gap: 0;
                 z-index: 999;
             }
+
             .nav-wrapper.active {
                 display: flex;
             }
+
             .nav {
                 flex-direction: column;
                 gap: 0;
                 width: 100%;
             }
+
             .nav a {
                 padding: 15px 0;
                 font-size: 1rem;
-                border-bottom: 1px solid rgba(255,255,255,0.1);
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
                 width: 100%;
                 text-align: center;
             }
+
             .nav a::after {
                 display: none;
             }
+
             .contact-btn {
                 margin-top: 15px;
                 padding: 12px 30px;
                 font-size: 1rem;
                 text-align: center;
             }
+
             .menu-toggle {
                 display: flex !important;
             }
+
             .page-header {
                 padding: 35px 15px;
             }
+
             .page-title {
                 font-size: 1.4rem;
             }
+
             .advance-notice {
                 font-size: 0.85rem;
                 padding: 8px 20px;
             }
+
             .container {
                 padding: 30px 15px;
             }
+
             .course-card {
                 padding: 20px 15px;
                 margin-bottom: 25px;
             }
+
             .course-duration {
                 font-size: 1.4rem;
             }
+
             .course-prices {
                 flex-wrap: wrap;
                 gap: 10px;
             }
+
             .original-price {
                 font-size: 1rem;
             }
+
             .discount-price {
                 font-size: 1.4rem;
             }
+
             .course-examples li {
                 font-size: 0.9rem;
             }
+
             .course-note {
                 font-size: 0.85rem;
                 padding: 12px 15px;
             }
+
             .course-cta img {
                 max-width: 220px;
             }
+
             .info-section {
                 padding: 20px 15px;
             }
+
             .info-title {
                 font-size: 1rem;
             }
+
             .info-list li {
                 font-size: 0.9rem;
             }
@@ -571,6 +608,7 @@
             cursor: pointer;
             padding: 8px;
         }
+
         .menu-toggle span {
             display: block;
             width: 100%;
@@ -580,72 +618,102 @@
             border-radius: 2px;
         }
 
-        /* ページ導線 */
+        /* ページ導線（5カラム対応） */
         .page-links-container {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
             margin-top: 48px;
         }
+
         .page-link-card {
             background: #fff;
-            padding: 24px 16px;
-            border-radius: 12px;
+            padding: 18px 10px;
+            border-radius: 10px;
             text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
             transition: all 0.3s;
             display: block;
             border: 2px solid transparent;
             position: relative;
         }
+
         .page-link-card::after {
             content: '→';
             position: absolute;
-            right: 12px;
+            right: 8px;
             top: 50%;
             transform: translateY(-50%);
             color: var(--color-gold);
-            font-size: 1rem;
+            font-size: 0.85rem;
             opacity: 0;
             transition: all 0.3s;
         }
+
         .page-link-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
             border-color: var(--color-gold);
         }
+
         .page-link-card:hover::after {
             opacity: 1;
-            right: 8px;
+            right: 5px;
         }
+
         .page-link-title {
             display: block;
-            font-size: 0.95rem;
+            font-size: 0.85rem;
             font-weight: 600;
             color: var(--color-primary);
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
+
         .page-link-desc {
             display: block;
-            font-size: 0.75rem;
+            font-size: 0.68rem;
             color: #888;
         }
+
         @media (max-width: 768px) {
             .page-links-container {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: repeat(3, 1fr);
                 gap: 10px;
                 margin-top: 36px;
             }
+
             .page-link-card {
-                padding: 18px 10px;
+                padding: 14px 8px;
             }
+
             .page-link-card::after {
                 display: none;
             }
+
             .page-link-title {
-                font-size: 0.82rem;
+                font-size: 0.75rem;
             }
+
             .page-link-desc {
-                font-size: 0.68rem;
+                font-size: 0.6rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-links-container {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+
+            .page-link-card {
+                padding: 12px 6px;
+            }
+
+            .page-link-title {
+                font-size: 0.7rem;
+            }
+
+            .page-link-desc {
+                display: none;
             }
         }

@@ -62,44 +62,48 @@
     <!-- スクロール進捗バー -->
     <div class="scroll-progress" id="scrollProgress"></div>
 
-    <!-- ブログヒーロー -->
-    <section class="blog-hero">
-        <div class="blog-hero-content">
-            <h1 class="blog-hero-title">ブログ</h1>
-            <p class="blog-hero-subtitle">占い師あつきのコラム</p>
-        </div>
-    </section>
+    <!-- メインコンテンツ -->
+    <main class="main-content">
 
-    <!-- ブログ一覧 -->
-    <section class="blog-section">
-        <div class="blog-inner">
-            <div class="blog-grid">
-                <!-- 記事1 -->
-                <article class="article-card animate-on-scroll">
-                    <div class="article-image">
-                        <span class="article-category">四柱推命</span>
-                        <span class="article-image-icon">🐴</span>
-                    </div>
-                    <div class="article-content">
-                        <div class="article-date">2026年1月31日</div>
-                        <h2 class="article-title">丙午の女は男を食い殺す？60年ぶりの【丙午】を四柱推命師が解説。</h2>
-                        <p class="article-excerpt">
-                            2026年は60年ぶりの丙午（ひのえうま）の年。「丙午生まれの女性は気性が荒い」「男を食い殺す」…なかなかひどい言われようですよね。これ、江戸時代の「八百屋お七」という女性の話が元になっていると言われています。四柱推命師として、丙午をどう見るか解説します。
-                        </p>
-                        <div style="display: flex; align-items: center; justify-content: space-between;">
-                            <a href="https://note.com/rokkon_uranai/n/ne553cf3d6bb0" class="article-link" target="_blank" rel="noopener">続きを読む</a>
-                            <span class="note-badge">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                                </svg>
-                                note.com
-                            </span>
+        <!-- ブログヒーロー -->
+        <section class="page-header">
+            <h1 class="page-title">ブログ</h1>
+            <p class="page-subtitle">占い師あつきのコラム</p>
+        </section>
+
+        <!-- ブログ一覧 -->
+        <section class="blog-section">
+            <div class="blog-inner">
+                <div class="blog-grid">
+                    <!-- 記事1 -->
+                    <article class="article-card animate-on-scroll">
+                        <div class="article-image">
+                            <span class="article-category">四柱推命</span>
+                            <img src="https://assets.st-note.com/production/uploads/images/247881481/rectangle_large_type_2_cac36aa82a803c698e52ab947727200c.jpeg?fit=bounds&quality=85&width=1280"
+                                alt="丙午の女は男を食い殺す？60年ぶりの【丙午】を四柱推命師が解説。" class="article-thumb">
                         </div>
-                    </div>
-                </article>
+                        <div class="article-content">
+                            <div class="article-date">2026年1月31日</div>
+                            <h2 class="article-title">丙午の女は男を食い殺す？60年ぶりの【丙午】を四柱推命師が解説。</h2>
+                            <p class="article-excerpt">
+                                2026年は60年ぶりの丙午（ひのえうま）の年。「丙午生まれの女性は気性が荒い」「男を食い殺す」…なかなかひどい言われようですよね。これ、江戸時代の「八百屋お七」という女性の話が元になっていると言われています。四柱推命師として、丙午をどう見るか解説します。
+                            </p>
+                            <div style="display: flex; align-items: center; justify-content: space-between;">
+                                <a href="https://note.com/rokkon_uranai/n/ne553cf3d6bb0" class="article-link"
+                                    target="_blank" rel="noopener">続きを読む</a>
+                                <span class="note-badge">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                                        <path
+                                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                                    </svg>
+                                    note.com
+                                </span>
+                            </div>
+                        </div>
+                    </article>
 
-                <!-- 今後の記事追加エリア（コメントアウト）-->
-                <!--
+                    <!-- 今後の記事追加エリア（コメントアウト）-->
+                    <!--
                 <article class="article-card animate-on-scroll">
                     <div class="article-image">
                         <span class="article-category">カテゴリー</span>
@@ -116,20 +120,49 @@
                     </div>
                 </article>
                 -->
-            </div>
+                </div>
 
-            <!-- noteへのリンク -->
-            <div class="blog-note-link">
-                <p class="blog-note-link-text">すべての記事はnote.comでご覧いただけます</p>
-                <a href="https://note.com/rokkon_uranai" class="blog-note-btn" target="_blank" rel="noopener">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M19 19H5V5h7V3H5a2 2 0 00-2 2v14a2 2 0 002 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/>
-                    </svg>
-                    noteを見る
+                <!-- noteへのリンク -->
+                <div class="blog-note-link">
+                    <p class="blog-note-link-text">すべての記事はnote.comでご覧いただけます</p>
+                    <a href="https://note.com/rokkon_uranai" class="blog-note-btn" target="_blank" rel="noopener">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M19 19H5V5h7V3H5a2 2 0 00-2 2v14a2 2 0 002 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z" />
+                        </svg>
+                        noteを見る
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ページ導線 -->
+        <section class="blog-page-links">
+            <div class="blog-page-links-inner">
+                <a href="index.html" class="blog-page-link-card">
+                    <span class="blog-page-link-title">ホーム</span>
+                    <span class="blog-page-link-desc">トップページ</span>
+                </a>
+                <a href="about.html" class="blog-page-link-card">
+                    <span class="blog-page-link-title">占い師紹介</span>
+                    <span class="blog-page-link-desc">鑑定スタイル</span>
+                </a>
+                <a href="pricing.html" class="blog-page-link-card">
+                    <span class="blog-page-link-title">料金案内</span>
+                    <span class="blog-page-link-desc">コース・料金</span>
+                </a>
+                <a href="testimonials.html" class="blog-page-link-card">
+                    <span class="blog-page-link-title">お客様の声</span>
+                    <span class="blog-page-link-desc">実際のご感想</span>
+                </a>
+                <a href="faq.html" class="blog-page-link-card">
+                    <span class="blog-page-link-title">よくある質問</span>
+                    <span class="blog-page-link-desc">Q&A</span>
                 </a>
             </div>
-        </div>
-    </section>
+        </section>
+
+    </main>
 
     <!-- フッター -->
     <footer class="footer">

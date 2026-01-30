@@ -174,18 +174,18 @@
     font-weight: 600;
 }
 
-/* ========== ページ導線 (FAQ固有) ========== */
+/* ========== ページ導線 (FAQ固有・5カラム対応) ========== */
 .page-links-container {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
     margin-top: 48px;
 }
 
 .page-link-card {
     background: #fff;
-    padding: 24px 16px;
-    border-radius: 12px;
+    padding: 18px 10px;
+    border-radius: 10px;
     text-align: center;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
     transition: all 0.3s;
@@ -197,11 +197,11 @@
 .page-link-card::after {
     content: '→';
     position: absolute;
-    right: 12px;
+    right: 8px;
     top: 50%;
     transform: translateY(-50%);
     color: var(--color-gold);
-    font-size: 1rem;
+    font-size: 0.85rem;
     opacity: 0;
     transition: all 0.3s;
 }
@@ -214,20 +214,20 @@
 
 .page-link-card:hover::after {
     opacity: 1;
-    right: 8px;
+    right: 5px;
 }
 
 .page-link-title {
     display: block;
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     font-weight: 600;
     color: var(--color-primary);
-    margin-bottom: 6px;
+    margin-bottom: 4px;
 }
 
 .page-link-desc {
     display: block;
-    font-size: 0.75rem;
+    font-size: 0.68rem;
     color: #888;
 }
 
@@ -292,15 +292,15 @@
 
 @media (max-width: 768px) {
 
-    /* Page Links Responsive */
+    /* Page Links Responsive - 3カラム */
     .page-links-container {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(3, 1fr);
         gap: 10px;
         margin-top: 36px;
     }
 
     .page-link-card {
-        padding: 18px 10px;
+        padding: 14px 8px;
     }
 
     .page-link-card::after {
@@ -308,10 +308,31 @@
     }
 
     .page-link-title {
-        font-size: 0.82rem;
+        font-size: 0.75rem;
     }
 
     .page-link-desc {
-        font-size: 0.68rem;
+        font-size: 0.6rem;
+    }
+}
+
+@media (max-width: 480px) {
+
+    /* Page Links Responsive - 2カラム */
+    .page-links-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    .page-link-card {
+        padding: 12px 6px;
+    }
+
+    .page-link-title {
+        font-size: 0.7rem;
+    }
+
+    .page-link-desc {
+        display: none;
     }
 }

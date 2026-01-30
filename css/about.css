@@ -24,7 +24,7 @@
             --color-primary-dark: #232d2a;
             --color-gold: #c4a35a;
             --color-text-white: #ffffff;
-            --color-text-light: rgba(255,255,255,0.9);
+            --color-text-light: rgba(255, 255, 255, 0.9);
             --color-cream: #f8f6f2;
         }
 
@@ -121,11 +121,11 @@
             font-weight: 500;
             letter-spacing: 0.08em;
             transition: all 0.3s;
-            border: 1px solid rgba(255,255,255,0.6);
+            border: 1px solid rgba(255, 255, 255, 0.6);
         }
 
         .contact-btn:hover {
-            background: rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.1);
             border-color: var(--color-text-white);
         }
 
@@ -189,7 +189,7 @@
         }
 
         .profile-hero-name-en {
-            color: rgba(255,255,255,0.5);
+            color: rgba(255, 255, 255, 0.5);
             font-size: 0.65rem;
             letter-spacing: 0.15em;
             margin-bottom: 20px;
@@ -225,18 +225,18 @@
         }
 
         .profile-hero-methods li {
-            color: rgba(255,255,255,0.9);
+            color: rgba(255, 255, 255, 0.9);
             font-size: 0.8rem;
             padding: 8px 12px;
-            background: rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 20px;
-            border: 1px solid rgba(255,255,255,0.15);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             text-align: center;
             white-space: nowrap;
         }
 
         .profile-hero-methods-note {
-            color: rgba(255,255,255,0.85);
+            color: rgba(255, 255, 255, 0.85);
             font-size: 0.85rem;
             margin: 0 0 20px 0;
         }
@@ -246,12 +246,12 @@
         }
 
         .profile-hero-greeting {
-            color: rgba(255,255,255,0.85);
+            color: rgba(255, 255, 255, 0.85);
             font-size: 0.85rem;
             line-height: 2;
             padding-top: 20px;
             margin-top: 20px;
-            border-top: 1px solid rgba(255,255,255,0.15);
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
             max-width: 90%;
         }
 
@@ -360,7 +360,7 @@
         .style-highlight p {
             font-size: 0.95rem;
             line-height: 1.9;
-            color: rgba(255,255,255,0.95);
+            color: rgba(255, 255, 255, 0.95);
         }
 
         /* ========== 実績 ========== */
@@ -384,7 +384,7 @@
             padding: 36px 20px;
             border-radius: 12px;
             text-align: center;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
         }
 
         .achievement-number {
@@ -410,7 +410,7 @@
             background: #fff;
             padding: 24px 28px;
             border-radius: 12px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
             max-width: 600px;
             margin: 0 auto;
         }
@@ -452,7 +452,7 @@
             padding: 24px 16px;
             border-radius: 10px;
             border-top: 3px solid var(--color-gold);
-            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
             text-align: center;
         }
 
@@ -527,7 +527,7 @@
         }
 
         .cta-text {
-            color: rgba(255,255,255,0.9);
+            color: rgba(255, 255, 255, 0.9);
             font-size: 0.95rem;
             line-height: 2;
             margin-bottom: 18px;
@@ -552,7 +552,7 @@
         }
 
         .cta-guide {
-            background: rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.1);
             padding: 24px;
             border-radius: 10px;
             margin: 24px auto;
@@ -572,7 +572,7 @@
         }
 
         .cta-guide-text {
-            color: rgba(255,255,255,0.85);
+            color: rgba(255, 255, 255, 0.85);
             font-size: 0.88rem;
             line-height: 1.7;
         }
@@ -595,7 +595,7 @@
         }
 
         .cta-sub {
-            color: rgba(255,255,255,0.6);
+            color: rgba(255, 255, 255, 0.6);
             font-size: 0.8rem;
             margin-top: 16px;
             position: relative;
@@ -605,7 +605,7 @@
         /* ========== フッター ========== */
         .footer {
             background: var(--color-primary);
-            color: rgba(255,255,255,0.7);
+            color: rgba(255, 255, 255, 0.7);
             text-align: center;
             padding: 25px 20px;
             height: 75px;
@@ -619,7 +619,7 @@
         }
 
         .footer-content a {
-            color: rgba(255,255,255,0.7);
+            color: rgba(255, 255, 255, 0.7);
             margin-right: 20px;
             transition: color 0.3s;
         }
@@ -633,12 +633,15 @@
             .header {
                 padding: 0 20px;
             }
+
             .nav {
                 gap: 20px;
             }
+
             .nav a {
                 font-size: 0.8rem;
             }
+
             .contact-btn {
                 padding: 10px 18px;
                 font-size: 0.8rem;
@@ -649,29 +652,37 @@
             .header-inner {
                 height: 60px;
             }
+
             .logo-main {
                 font-size: 1.1rem;
             }
+
             .nav {
                 gap: 15px;
             }
+
             .nav a {
                 font-size: 0.75rem;
             }
+
             .contact-btn {
                 padding: 8px 14px;
                 font-size: 0.75rem;
             }
+
             .main-content {
                 padding-top: 60px;
             }
+
             .achievement-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
+
             .footer {
                 height: auto;
                 padding: 20px;
             }
+
             .footer-content {
                 font-size: 0.75rem;
             }
@@ -690,161 +701,206 @@
                 gap: 0;
                 z-index: 999;
             }
+
             .nav-wrapper.active {
                 display: flex;
             }
+
             .nav {
                 flex-direction: column;
                 gap: 0;
                 width: 100%;
             }
+
             .nav a {
                 padding: 15px 0;
                 font-size: 1rem;
-                border-bottom: 1px solid rgba(255,255,255,0.1);
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
                 width: 100%;
                 text-align: center;
             }
+
             .nav a::after {
                 display: none;
             }
+
             .contact-btn {
                 margin-top: 15px;
                 padding: 12px 30px;
                 font-size: 1rem;
                 text-align: center;
             }
+
             .menu-toggle {
                 display: flex !important;
             }
+
             .profile-hero-inner {
                 grid-template-columns: 1fr;
                 min-height: auto;
             }
+
             .profile-hero-photo {
                 height: 450px;
                 object-fit: cover;
                 /* スマホ: 下側をもっと見せる */
                 object-position: center 30%;
             }
+
             .profile-hero-content {
                 padding: 32px 24px 40px;
                 text-align: center;
                 align-items: center;
             }
+
             .profile-hero-name {
                 font-size: 1.5rem;
             }
+
             .profile-hero-tagline {
                 font-size: 0.95rem;
             }
+
             .profile-hero-catch {
                 font-size: 0.88rem;
             }
+
             .profile-hero-methods {
                 max-width: 280px;
                 margin: 0 auto 16px;
             }
+
             .profile-hero-methods li {
                 font-size: 0.75rem;
                 padding: 6px 10px;
             }
+
             .profile-hero-greeting {
                 text-align: center;
                 max-width: 100%;
             }
+
             .hero-cta-btn img {
                 max-width: 200px;
             }
+
             .profile-section {
                 padding: 48px 20px;
             }
+
             .section-title {
                 font-size: 1.15rem;
                 margin-bottom: 28px;
             }
+
             .style-item {
                 padding: 20px;
             }
+
             .style-lead {
                 font-size: 0.95rem;
             }
+
             .style-item p {
                 font-size: 0.88rem;
             }
+
             .style-highlight {
                 padding: 24px 20px;
             }
+
             .style-highlight strong {
                 font-size: 1.05rem;
             }
+
             .achievement-section {
                 padding: 48px 20px;
             }
+
             .achievement-grid {
                 gap: 16px;
                 max-width: 400px;
             }
+
             .achievement-item {
                 padding: 28px 16px;
             }
+
             .achievement-number {
                 font-size: 2rem;
             }
+
             .achievement-label {
                 font-size: 0.8rem;
             }
+
             .achievement-list {
                 padding: 20px;
             }
+
             .achievement-list li {
                 font-size: 0.85rem;
                 padding-left: 20px;
             }
+
             .specialty-grid {
                 grid-template-columns: repeat(2, 1fr);
                 gap: 12px;
             }
+
             .specialty-item {
                 padding: 20px 12px;
             }
+
             .specialty-icon {
                 font-size: 1.4rem;
             }
+
             .specialty-title {
                 font-size: 0.88rem;
             }
+
             .specialty-desc {
                 font-size: 0.72rem;
             }
+
             .belief-lead {
                 font-size: 0.98rem;
             }
+
             .belief-text {
                 font-size: 0.88rem;
             }
+
             .cta-section {
                 padding: 48px 20px;
             }
+
             .cta-text {
                 font-size: 0.88rem;
             }
+
             .cta-strong {
                 font-size: 0.98rem;
             }
+
             .cta-guide {
                 padding: 20px;
                 max-width: 300px;
             }
+
             .cta-guide-title {
                 font-size: 0.9rem;
             }
+
             .cta-guide-text {
                 font-size: 0.82rem;
             }
+
             .cta-btn img {
                 max-width: 280px;
             }
+
             .hero-cta-btn img {
                 max-width: 260px;
             }
@@ -870,6 +926,7 @@
             cursor: pointer;
             padding: 8px;
         }
+
         .menu-toggle span {
             display: block;
             width: 100%;
@@ -879,80 +936,112 @@
             border-radius: 2px;
         }
 
-        /* ページ導線 */
+        /* ページ導線（5カラム対応） */
         .page-links {
             background: var(--color-cream);
             padding: 48px 20px;
-            border-top: 1px solid rgba(0,0,0,0.05);
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
         }
+
         .page-links-inner {
             max-width: 1100px;
             margin: 0 auto;
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
         }
+
         .page-link-card {
             background: #fff;
-            padding: 24px 16px;
-            border-radius: 12px;
+            padding: 18px 10px;
+            border-radius: 10px;
             text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
             transition: all 0.3s;
             display: block;
             border: 2px solid transparent;
             position: relative;
         }
+
         .page-link-card::after {
             content: '→';
             position: absolute;
-            right: 12px;
+            right: 8px;
             top: 50%;
             transform: translateY(-50%);
             color: var(--color-gold);
-            font-size: 1rem;
+            font-size: 0.85rem;
             opacity: 0;
             transition: all 0.3s;
         }
+
         .page-link-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
             border-color: var(--color-gold);
         }
+
         .page-link-card:hover::after {
             opacity: 1;
-            right: 8px;
+            right: 5px;
         }
+
         .page-link-title {
             display: block;
-            font-size: 0.95rem;
+            font-size: 0.85rem;
             font-weight: 600;
             color: var(--color-primary);
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
+
         .page-link-desc {
             display: block;
-            font-size: 0.75rem;
+            font-size: 0.68rem;
             color: #888;
         }
-        @media (max-width: 1024px) {
+
+        @media (max-width: 768px) {
             .page-links {
                 padding: 36px 16px;
             }
+
             .page-links-inner {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: repeat(3, 1fr);
                 gap: 10px;
             }
+
             .page-link-card {
-                padding: 18px 12px;
+                padding: 14px 8px;
             }
+
             .page-link-card::after {
                 display: none;
             }
+
             .page-link-title {
-                font-size: 0.82rem;
+                font-size: 0.75rem;
             }
+
             .page-link-desc {
+                font-size: 0.6rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-links-inner {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+
+            .page-link-card {
+                padding: 12px 6px;
+            }
+
+            .page-link-title {
                 font-size: 0.7rem;
+            }
+
+            .page-link-desc {
+                display: none;
             }
         }
