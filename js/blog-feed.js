@@ -3,7 +3,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!BLOG_GRID) return;
 
     // note RSSのURLをrss2json経由で取得
-    const RSS_URL = 'https://note.com/rokkon_uranai/rss';
+    // キャッシュ回避のためにタイムスタンプを付与
+    const RSS_URL = 'https://note.com/rokkon_uranai/rss?t=' + Date.now();
     const API_URL = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(RSS_URL)}`;
 
     fetch(API_URL)
@@ -12,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.status === 'ok') {
                 // 既存のコンテンツをクリアして最新記事を表示
                 BLOG_GRID.innerHTML = '';
-                
+
                 // 最新6件を取得
                 const items = data.items.slice(0, 6);
 
