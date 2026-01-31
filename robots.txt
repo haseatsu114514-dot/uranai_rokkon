@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://uranai-rokkon.com/sitemap.xml
