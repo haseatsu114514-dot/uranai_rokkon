@@ -35,7 +35,7 @@ body {
 
 body::before {
     content: "";
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
@@ -856,50 +856,13 @@ body::before {
     color: var(--color-gold);
 }
 
-/* ========== レスポンシブ ========== */
-@media (max-width: 1100px) {
+/* ========== レスポンシブ（PC: 769px以上 / スマホ: 768px以下） ========== */
+@media (max-width: 768px) {
+    /* ヘッダー */
     .header {
-        padding: 0 20px;
+        padding: 0 15px;
     }
 
-    .nav {
-        gap: 20px;
-    }
-
-    .nav a {
-        font-size: 0.8rem;
-    }
-
-    .contact-btn {
-        padding: 10px 18px;
-        font-size: 0.8rem;
-    }
-
-    .hero {
-        min-height: 600px;
-    }
-
-    .hero-title {
-        font-size: 3.8rem;
-        margin-bottom: 40px;
-    }
-
-    .hero-subtitle {
-        font-size: 1.25rem;
-        margin-bottom: 2.5rem;
-    }
-
-    .trust-badge {
-        font-size: 0.8rem;
-        padding: 0.45rem 1.3rem;
-    }
-
-    .about-title {
-        font-size: 3rem;
-    }
-}
-
-@media (max-width: 900px) {
     .header-inner {
         height: 60px;
     }
@@ -908,205 +871,7 @@ body::before {
         font-size: 1.1rem;
     }
 
-    .nav {
-        gap: 15px;
-    }
-
-    .nav a {
-        font-size: 0.75rem;
-    }
-
-    .contact-btn {
-        padding: 8px 14px;
-        font-size: 0.75rem;
-    }
-
-    .hero {
-        min-height: 550px;
-        padding-top: 60px;
-    }
-
-    .hero-content {
-        padding: 30px 20px;
-    }
-
-    .hero-title {
-        font-size: 2.2rem;
-        margin-bottom: 30px;
-        margin-top: 10px;
-    }
-
-    .hero-subtitle {
-        font-size: 1.1rem;
-        margin-bottom: 2rem;
-    }
-
-    .trust-badge {
-        font-size: 0.75rem;
-        padding: 0.4rem 1.2rem;
-        margin-bottom: 1.5rem;
-    }
-
-    .hero-btn img {
-        max-width: 350px;
-    }
-
-    .availability-section {
-        padding: 40px 20px;
-    }
-
-    .about-section {
-        padding: 50px 20px;
-    }
-
-    .about-title {
-        font-size: 1.8rem;
-    }
-
-    .about-title ruby rt {
-        font-size: 0.7rem;
-    }
-
-    .about-text {
-        font-size: 0.95rem;
-    }
-
-    .flow-section {
-        padding: 60px 20px;
-    }
-
-    .section-title {
-        font-size: 1.8rem;
-    }
-
-    .flow-step {
-        gap: 20px;
-    }
-
-    .flow-number {
-        width: 46px;
-        height: 46px;
-        font-size: 1.1rem;
-    }
-
-    .flow-line {
-        left: 22px;
-        top: 48px;
-    }
-
-    .flow-content {
-        padding: 20px;
-    }
-
-    .flow-title {
-        font-size: 1.05rem;
-    }
-
-    .flow-desc {
-        font-size: 0.9rem;
-    }
-
-    .flow-screenshot img {
-        max-width: 170px;
-    }
-
-    .footer {
-        height: auto;
-        padding: 20px;
-    }
-
-    .footer-content {
-        font-size: 0.75rem;
-    }
-
-    .page-links-inner {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 10px;
-    }
-
-    .page-link-card {
-        padding: 14px 8px;
-    }
-
-    .page-link-card::after {
-        display: none;
-    }
-
-    .page-link-title {
-        font-size: 0.75rem;
-    }
-
-    .page-link-desc {
-        font-size: 0.6rem;
-    }
-}
-
-@media (max-width: 600px) {
-    .nav {
-        gap: 8px;
-    }
-
-    .nav a {
-        font-size: 0.65rem;
-    }
-
-    .contact-btn {
-        padding: 6px 10px;
-        font-size: 0.65rem;
-    }
-
-    .hero {
-        min-height: 500px;
-    }
-
-    .hero-title {
-        font-size: 2rem;
-        margin-bottom: 25px;
-    }
-
-    .hero-subtitle {
-        font-size: 1rem;
-        margin-bottom: 1.8rem;
-    }
-
-    .trust-badge {
-        font-size: 0.72rem;
-        padding: 0.38rem 1.1rem;
-    }
-
-    .about-title {
-        font-size: 1.5rem;
-    }
-
-    .page-links {
-        padding: 40px 16px;
-    }
-
-    .page-links-inner {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-    }
-
-    .page-link-card {
-        padding: 18px 12px;
-    }
-
-    .page-link-card::after {
-        display: none;
-    }
-
-    .page-link-title {
-        font-size: 0.85rem;
-    }
-
-    .page-link-desc {
-        font-size: 0.7rem;
-    }
-}
-
-@media (max-width: 480px) {
-
-    /* ヘッダーをハンバーガーメニューに */
+    /* ハンバーガーメニュー */
     .nav-wrapper {
         display: none;
         position: fixed;
@@ -1164,7 +929,7 @@ body::before {
     }
 
     .hero-title {
-        font-size: 1.9rem;
+        font-size: 2rem;
         letter-spacing: 0.05em;
         margin-bottom: 20px;
         margin-top: 0;
@@ -1177,8 +942,8 @@ body::before {
     }
 
     .trust-badge {
-        font-size: 0.7rem;
-        padding: 0.35rem 1rem;
+        font-size: 0.72rem;
+        padding: 0.38rem 1.1rem;
         margin-bottom: 1rem;
     }
 
@@ -1186,6 +951,7 @@ body::before {
         max-width: 300px;
     }
 
+    /* 予約状況 */
     .availability-section {
         padding: 30px 15px;
     }
@@ -1202,12 +968,12 @@ body::before {
     }
 
     .about-title ruby rt {
-        font-size: 0.55rem;
+        font-size: 0.6rem;
         line-height: 2;
     }
 
     .about-text {
-        font-size: 0.85rem;
+        font-size: 0.9rem;
         line-height: 1.8;
     }
 
@@ -1226,47 +992,83 @@ body::before {
     }
 
     .section-title {
-        font-size: 1.4rem;
+        font-size: 1.5rem;
         margin-bottom: 35px;
     }
 
     .flow-step {
-        gap: 12px;
+        gap: 15px;
         padding-bottom: 25px;
     }
 
     .flow-number {
-        width: 36px;
-        height: 36px;
-        font-size: 0.9rem;
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
         flex-shrink: 0;
     }
 
     .flow-line {
-        left: 17px;
-        top: 40px;
+        left: 19px;
+        top: 44px;
     }
 
     .flow-content {
-        padding: 15px;
+        padding: 18px;
     }
 
     .flow-title {
-        font-size: 0.95rem;
+        font-size: 1rem;
     }
 
     .flow-desc {
-        font-size: 0.8rem;
+        font-size: 0.85rem;
         line-height: 1.7;
     }
 
     .flow-note {
-        font-size: 0.75rem;
-        padding: 6px 10px;
+        font-size: 0.8rem;
+        padding: 8px 12px;
     }
 
     .flow-screenshot img {
         max-width: 150px;
+    }
+
+    /* ページ導線 */
+    .page-links {
+        padding: 40px 16px;
+    }
+
+    .page-links-inner {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .page-link-card {
+        padding: 16px 10px;
+    }
+
+    .page-link-card::after {
+        display: none;
+    }
+
+    .page-link-title {
+        font-size: 0.8rem;
+    }
+
+    .page-link-desc {
+        font-size: 0.65rem;
+    }
+
+    /* フッター */
+    .footer {
+        height: auto;
+        padding: 20px;
+    }
+
+    .footer-content {
+        font-size: 0.75rem;
     }
 }
 
