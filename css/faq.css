@@ -231,51 +231,29 @@
     color: #888;
 }
 
-/* ========== レスポンシブ (FAQ固有) ========== */
-@media (max-width: 900px) {
+/* ========== レスポンシブ（PC: 769px以上 / スマホ: 768px以下） ========== */
+@media (max-width: 768px) {
     .main-content {
         padding-top: 60px;
     }
 
     .page-header {
-        padding: 40px 20px;
+        padding: 35px 15px;
     }
 
     .page-title {
-        font-size: 1.6rem;
-    }
-
-    .container {
-        padding: 40px 15px;
-    }
-
-    .question {
-        font-size: 0.95rem;
-        padding: 20px 50px 20px 20px;
-        gap: 10px;
-    }
-
-    .question::before {
-        min-width: 28px;
-        height: 28px;
-        font-size: 0.8rem;
-    }
-
-    .question::after {
-        right: 20px;
         font-size: 1.5rem;
     }
 
-    .answer {
-        font-size: 0.9rem;
-        padding: 0 20px 24px 58px;
+    .container {
+        padding: 35px 15px;
     }
-}
 
-@media (max-width: 600px) {
+    /* FAQ */
     .question {
-        font-size: 0.88rem;
+        font-size: 0.9rem;
         padding: 18px 45px 18px 16px;
+        gap: 10px;
     }
 
     .question::before {
@@ -284,17 +262,19 @@
         font-size: 0.75rem;
     }
 
-    .answer {
-        padding: 0 16px 20px 48px;
-        font-size: 0.85rem;
+    .question::after {
+        right: 18px;
+        font-size: 1.5rem;
     }
-}
 
-@media (max-width: 768px) {
+    .answer {
+        font-size: 0.85rem;
+        padding: 0 16px 20px 48px;
+    }
 
-    /* Page Links Responsive - 3カラム */
+    /* ページ導線 */
     .page-links-container {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(2, 1fr);
         gap: 10px;
         margin-top: 36px;
     }
@@ -313,26 +293,5 @@
 
     .page-link-desc {
         font-size: 0.6rem;
-    }
-}
-
-@media (max-width: 480px) {
-
-    /* Page Links Responsive - 2カラム */
-    .page-links-container {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 8px;
-    }
-
-    .page-link-card {
-        padding: 12px 6px;
-    }
-
-    .page-link-title {
-        font-size: 0.7rem;
-    }
-
-    .page-link-desc {
-        display: none;
     }
 }

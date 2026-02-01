@@ -459,121 +459,29 @@
     color: #888;
 }
 
-/* ========== レスポンシブ (testimonials固有) ========== */
-@media (max-width: 900px) {
+/* ========== レスポンシブ（PC: 769px以上 / スマホ: 768px以下） ========== */
+@media (max-width: 768px) {
     .main-content {
         padding-top: 60px;
     }
 
     .page-header {
-        padding: 40px 20px;
-    }
-
-    .page-title {
-        font-size: 1.6rem;
-    }
-
-    .testimonials-section {
-        padding: 40px 20px;
-    }
-
-    .page-links {
-        padding: 48px 20px;
-    }
-
-    .page-links-inner {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 10px;
-    }
-
-    .page-link-card {
-        padding: 14px 8px;
-    }
-
-    .page-link-card::after {
-        display: none;
-    }
-
-    .page-link-title {
-        font-size: 0.75rem;
-    }
-
-    .page-link-desc {
-        font-size: 0.6rem;
-    }
-}
-
-@media (max-width: 768px) {
-    .page-header {
         padding: 35px 15px;
     }
 
     .page-title {
-        font-size: 1.4rem;
+        font-size: 1.5rem;
+    }
+
+    .page-subtitle {
+        font-size: 0.9rem;
     }
 
     .testimonials-section {
         padding: 30px 15px;
     }
 
-    .page-links {
-        padding: 40px 16px;
-    }
-
-    .page-links-inner {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 10px;
-    }
-
-    .page-link-card {
-        padding: 14px 8px;
-    }
-
-    .page-link-card::after {
-        display: none;
-    }
-
-    .page-link-title {
-        font-size: 0.75rem;
-    }
-
-    .page-link-desc {
-        font-size: 0.6rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .page-links-inner {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 8px;
-    }
-
-    .page-link-card {
-        padding: 12px 6px;
-    }
-
-    .page-link-title {
-        font-size: 0.7rem;
-    }
-
-    .page-link-desc {
-        display: none;
-    }
-}
-
-@media (max-width: 600px) {
-    .page-header {
-        padding: 36px 16px;
-    }
-
-    .page-title {
-        font-size: 1.35rem;
-    }
-
-    .testimonials-section {
-        padding: 24px 14px 36px;
-    }
-
+    /* タブ */
     .genre-tabs {
         gap: 6px;
         margin-bottom: 18px;
@@ -581,9 +489,10 @@
 
     .genre-tab {
         padding: 8px 12px;
-        font-size: 0.73rem;
+        font-size: 0.75rem;
     }
 
+    /* カード */
     .testimonial-card {
         padding: 22px 16px 20px;
         border-radius: 12px;
@@ -595,7 +504,7 @@
     }
 
     .testimonial-content {
-        font-size: 0.82rem;
+        font-size: 0.85rem;
         line-height: 1.95;
         margin-bottom: 14px;
     }
@@ -604,6 +513,7 @@
         font-size: 0.75rem;
     }
 
+    /* スライダー */
     .slider-nav {
         margin-top: 16px;
         gap: 10px;
@@ -620,6 +530,7 @@
         font-size: 0.75rem;
     }
 
+    /* CTA */
     .review-cta {
         padding: 22px 16px;
         margin-top: 22px;
@@ -632,18 +543,30 @@
     .cta-btn img {
         max-width: 300px;
     }
-}
 
-@media (max-width: 480px) {
-    .page-header {
-        padding: 30px 12px;
+    /* ページ導線 */
+    .page-links {
+        padding: 40px 16px;
     }
 
-    .page-title {
-        font-size: 1.2rem;
+    .page-links-inner {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
     }
 
-    .page-subtitle {
-        font-size: 0.9rem;
+    .page-link-card {
+        padding: 14px 8px;
+    }
+
+    .page-link-card::after {
+        display: none;
+    }
+
+    .page-link-title {
+        font-size: 0.75rem;
+    }
+
+    .page-link-desc {
+        font-size: 0.6rem;
     }
 }

@@ -317,20 +317,18 @@
     color: #888;
 }
 
-/* ========== レスポンシブ ========== */
-@media (max-width: 900px) {
-    .blog-main {
+/* ========== レスポンシブ（PC: 769px以上 / スマホ: 768px以下） ========== */
+@media (max-width: 768px) {
+    .main-content {
         padding-top: 60px;
     }
-}
 
-@media (max-width: 768px) {
     .blog-hero {
         padding: 40px 20px;
     }
 
     .blog-hero-title {
-        font-size: 1.6rem;
+        font-size: 1.5rem;
         letter-spacing: 0.1em;
     }
 
@@ -352,20 +350,25 @@
     }
 
     .article-content {
-        padding: 22px;
+        padding: 20px;
     }
 
     .article-title {
-        font-size: 1.1rem;
+        font-size: 1.05rem;
     }
 
-    /* ページ導線レスポンシブ */
+    .article-excerpt {
+        font-size: 0.85rem;
+        -webkit-line-clamp: 2;
+    }
+
+    /* ページ導線 */
     .blog-page-links {
         padding: 40px 15px;
     }
 
     .blog-page-links-inner {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(2, 1fr);
         gap: 10px;
     }
 
@@ -383,41 +386,5 @@
 
     .blog-page-link-desc {
         font-size: 0.6rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .blog-hero-title {
-        font-size: 1.5rem;
-    }
-
-    .article-content {
-        padding: 18px;
-    }
-
-    .article-title {
-        font-size: 1rem;
-    }
-
-    .article-excerpt {
-        font-size: 0.85rem;
-        -webkit-line-clamp: 2;
-    }
-
-    .blog-page-links-inner {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 8px;
-    }
-
-    .blog-page-link-card {
-        padding: 12px 6px;
-    }
-
-    .blog-page-link-title {
-        font-size: 0.7rem;
-    }
-
-    .blog-page-link-desc {
-        display: none;
     }
 }

@@ -628,293 +628,6 @@
             color: var(--color-gold);
         }
 
-        /* ========== レスポンシブ ========== */
-        @media (max-width: 1100px) {
-            .header {
-                padding: 0 20px;
-            }
-
-            .nav {
-                gap: 20px;
-            }
-
-            .nav a {
-                font-size: 0.8rem;
-            }
-
-            .contact-btn {
-                padding: 10px 18px;
-                font-size: 0.8rem;
-            }
-        }
-
-        @media (max-width: 900px) {
-            .header-inner {
-                height: 60px;
-            }
-
-            .logo-main {
-                font-size: 1.1rem;
-            }
-
-            .nav {
-                gap: 15px;
-            }
-
-            .nav a {
-                font-size: 0.75rem;
-            }
-
-            .contact-btn {
-                padding: 8px 14px;
-                font-size: 0.75rem;
-            }
-
-            .main-content {
-                padding-top: 60px;
-            }
-
-            .achievement-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .footer {
-                height: auto;
-                padding: 20px;
-            }
-
-            .footer-content {
-                font-size: 0.75rem;
-            }
-        }
-
-        @media (max-width: 1024px) {
-            .nav-wrapper {
-                display: none;
-                position: fixed;
-                top: 60px;
-                left: 0;
-                width: 100%;
-                background: var(--color-primary);
-                flex-direction: column;
-                padding: 20px;
-                gap: 0;
-                z-index: 999;
-            }
-
-            .nav-wrapper.active {
-                display: flex;
-            }
-
-            .nav {
-                flex-direction: column;
-                gap: 0;
-                width: 100%;
-            }
-
-            .nav a {
-                padding: 15px 0;
-                font-size: 1rem;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-                width: 100%;
-                text-align: center;
-            }
-
-            .nav a::after {
-                display: none;
-            }
-
-            .contact-btn {
-                margin-top: 15px;
-                padding: 12px 30px;
-                font-size: 1rem;
-                text-align: center;
-            }
-
-            .menu-toggle {
-                display: flex !important;
-            }
-
-            .profile-hero-inner {
-                grid-template-columns: 1fr;
-                min-height: auto;
-            }
-
-            .profile-hero-photo {
-                height: 450px;
-                object-fit: cover;
-                /* スマホ: 下側をもっと見せる */
-                object-position: center 30%;
-            }
-
-            .profile-hero-content {
-                padding: 32px 24px 40px;
-                text-align: center;
-                align-items: center;
-            }
-
-            .profile-hero-name {
-                font-size: 1.5rem;
-            }
-
-            .profile-hero-tagline {
-                font-size: 0.95rem;
-            }
-
-            .profile-hero-catch {
-                font-size: 0.88rem;
-            }
-
-            .profile-hero-methods {
-                max-width: 280px;
-                margin: 0 auto 16px;
-            }
-
-            .profile-hero-methods li {
-                font-size: 0.75rem;
-                padding: 6px 10px;
-            }
-
-            .profile-hero-greeting {
-                text-align: center;
-                max-width: 100%;
-            }
-
-            .hero-cta-btn img {
-                max-width: 200px;
-            }
-
-            .profile-section {
-                padding: 48px 20px;
-            }
-
-            .section-title {
-                font-size: 1.15rem;
-                margin-bottom: 28px;
-            }
-
-            .style-item {
-                padding: 20px;
-            }
-
-            .style-lead {
-                font-size: 0.95rem;
-            }
-
-            .style-item p {
-                font-size: 0.88rem;
-            }
-
-            .style-highlight {
-                padding: 24px 20px;
-            }
-
-            .style-highlight strong {
-                font-size: 1.05rem;
-            }
-
-            .achievement-section {
-                padding: 48px 20px;
-            }
-
-            .achievement-grid {
-                gap: 16px;
-                max-width: 400px;
-            }
-
-            .achievement-item {
-                padding: 28px 16px;
-            }
-
-            .achievement-number {
-                font-size: 2rem;
-            }
-
-            .achievement-label {
-                font-size: 0.8rem;
-            }
-
-            .achievement-list {
-                padding: 20px;
-            }
-
-            .achievement-list li {
-                font-size: 0.85rem;
-                padding-left: 20px;
-            }
-
-            .specialty-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 12px;
-            }
-
-            .specialty-item {
-                padding: 20px 12px;
-            }
-
-            .specialty-icon {
-                font-size: 1.4rem;
-            }
-
-            .specialty-title {
-                font-size: 0.88rem;
-            }
-
-            .specialty-desc {
-                font-size: 0.72rem;
-            }
-
-            .belief-lead {
-                font-size: 0.98rem;
-            }
-
-            .belief-text {
-                font-size: 0.88rem;
-            }
-
-            .cta-section {
-                padding: 48px 20px;
-            }
-
-            .cta-text {
-                font-size: 0.88rem;
-            }
-
-            .cta-strong {
-                font-size: 0.98rem;
-            }
-
-            .cta-guide {
-                padding: 20px;
-                max-width: 300px;
-            }
-
-            .cta-guide-title {
-                font-size: 0.9rem;
-            }
-
-            .cta-guide-text {
-                font-size: 0.82rem;
-            }
-
-            .cta-btn img {
-                max-width: 280px;
-            }
-
-            .hero-cta-btn img {
-                max-width: 260px;
-            }
-        }
-
-        /* 小さいスマホ対応 */
-        @media (max-width: 480px) {
-            .profile-hero-photo {
-                height: 400px;
-                /* 小さいスマホ: 下側重視 */
-                object-position: center 28%;
-            }
-        }
-
         /* ハンバーガーメニュー */
         .menu-toggle {
             display: none;
@@ -1000,13 +713,251 @@
             color: #888;
         }
 
+        /* ========== レスポンシブ（PC: 769px以上 / スマホ: 768px以下） ========== */
         @media (max-width: 768px) {
+            /* ヘッダー */
+            .header {
+                padding: 0 15px;
+            }
+
+            .header-inner {
+                height: 60px;
+            }
+
+            .logo-main {
+                font-size: 1.1rem;
+            }
+
+            /* ハンバーガーメニュー */
+            .nav-wrapper {
+                display: none;
+                position: fixed;
+                top: 60px;
+                left: 0;
+                width: 100%;
+                background: var(--color-primary);
+                flex-direction: column;
+                padding: 20px;
+                gap: 0;
+                z-index: 999;
+            }
+
+            .nav-wrapper.active {
+                display: flex;
+            }
+
+            .nav {
+                flex-direction: column;
+                gap: 0;
+                width: 100%;
+            }
+
+            .nav a {
+                padding: 15px 0;
+                font-size: 1rem;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                width: 100%;
+                text-align: center;
+            }
+
+            .nav a::after {
+                display: none;
+            }
+
+            .contact-btn {
+                margin-top: 15px;
+                padding: 12px 30px;
+                font-size: 1rem;
+                text-align: center;
+            }
+
+            .menu-toggle {
+                display: flex !important;
+            }
+
+            .main-content {
+                padding-top: 60px;
+            }
+
+            /* プロフィールヒーロー */
+            .profile-hero-inner {
+                grid-template-columns: 1fr;
+                min-height: auto;
+            }
+
+            .profile-hero-photo {
+                height: 400px;
+                object-fit: cover;
+                object-position: center 30%;
+            }
+
+            .profile-hero-content {
+                padding: 32px 24px 40px;
+                text-align: center;
+                align-items: center;
+            }
+
+            .profile-hero-name {
+                font-size: 1.5rem;
+            }
+
+            .profile-hero-tagline {
+                font-size: 0.95rem;
+            }
+
+            .profile-hero-catch {
+                font-size: 0.88rem;
+            }
+
+            .profile-hero-methods {
+                max-width: 280px;
+                margin: 0 auto 16px;
+            }
+
+            .profile-hero-methods li {
+                font-size: 0.75rem;
+                padding: 6px 10px;
+            }
+
+            .profile-hero-greeting {
+                text-align: center;
+                max-width: 100%;
+            }
+
+            .hero-cta-btn img {
+                max-width: 260px;
+            }
+
+            /* セクション */
+            .profile-section {
+                padding: 48px 20px;
+            }
+
+            .section-title {
+                font-size: 1.15rem;
+                margin-bottom: 28px;
+            }
+
+            .style-item {
+                padding: 20px;
+            }
+
+            .style-lead {
+                font-size: 0.95rem;
+            }
+
+            .style-item p {
+                font-size: 0.88rem;
+            }
+
+            .style-highlight {
+                padding: 24px 20px;
+            }
+
+            .style-highlight strong {
+                font-size: 1.05rem;
+            }
+
+            /* 実績 */
+            .achievement-section {
+                padding: 48px 20px;
+            }
+
+            .achievement-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+                max-width: 400px;
+            }
+
+            .achievement-item {
+                padding: 28px 16px;
+            }
+
+            .achievement-number {
+                font-size: 2rem;
+            }
+
+            .achievement-label {
+                font-size: 0.8rem;
+            }
+
+            .achievement-list {
+                padding: 20px;
+            }
+
+            .achievement-list li {
+                font-size: 0.85rem;
+                padding-left: 20px;
+            }
+
+            /* 得意な鑑定 */
+            .specialty-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+
+            .specialty-item {
+                padding: 20px 12px;
+            }
+
+            .specialty-icon {
+                font-size: 1.4rem;
+            }
+
+            .specialty-title {
+                font-size: 0.88rem;
+            }
+
+            .specialty-desc {
+                font-size: 0.72rem;
+            }
+
+            /* 占いへの想い */
+            .belief-lead {
+                font-size: 0.98rem;
+            }
+
+            .belief-text {
+                font-size: 0.88rem;
+            }
+
+            /* CTA */
+            .cta-section {
+                padding: 48px 20px;
+            }
+
+            .cta-text {
+                font-size: 0.88rem;
+            }
+
+            .cta-strong {
+                font-size: 0.98rem;
+            }
+
+            .cta-guide {
+                padding: 20px;
+                max-width: 300px;
+            }
+
+            .cta-guide-title {
+                font-size: 0.9rem;
+            }
+
+            .cta-guide-text {
+                font-size: 0.82rem;
+            }
+
+            .cta-btn img {
+                max-width: 280px;
+            }
+
+            /* ページ導線 */
             .page-links {
                 padding: 36px 16px;
             }
 
             .page-links-inner {
-                grid-template-columns: repeat(3, 1fr);
+                grid-template-columns: repeat(2, 1fr);
                 gap: 10px;
             }
 
@@ -1025,23 +976,14 @@
             .page-link-desc {
                 font-size: 0.6rem;
             }
-        }
 
-        @media (max-width: 480px) {
-            .page-links-inner {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 8px;
+            /* フッター */
+            .footer {
+                height: auto;
+                padding: 20px;
             }
 
-            .page-link-card {
-                padding: 12px 6px;
-            }
-
-            .page-link-title {
-                font-size: 0.7rem;
-            }
-
-            .page-link-desc {
-                display: none;
+            .footer-content {
+                font-size: 0.75rem;
             }
         }
