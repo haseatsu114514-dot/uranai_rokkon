@@ -4,8 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // note RSSのURL
     const RSS_URL = 'https://note.com/rokkon_uranai/rss';
-    // allorigins.winを使ってCORSを回避しつつRaw XMLを取得
-    const API_URL = `https://api.allorigins.win/get?url=${encodeURIComponent(RSS_URL)}`;
+    // rss2jsonを使ってJSONとして取得 (alloriginsより安定性が高い)
+    const API_URL = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(RSS_URL)}`;
 
     fetch(API_URL)
         .then(response => {
@@ -13,50 +13,33 @@ document.addEventListener('DOMContentLoaded', () => {
             throw new Error('Network response was not ok.');
         })
         .then(data => {
-            if (data.contents) {
-                // XMLをパース
-                const parser = new DOMParser();
-                const xml = parser.parseFromString(data.contents, "text/xml");
-                const items = xml.querySelectorAll("item");
-
+            if (data.items && data.items.length > 0) {
                 // 既存のコンテンツをクリア
                 BLOG_GRID.innerHTML = '';
 
                 // 最新6件を取得
-                // NodeListはsliceできないのでArray.fromするか、ループでカウントする
-                const maxItems = Math.min(items.length, 6);
+                const items = data.items.slice(0, 6);
 
-                for (let i = 0; i < maxItems; i++) {
-                    const item = items[i];
-                    
+                items.forEach((item, index) => {
                     // タイトル
-                    const title = item.getElementsByTagName("title")[0]?.textContent || "無題";
+                    const title = item.title || "無題";
                     
                     // リンク
-                    const link = item.getElementsByTagName("link")[0]?.textContent || "#";
+                    const link = item.link || "#";
                     
                     // 日付
-                    const pubDateText = item.getElementsByTagName("pubDate")[0]?.textContent;
-                    const dateObj = new Date(pubDateText);
+                    const dateObj = new Date(item.pubDate);
                     const formattedDate = `${dateObj.getFullYear()}年${dateObj.getMonth() + 1}月${dateObj.getDate()}日`;
                     
-                    // カテゴリ (categoriesタグはない場合が多いが念のためチェック)
-                    // NoteのRSSにはcategoryタグがない場合もあるため、デフォルト固定か、あれば使う
-                    const categoryTag = item.getElementsByTagName("category")[0];
-                    const category = categoryTag ? categoryTag.textContent : 'コラム';
+                    // カテゴリ (rss2jsonではcategories配列)
+                    const category = (item.categories && item.categories.length > 0) ? item.categories[0] : 'コラム';
 
-                    // サムネイル (media:thumbnail)
-                    // getElementsByTagNameは名前空間付きタグを"media:thumbnail"で取れるブラウザが多いが
-                    // 安全のため名前空間なしでも探す、あるいは "thumbnail" で探す
-                    let thumbUrl = "";
-                    const mediaThumb = item.getElementsByTagName("media:thumbnail")[0] || item.getElementsByTagName("thumbnail")[0];
+                    // サムネイル
+                    let thumbUrl = item.thumbnail;
                     
-                    if (mediaThumb) {
-                        thumbUrl = mediaThumb.textContent;
-                    } else {
-                        // description内のimgタグを探す (フォールバック)
-                        const description = item.getElementsByTagName("description")[0]?.textContent || "";
-                        const imgMatch = description.match(/<img[^>]+src="([^">]+)"/);
+                    // サムネイルがない場合、descriptionから画像を探すフォールバック
+                    if (!thumbUrl) {
+                        const imgMatch = item.description.match(/<img[^>]+src="([^">]+)"/);
                         if (imgMatch) {
                             thumbUrl = imgMatch[1];
                         } else {
@@ -64,9 +47,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     }
 
-                    // 抜粋
-                    const description = item.getElementsByTagName("description")[0]?.textContent || "";
-                    const plainText = description.replace(/<[^>]+>/g, '');
+                    // 抜粋 (HTMLタグ除去)
+                    const plainText = item.description.replace(/<[^>]+>/g, '');
                     const excerpt = plainText.length > 60 ? plainText.substring(0, 60) + '...' : plainText;
 
                     // 記事カード生成
@@ -95,13 +77,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     setTimeout(() => {
                         article.style.opacity = '1';
                         article.style.transform = 'translateY(0)';
-                    }, i * 100 + 100);
-                }
+                    }, index * 100 + 100);
+                });
             } else {
-                console.error('No content found in feed');
+                console.warn('No content found in feed');
+                // データがない場合でも、ハードコードされた記事を残すか、エラー表示するかは要検討
+                // 現状はinnerHTMLクリア前なので、何もしなければハードコードされた初期表示が残る
+                // ここではもしデータ取得できてitemsが空ならクリアしてしまう可能性があるので、
+                // data.itemsがある場合のみクリアするように分岐済み。
             }
         })
         .catch(error => {
             console.error('Blog feed load failed:', error);
+            // エラー時は既存のハードコード記事がそのまま残る（安全策）
         });
 });
