@@ -5,8 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Note RSS URL
     const RSS_URL = 'https://note.com/rokkon_uranai/rss';
-    // Use allorigins to bypass CORS and get raw XML
-    const API_URL = `https://api.allorigins.win/contents?url=${encodeURIComponent(RSS_URL)}`;
+    // Use rss2json as primary (stable, JSON)
+    const API_URL = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(RSS_URL)}`;
 
     fetch(API_URL)
         .then(response => {
@@ -14,48 +14,50 @@ document.addEventListener('DOMContentLoaded', () => {
             throw new Error('Network response was not ok.');
         })
         .then(data => {
-            const parser = new DOMParser();
-            const xmlDoc = parser.parseFromString(data.contents, "text/xml");
-            const items = xmlDoc.querySelectorAll('item');
-
-            if (items && items.length > 0) {
+            if (data.items && data.items.length > 0) {
                 // Remove loading indicator
                 if (LOADING_INDICATOR) LOADING_INDICATOR.style.display = 'none';
 
-                items.forEach((item) => {
-                    // Extract data from XML
-                    const title = item.querySelector('title').textContent;
-                    const link = item.querySelector('link').textContent;
-                    const pubDate = new Date(item.querySelector('pubDate').textContent);
+                data.items.forEach((item) => {
+                    // Extract data from JSON
+                    const title = item.title || "無題";
+                    const link = item.link || "#";
+
+                    // rss2json returns date as "YYYY-MM-DD HH:mm:ss"
+                    let pubDate;
+                    if (item.pubDate.includes(' ')) {
+                        pubDate = new Date(item.pubDate.replace(' ', 'T'));
+                    } else {
+                        pubDate = new Date(item.pubDate);
+                    }
+                    if (isNaN(pubDate.getTime())) { pubDate = new Date(); }
+
                     const formattedDate = `${pubDate.getFullYear()}年${pubDate.getMonth() + 1}月${pubDate.getDate()}日`;
 
                     // Category
-                    const categoryElements = item.getElementsByTagName('category'); // HTMLCollection
-                    // Note RSS specific: 'category' tags exist? 
-                    // Usually <category> exists in standard RSS.
-                    // If note doesn't provide it, default to 'コラム'
-                    const category = (categoryElements.length > 0) ? categoryElements[0].textContent : 'コラム';
+                    const category = (item.categories && item.categories.length > 0) ? item.categories[0] : 'コラム';
 
-                    // Thumbnail
-                    // Note RSS uses <media:thumbnail>
-                    let thumbUrl = '';
-                    const mediaThumbnail = item.getElementsByTagName('media:thumbnail')[0];
-                    if (mediaThumbnail) {
-                        thumbUrl = mediaThumbnail.textContent;
-                    } else {
-                        // Fallback: extract from description/content:encoded
-                        const description = item.querySelector('description').textContent;
-                        const imgMatch = description.match(/<img[^>]+src="([^">]+)"/);
-                        if (imgMatch) {
-                            thumbUrl = imgMatch[1];
+                    // Thumbnail Logic
+                    let thumbUrl = item.thumbnail; // Often empty for Note
+
+                    // Fallback to extraction from description or content
+                    if (!thumbUrl) {
+                        const imgMatchDesc = item.description.match(/<img[^>]+src="([^">]+)"/);
+                        // content field is provided by rss2json if available
+                        const imgMatchContent = item.content ? item.content.match(/<img[^>]+src="([^">]+)"/) : null;
+
+                        if (imgMatchDesc) {
+                            thumbUrl = imgMatchDesc[1];
+                        } else if (imgMatchContent) {
+                            thumbUrl = imgMatchContent[1];
                         } else {
-                            thumbUrl = 'images/favicon.png';
+                            // Default Fallback
+                            thumbUrl = 'images/otya.png';
                         }
                     }
 
                     // Excerpt
-                    const description = item.querySelector('description').textContent;
-                    const plainText = description.replace(/<[^>]+>/g, '');
+                    const plainText = item.description.replace(/<[^>]+>/g, '');
                     const excerpt = plainText.length > 60 ? plainText.substring(0, 60) + '...' : plainText;
 
                     // Create Slide
@@ -66,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <article class="article-card">
                             <div class="article-image">
                                 <span class="article-category">${category}</span>
-                                <img src="${thumbUrl}" alt="${title}" class="article-thumb">
+                                <img src="${thumbUrl}" alt="${title}" class="article-thumb" onerror="this.src='images/otya.png'">
                             </div>
                             <div class="article-content">
                                 <div class="article-date">${formattedDate}</div>
