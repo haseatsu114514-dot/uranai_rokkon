@@ -7,7 +7,6 @@
     min-height: 100vh;
 }
 
-/* ブログヒーロー（FAQと統一） */
 /* ブログヒーロー（共通化） */
 .page-header {
     background: linear-gradient(135deg, #3a4a45 0%, #4a5a55 100%);
@@ -42,33 +41,18 @@
     margin: 0 auto;
 }
 
-/* 記事グリッド - Removed in favor of Swiper
+/* 記事グリッド (復元) */
 .blog-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
     gap: 30px;
-} */
-
-/* Swiper Styles */
-.swiper {
-    width: 100%;
-    padding-bottom: 50px !important;
-    /* Space for pagination */
-    padding-left: 10px;
-    /* Slight padding for shadow/overflow visibility */
-    padding-right: 10px;
+    margin-bottom: 40px;
 }
 
-.swiper-slide {
-    height: auto;
-    /* Allow auto height for flex stacking */
-    display: flex;
-    /* Make slide a flex container so card stretches */
-}
-
-/* Ensure article card takes full height of the slide */
+/* Ensure article card takes full height */
 .article-card {
     width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
     background: #fff;
@@ -77,40 +61,6 @@
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     border: 2px solid transparent;
-}
-
-/* Swiper Navigation & Pagination Colors */
-.swiper-button-next,
-.swiper-button-prev {
-    color: var(--color-primary-dark, #702f2f);
-}
-
-.swiper-pagination-bullet-active {
-    background: var(--color-primary-dark, #702f2f) !important;
-}
-
-/* Loading Indicator */
-.loading-indicator {
-    text-align: center;
-    padding: 60px 20px;
-    font-family: 'Shippori Mincho', serif;
-    color: #666;
-}
-
-.spinner {
-    margin: 0 auto 20px;
-    width: 40px;
-    height: 40px;
-    border: 3px solid rgba(0, 0, 0, 0.1);
-    border-radius: 50%;
-    border-top-color: var(--color-primary, #9a8058);
-    animation: spin 1s ease-in-out infinite;
-}
-
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
 }
 
 .article-card:hover {
@@ -212,7 +162,7 @@
 }
 
 /* 続きを読むリンク */
-.article-link {
+.read-more {
     display: inline-flex;
     align-items: center;
     gap: 8px;
@@ -224,16 +174,16 @@
     text-decoration: none;
 }
 
-.article-link::after {
+.read-more::after {
     content: '→';
     transition: transform 0.3s;
 }
 
-.article-link:hover {
+.read-more:hover {
     color: var(--color-primary);
 }
 
-.article-link:hover::after {
+.read-more:hover::after {
     transform: translateX(4px);
 }
 
@@ -251,22 +201,67 @@
     margin-left: auto;
 }
 
-/* 空状態 */
-.blog-empty {
+
+/* Loading Indicator */
+.loading-indicator {
     text-align: center;
-    padding: 80px 20px;
-    color: #888;
+    padding: 60px 20px;
+    font-family: 'Shippori Mincho', serif;
+    color: #666;
 }
 
-.blog-empty-icon {
-    font-size: 4rem;
-    margin-bottom: 20px;
-    opacity: 0.3;
+.spinner {
+    margin: 0 auto 20px;
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    border-top-color: var(--color-primary, #9a8058);
+    animation: spin 1s ease-in-out infinite;
 }
 
-.blog-empty-text {
-    font-size: 1.1rem;
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
 }
+
+/* Pagination / Load More Button */
+.pagination-container {
+    text-align: center;
+    margin-top: 40px;
+}
+
+.load-more-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 40px;
+    background: #fff;
+    border: 2px solid var(--color-gold);
+    color: var(--color-primary-dark);
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.load-more-btn:hover {
+    background: var(--color-gold);
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(196, 163, 90, 0.3);
+}
+
+.load-more-btn svg {
+    transition: transform 0.3s;
+}
+
+.load-more-btn:hover svg {
+    transform: translateY(2px);
+}
+
 
 /* noteリンクセクション */
 .blog-note-link {
@@ -303,87 +298,10 @@
     box-shadow: 0 8px 25px rgba(65, 199, 100, 0.4);
 }
 
-/* ========== ページ導線 (ブログ固有・5カラム対応) ========== */
-.blog-page-links {
-    background: var(--color-cream);
-    padding: 60px 20px;
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
-}
-
-.blog-page-links-inner {
-    max-width: 1100px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 12px;
-}
-
-.blog-page-link-card {
-    background: #fff;
-    padding: 18px 10px;
-    border-radius: 10px;
-    text-align: center;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
-    transition: all 0.3s;
-    display: block;
-    border: 2px solid transparent;
-    position: relative;
-}
-
-.blog-page-link-card::after {
-    content: '→';
-    position: absolute;
-    right: 8px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--color-gold);
-    font-size: 0.85rem;
-    opacity: 0;
-    transition: all 0.3s;
-}
-
-.blog-page-link-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-    border-color: var(--color-gold);
-}
-
-.blog-page-link-card:hover::after {
-    opacity: 1;
-    right: 5px;
-}
-
-.blog-page-link-title {
-    display: block;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--color-primary);
-    margin-bottom: 4px;
-}
-
-.blog-page-link-desc {
-    display: block;
-    font-size: 0.68rem;
-    color: #888;
-}
-
-/* ========== レスポンシブ（PC: 769px以上 / スマホ: 768px以下） ========== */
+/* レスポンシブ対応 */
 @media (max-width: 768px) {
     .main-content {
         padding-top: 60px;
-    }
-
-    .blog-hero {
-        padding: 40px 20px;
-    }
-
-    .blog-hero-title {
-        font-size: 1.5rem;
-        letter-spacing: 0.1em;
-    }
-
-    .blog-hero-subtitle {
-        font-size: 0.9rem;
     }
 
     .blog-section {
@@ -392,129 +310,10 @@
 
     .blog-grid {
         grid-template-columns: 1fr;
-        gap: 24px;
+        gap: 20px;
     }
 
     .article-image {
-        height: 160px;
-    }
-
-    .article-content {
-        padding: 20px;
-    }
-
-    .article-title {
-        font-size: 1.05rem;
-    }
-
-    .article-excerpt {
-        font-size: 0.85rem;
-        -webkit-line-clamp: 2;
-    }
-
-    /* ページ導線 */
-    .blog-page-links {
-        padding: 40px 15px;
-    }
-
-    .blog-page-links-inner {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-    }
-
-    .blog-page-link-card {
-        padding: 14px 8px;
-    }
-
-    .blog-page-link-card::after {
-        display: none;
-    }
-
-    .blog-page-link-title {
-        font-size: 0.75rem;
-    }
-
-    .blog-page-link-desc {
-        font-size: 0.6rem;
-    }
-}
-
-/* ========== ページ導線 (ブログ固有・5カラム対応) ========== */
-/* View More Card Styles */
-.view-more-card {
-    height: 100%;
-    min-height: 200px;
-    /* Ensure height matches other cards */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, var(--color-cream, #f9f4ef) 0%, #fff 100%);
-    border: 2px dashed var(--color-gold, #c4a35a);
-    box-shadow: none;
-    text-decoration: none;
-    transition: all 0.3s ease;
-}
-
-.view-more-card:hover {
-    background: #fff;
-    border-color: var(--color-primary, #9a8058);
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(196, 163, 90, 0.15);
-}
-
-.view-more-content {
-    text-align: center;
-    color: var(--color-primary-dark, #5d4037);
-}
-
-.view-more-icon-wrapper {
-    margin-bottom: 15px;
-}
-
-.view-more-icon {
-    font-size: 3rem;
-    display: block;
-    margin-bottom: 5px;
-}
-
-.view-more-text {
-    font-size: 1.1rem;
-    font-weight: 600;
-    line-height: 1.4;
-    margin-bottom: 20px;
-    color: var(--color-primary-dark, #5d4037);
-}
-
-.view-more-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 20px;
-    background: var(--color-gold, #c4a35a);
-    color: #fff;
-    border-radius: 50px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    transition: background 0.3s ease;
-}
-
-.view-more-card:hover .view-more-btn {
-    background: var(--color-primary, #9a8058);
-}
-
-@media (max-width: 768px) {
-    .view-more-card {
-        min-height: auto;
-        /* Let it stretch to slide height */
-        aspect-ratio: 3/4;
-        /* Make it roughly consistent with article cards if needed, or just let flex handle it */
-    }
-
-    .view-more-text {
-        font-size: 1rem;
-    }
-
-    .view-more-icon {
-        font-size: 2.5rem;
+        height: 180px;
     }
 }

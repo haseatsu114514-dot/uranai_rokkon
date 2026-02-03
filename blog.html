@@ -37,8 +37,8 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/blog.css">
     <link rel="stylesheet" href="css/animations.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+
 </head>
 
 <body>
@@ -93,13 +93,20 @@
                 </div>
 
                 <!-- Swiper -->
-                <div class="swiper blog-slider">
-                    <div class="swiper-wrapper" id="blog-wrapper">
-                        <!-- JSで記事がここに挿入されます -->
-                    </div>
-                    <div class="swiper-pagination"></div>
-                    <div class="swiper-button-prev"></div>
-                    <div class="swiper-button-next"></div>
+                <!-- Blog Grid -->
+                <div id="blog-grid" class="blog-grid blog-grid-empty">
+                    <!-- JSで記事がここに挿入されます -->
+                </div>
+
+                <!-- Load More Button -->
+                <div id="pagination-container" class="pagination-container" style="display:none;">
+                    <button id="load-more-btn" class="load-more-btn">
+                        <span>もっと見る</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M6 9l6 6 6-6" />
+                        </svg>
+                    </button>
                 </div>
 
                 <!-- noteへのリンク -->
