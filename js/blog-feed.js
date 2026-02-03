@@ -8,11 +8,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!BLOG_GRID) return;
 
     // Configuration
-    const API_URL = 'https://script.google.com/macros/s/AKfycbzHphDHI3-3ddVfe7oMcX_gvrV1M3bvf-YB2v-YnjttLAfYextn0WznYD_rtVQT1hRouA/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbxI3B7v5hLQNFPfO_VEA_ZgLb3BbPLJTOcdKT5scsUzg4mbpsQVP4aLge3TU5l-wySYjQ/exec';
     const ITEMS_PER_PAGE = 9; // Show 9 items (3x3 grid)
 
     // Cache Configuration
-    const CACHE_KEY = 'blog_feed_cache_v7';
+    const CACHE_KEY = 'blog_feed_cache_v9';
     const CACHE_DURATION = 60 * 60 * 1000; // 1 hour in milliseconds
 
     let allItems = []; // All fetched items
