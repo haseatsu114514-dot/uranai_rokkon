@@ -42,25 +42,75 @@
     margin: 0 auto;
 }
 
-/* 記事グリッド */
+/* 記事グリッド - Removed in favor of Swiper
 .blog-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
     gap: 30px;
+} */
+
+/* Swiper Styles */
+.swiper {
+    width: 100%;
+    padding-bottom: 50px !important;
+    /* Space for pagination */
+    padding-left: 10px;
+    /* Slight padding for shadow/overflow visibility */
+    padding-right: 10px;
 }
 
-/* 記事カード */
+.swiper-slide {
+    height: auto;
+    /* Allow auto height for flex stacking */
+    display: flex;
+    /* Make slide a flex container so card stretches */
+}
+
+/* Ensure article card takes full height of the slide */
 .article-card {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
     background: #fff;
     border-radius: 16px;
     overflow: hidden;
-    box-shadow:
-        0 4px 20px rgba(0, 0, 0, 0.06),
-        0 1px 3px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     border: 2px solid transparent;
-    display: flex;
-    flex-direction: column;
+}
+
+/* Swiper Navigation & Pagination Colors */
+.swiper-button-next,
+.swiper-button-prev {
+    color: var(--color-primary-dark, #702f2f);
+}
+
+.swiper-pagination-bullet-active {
+    background: var(--color-primary-dark, #702f2f) !important;
+}
+
+/* Loading Indicator */
+.loading-indicator {
+    text-align: center;
+    padding: 60px 20px;
+    font-family: 'Shippori Mincho', serif;
+    color: #666;
+}
+
+.spinner {
+    margin: 0 auto 20px;
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    border-top-color: var(--color-primary, #9a8058);
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .article-card:hover {
@@ -386,5 +436,85 @@
 
     .blog-page-link-desc {
         font-size: 0.6rem;
+    }
+}
+
+/* ========== ページ導線 (ブログ固有・5カラム対応) ========== */
+/* View More Card Styles */
+.view-more-card {
+    height: 100%;
+    min-height: 200px;
+    /* Ensure height matches other cards */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--color-cream, #f9f4ef) 0%, #fff 100%);
+    border: 2px dashed var(--color-gold, #c4a35a);
+    box-shadow: none;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.view-more-card:hover {
+    background: #fff;
+    border-color: var(--color-primary, #9a8058);
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(196, 163, 90, 0.15);
+}
+
+.view-more-content {
+    text-align: center;
+    color: var(--color-primary-dark, #5d4037);
+}
+
+.view-more-icon-wrapper {
+    margin-bottom: 15px;
+}
+
+.view-more-icon {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.view-more-text {
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.4;
+    margin-bottom: 20px;
+    color: var(--color-primary-dark, #5d4037);
+}
+
+.view-more-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 20px;
+    background: var(--color-gold, #c4a35a);
+    color: #fff;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: background 0.3s ease;
+}
+
+.view-more-card:hover .view-more-btn {
+    background: var(--color-primary, #9a8058);
+}
+
+@media (max-width: 768px) {
+    .view-more-card {
+        min-height: auto;
+        /* Let it stretch to slide height */
+        aspect-ratio: 3/4;
+        /* Make it roughly consistent with article cards if needed, or just let flex handle it */
+    }
+
+    .view-more-text {
+        font-size: 1rem;
+    }
+
+    .view-more-icon {
+        font-size: 2.5rem;
     }
 }

@@ -1,11 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const BLOG_GRID = document.querySelector('.blog-grid');
-    if (!BLOG_GRID) return;
+    const BLOG_WRAPPER = document.getElementById('blog-wrapper');
+    const LOADING_INDICATOR = document.getElementById('loading-indicator');
+    if (!BLOG_WRAPPER) return;
 
-    // note RSSのURL
+    // Note RSS URL
     const RSS_URL = 'https://note.com/rokkon_uranai/rss';
-    // rss2jsonを使ってJSONとして取得 (alloriginsより安定性が高い)
-    const API_URL = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(RSS_URL)}`;
+    // Use allorigins to bypass CORS and get raw XML
+    const API_URL = `https://api.allorigins.win/contents?url=${encodeURIComponent(RSS_URL)}`;
 
     fetch(API_URL)
         .then(response => {
@@ -13,33 +14,38 @@ document.addEventListener('DOMContentLoaded', () => {
             throw new Error('Network response was not ok.');
         })
         .then(data => {
-            if (data.items && data.items.length > 0) {
-                // 既存のコンテンツをクリア
-                BLOG_GRID.innerHTML = '';
+            const parser = new DOMParser();
+            const xmlDoc = parser.parseFromString(data.contents, "text/xml");
+            const items = xmlDoc.querySelectorAll('item');
 
-                // 最新6件を取得
-                const items = data.items.slice(0, 6);
+            if (items && items.length > 0) {
+                // Remove loading indicator
+                if (LOADING_INDICATOR) LOADING_INDICATOR.style.display = 'none';
 
-                items.forEach((item, index) => {
-                    // タイトル
-                    const title = item.title || "無題";
-                    
-                    // リンク
-                    const link = item.link || "#";
-                    
-                    // 日付
-                    const dateObj = new Date(item.pubDate);
-                    const formattedDate = `${dateObj.getFullYear()}年${dateObj.getMonth() + 1}月${dateObj.getDate()}日`;
-                    
-                    // カテゴリ (rss2jsonではcategories配列)
-                    const category = (item.categories && item.categories.length > 0) ? item.categories[0] : 'コラム';
+                items.forEach((item) => {
+                    // Extract data from XML
+                    const title = item.querySelector('title').textContent;
+                    const link = item.querySelector('link').textContent;
+                    const pubDate = new Date(item.querySelector('pubDate').textContent);
+                    const formattedDate = `${pubDate.getFullYear()}年${pubDate.getMonth() + 1}月${pubDate.getDate()}日`;
 
-                    // サムネイル
-                    let thumbUrl = item.thumbnail;
-                    
-                    // サムネイルがない場合、descriptionから画像を探すフォールバック
-                    if (!thumbUrl) {
-                        const imgMatch = item.description.match(/<img[^>]+src="([^">]+)"/);
+                    // Category
+                    const categoryElements = item.getElementsByTagName('category'); // HTMLCollection
+                    // Note RSS specific: 'category' tags exist? 
+                    // Usually <category> exists in standard RSS.
+                    // If note doesn't provide it, default to 'コラム'
+                    const category = (categoryElements.length > 0) ? categoryElements[0].textContent : 'コラム';
+
+                    // Thumbnail
+                    // Note RSS uses <media:thumbnail>
+                    let thumbUrl = '';
+                    const mediaThumbnail = item.getElementsByTagName('media:thumbnail')[0];
+                    if (mediaThumbnail) {
+                        thumbUrl = mediaThumbnail.textContent;
+                    } else {
+                        // Fallback: extract from description/content:encoded
+                        const description = item.querySelector('description').textContent;
+                        const imgMatch = description.match(/<img[^>]+src="([^">]+)"/);
                         if (imgMatch) {
                             thumbUrl = imgMatch[1];
                         } else {
@@ -47,48 +53,96 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     }
 
-                    // 抜粋 (HTMLタグ除去)
-                    const plainText = item.description.replace(/<[^>]+>/g, '');
+                    // Excerpt
+                    const description = item.querySelector('description').textContent;
+                    const plainText = description.replace(/<[^>]+>/g, '');
                     const excerpt = plainText.length > 60 ? plainText.substring(0, 60) + '...' : plainText;
 
-                    // 記事カード生成
-                    const article = document.createElement('article');
-                    article.className = 'article-card';
-                    article.style.opacity = '0';
-                    article.style.transform = 'translateY(20px)';
-                    article.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                    // Create Slide
+                    const slide = document.createElement('div');
+                    slide.className = 'swiper-slide';
 
-                    article.innerHTML = `
-                        <div class="article-image">
-                            <span class="article-category">${category}</span>
-                            <img src="${thumbUrl}" alt="${title}" class="article-thumb">
-                        </div>
-                        <div class="article-content">
-                            <div class="article-date">${formattedDate}</div>
-                            <h2 class="article-title">${title}</h2>
-                            <p class="article-excerpt">${excerpt}</p>
-                            <a href="${link}" class="read-more" target="_blank" rel="noopener noreferrer">記事を読む →</a>
-                        </div>
+                    slide.innerHTML = `
+                        <article class="article-card">
+                            <div class="article-image">
+                                <span class="article-category">${category}</span>
+                                <img src="${thumbUrl}" alt="${title}" class="article-thumb">
+                            </div>
+                            <div class="article-content">
+                                <div class="article-date">${formattedDate}</div>
+                                <h2 class="article-title">${title}</h2>
+                                <p class="article-excerpt">${excerpt}</p>
+                                <div style="display: flex; align-items: center; justify-content: space-between;">
+                                    <a href="${link}" class="read-more" target="_blank" rel="noopener noreferrer">記事を読む →</a>
+                                    <span class="note-badge">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                                        </svg>
+                                        note.com
+                                    </span>
+                                </div>
+                            </div>
+                        </article>
                     `;
 
-                    BLOG_GRID.appendChild(article);
-
-                    // フェードインアニメーション
-                    setTimeout(() => {
-                        article.style.opacity = '1';
-                        article.style.transform = 'translateY(0)';
-                    }, index * 100 + 100);
+                    BLOG_WRAPPER.appendChild(slide);
                 });
+
+                // Add "View More" Slide
+                const moreSlide = document.createElement('div');
+                moreSlide.className = 'swiper-slide';
+                moreSlide.innerHTML = `
+                    <a href="https://note.com/rokkon_uranai" class="article-card view-more-card" target="_blank" rel="noopener noreferrer">
+                        <div class="view-more-content">
+                            <div class="view-more-icon-wrapper">
+                                <span class="view-more-icon">📚</span>
+                            </div>
+                            <h3 class="view-more-text">Noteで<br>すべての記事を見る</h3>
+                            <div class="view-more-btn">
+                                <span>View All</span>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </a>
+                `;
+                BLOG_WRAPPER.appendChild(moreSlide);
+
+                // Initialize Swiper
+                new Swiper('.blog-slider', {
+                    slidesPerView: 1.2, // Show part of the next slide on mobile
+                    spaceBetween: 20,   // Smaller gap on mobile
+                    loop: false,
+                    pagination: {
+                        el: '.swiper-pagination',
+                        clickable: true,
+                    },
+                    navigation: {
+                        nextEl: '.swiper-button-next',
+                        prevEl: '.swiper-button-prev',
+                    },
+                    breakpoints: {
+                        // when window width is >= 768px
+                        768: {
+                            slidesPerView: 2,
+                            spaceBetween: 30
+                        },
+                        // when window width is >= 1024px
+                        1024: {
+                            slidesPerView: 3,
+                            spaceBetween: 40
+                        }
+                    }
+                });
+
             } else {
                 console.warn('No content found in feed');
-                // データがない場合でも、ハードコードされた記事を残すか、エラー表示するかは要検討
-                // 現状はinnerHTMLクリア前なので、何もしなければハードコードされた初期表示が残る
-                // ここではもしデータ取得できてitemsが空ならクリアしてしまう可能性があるので、
-                // data.itemsがある場合のみクリアするように分岐済み。
+                if (LOADING_INDICATOR) LOADING_INDICATOR.innerHTML = '<p>記事が見つかりませんでした。</p>';
             }
         })
         .catch(error => {
             console.error('Blog feed load failed:', error);
-            // エラー時は既存のハードコード記事がそのまま残る（安全策）
+            if (LOADING_INDICATOR) LOADING_INDICATOR.innerHTML = '<p>記事の読み込みに失敗しました。</p>';
         });
 });
