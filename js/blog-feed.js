@@ -7,8 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!BLOG_GRID) return;
 
     // Configuration
-    // Google Apps Script Proxy (Returns clean JSON with correct Note thumbnails)
-    const API_URL = 'https://script.google.com/macros/s/AKfycbx63uRNLZa_FpSbQk2-iU4TxXRqlzqX4l97s50jXyWwCf7_mVgy8HmFwWKKxJwKXPRSDg/exec';
+    // Google Apps Script Proxy V2 (Uses Note API: Returns high-res images & like counts)
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyQACn3cVV5yeXP5ZHVsKzwh92MQj5sSswXoiSKJMixNQwl271njvIIIf9U3LLJPCOUVQ/exec';
     const ITEMS_PER_PAGE = 6;
 
     let allItems = [];
@@ -78,18 +78,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const title = item.title || "無題";
         const link = item.link || "#";
 
-        // GAS returns "Tue, 03 Feb 2026 23:18:32 +0900" which Date() parses comfortably
         let pubDate = new Date(item.pubDate);
         if (isNaN(pubDate.getTime())) { pubDate = new Date(); }
         const formattedDate = `${pubDate.getFullYear()}年${pubDate.getMonth() + 1}月${pubDate.getDate()}日`;
 
         const category = item.category || 'コラム';
+        const likeCount = item.likeCount || 0;
 
         // Thumbnail Logic
-        // GAS Proxy returns the correct thumbnail URL directly in 'thumbnail' property
         let thumbUrl = item.thumbnail;
-
-        // Final fallback if thumbnail is empty string
         if (!thumbUrl) {
             thumbUrl = 'images/otya.png';
         }
@@ -106,7 +103,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 <img src="${thumbUrl}" alt="${title}" class="article-thumb" onerror="this.src='images/otya.png'">
             </div>
             <div class="article-content">
-                <div class="article-date">${formattedDate}</div>
+                <div class="article-meta" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 0.8rem; color: #888;">
+                    <span class="article-date">${formattedDate}</span>
+                    <span class="article-like" style="display: flex; align-items: center; gap: 4px; color: #ff5f5f;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                        </svg>
+                        <span>${likeCount}</span>
+                    </span>
+                </div>
                 <h2 class="article-title">${title}</h2>
                 <p class="article-excerpt">${excerpt}</p>
                 <div style="display: flex; align-items: center; justify-content: space-between;">
