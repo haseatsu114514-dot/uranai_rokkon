@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const ITEMS_PER_PAGE = 9; // Show 9 items (3x3 grid)
 
     // Cache Configuration
-    const CACHE_KEY = 'blog_feed_cache_v6';
+    const CACHE_KEY = 'blog_feed_cache_v7';
     const CACHE_DURATION = 60 * 60 * 1000; // 1 hour in milliseconds
 
     let allItems = []; // All fetched items
