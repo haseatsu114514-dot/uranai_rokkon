@@ -7,8 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!BLOG_GRID) return;
 
     // Configuration
-    const RSS_URL = 'https://note.com/rokkon_uranai/rss';
-    const API_URL = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(RSS_URL)}`;
+    // Google Apps Script Proxy (Returns clean JSON with correct Note thumbnails)
+    const API_URL = 'https://script.google.com/macros/s/AKfycbx63uRNLZa_FpSbQk2-iU4TxXRqlzqX4l97s50jXyWwCf7_mVgy8HmFwWKKxJwKXPRSDg/exec';
     const ITEMS_PER_PAGE = 6;
 
     let allItems = [];
@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
             throw new Error('Network response was not ok.');
         })
         .then(data => {
-            if (data.items && data.items.length > 0) {
+            if (data.status === 'ok' && data.items && data.items.length > 0) {
                 allItems = data.items;
 
                 // Hide loading
@@ -78,32 +78,23 @@ document.addEventListener('DOMContentLoaded', () => {
         const title = item.title || "無題";
         const link = item.link || "#";
 
-        let pubDate;
-        if (item.pubDate.includes(' ')) {
-            pubDate = new Date(item.pubDate.replace(' ', 'T'));
-        } else {
-            pubDate = new Date(item.pubDate);
-        }
+        // GAS returns "Tue, 03 Feb 2026 23:18:32 +0900" which Date() parses comfortably
+        let pubDate = new Date(item.pubDate);
         if (isNaN(pubDate.getTime())) { pubDate = new Date(); }
         const formattedDate = `${pubDate.getFullYear()}年${pubDate.getMonth() + 1}月${pubDate.getDate()}日`;
 
-        const category = (item.categories && item.categories.length > 0) ? item.categories[0] : 'コラム';
+        const category = item.category || 'コラム';
 
         // Thumbnail Logic
+        // GAS Proxy returns the correct thumbnail URL directly in 'thumbnail' property
         let thumbUrl = item.thumbnail;
-        if (!thumbUrl) {
-            const imgMatchDesc = item.description.match(/<img[^>]+src="([^">]+)"/);
-            const imgMatchContent = item.content ? item.content.match(/<img[^>]+src="([^">]+)"/) : null;
 
-            if (imgMatchDesc) {
-                thumbUrl = imgMatchDesc[1];
-            } else if (imgMatchContent) {
-                thumbUrl = imgMatchContent[1];
-            } else {
-                thumbUrl = 'images/otya.png';
-            }
+        // Final fallback if thumbnail is empty string
+        if (!thumbUrl) {
+            thumbUrl = 'images/otya.png';
         }
 
+        // Clean description for excerpt
         const plainText = item.description.replace(/<[^>]+>/g, '');
         const excerpt = plainText.length > 60 ? plainText.substring(0, 60) + '...' : plainText;
 
