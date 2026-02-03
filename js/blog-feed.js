@@ -8,8 +8,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!BLOG_GRID) return;
 
     // Configuration
-    const API_URL = 'https://script.google.com/macros/s/AKfycbyQACn3cVV5yeXP5ZHVsKzwh92MQj5sSswXoiSKJMixNQwl271njvIIIf9U3LLJPCOUVQ/exec';
-    const ITEMS_PER_PAGE = 6;
+    const API_URL = 'https://script.google.com/macros/s/AKfycbzWjAaAad8y6iZqUh6tP0lAIN43v3iMss5hh1UJmRcEAwxC2T0kRRsq0RWv7yniLmqc6A/exec';
+    const ITEMS_PER_PAGE = 9; // Show 9 items (3x3 grid)
+
+    // Cache Configuration
+    const CACHE_KEY = 'blog_feed_cache_v2';
+    const CACHE_DURATION = 60 * 60 * 1000; // 1 hour in milliseconds
 
     let allItems = []; // All fetched items
     let filteredItems = []; // Items matching current filter
@@ -17,13 +21,17 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentFilter = 'all';
 
     // Auto-Categorization Logic
+    // Priority: Love > Work > Fortune > Life (Default)
     const CATEGORY_RULES = {
-        'love': ['恋愛', '結婚', '復縁', 'モテ', 'パートナー', '婚活', '夫婦', '恋人', '失恋'],
-        'work': ['仕事', '転職', '起業', 'お金', '経営', 'キャリア', 'ビジネス', '金運', '職場'],
-        'fortune': ['占い', '運勢', '運気', '四柱推命', '鑑定', '2026年', 'スピリチュアル', '開運'],
+        'love': ['恋愛', '結婚', '復縁', 'モテ', 'パートナー', '婚活', '夫婦', '恋人', '失恋', '不倫', '彼氏', '彼女', '愛', 'カップル'],
+        'work': ['仕事', '転職', '起業', 'お金', '経営', 'キャリア', 'ビジネス', '金運', '職場', '上司', '部下', '収入', '適職', 'フリーランス'],
+        'fortune': ['四柱推命', '鑑定', '占い', '運勢', '運気', '2026', 'スピリチュアル', '開運', '神社', 'パワースポット', '宿命'],
     };
 
     function assignCategory(title, description) {
+        // Specific Overrides
+        if (title.includes('テイカー')) return 'life';
+
         const text = (title + description).toLowerCase();
         for (const [key, keywords] of Object.entries(CATEGORY_RULES)) {
             if (keywords.some(k => text.includes(k))) {
@@ -33,38 +41,73 @@ document.addEventListener('DOMContentLoaded', () => {
         return 'life'; // Default fallback (コラム・人生)
     }
 
-    // Load Blog Data
-    fetch(API_URL)
-        .then(response => {
-            if (response.ok) return response.json();
-            throw new Error('Network response was not ok.');
-        })
-        .then(data => {
-            if (data.status === 'ok' && data.items && data.items.length > 0) {
-                // Pre-process items with category assignment
-                allItems = data.items.map(item => {
-                    const assignedCat = assignCategory(item.title, item.description);
-                    return { ...item, assignedCategory: assignedCat };
-                });
+    // Function to load data (Cache -> Network)
+    async function loadBlogData() {
+        const now = new Date().getTime();
+        const cachedData = localStorage.getItem(CACHE_KEY);
 
-                // Initialize view
-                applyFilter('all');
-
-                // Hide loading
-                if (LOADING_INDICATOR) LOADING_INDICATOR.style.display = 'none';
-
-                // Remove empty class
-                BLOG_GRID.classList.remove('blog-grid-empty');
-
-            } else {
-                console.warn('No content found in feed');
-                if (LOADING_INDICATOR) LOADING_INDICATOR.innerHTML = '<p>記事が見つかりませんでした。</p>';
+        if (cachedData) {
+            try {
+                const parsed = JSON.parse(cachedData);
+                if (now - parsed.timestamp < CACHE_DURATION) {
+                    console.log('Using cached blog data');
+                    processData(parsed.data);
+                    return;
+                }
+            } catch (e) {
+                console.warn('Cache parse error', e);
+                localStorage.removeItem(CACHE_KEY);
             }
-        })
-        .catch(error => {
+        }
+
+        console.log('Fetching fresh blog data...');
+        try {
+            const response = await fetch(API_URL);
+            if (!response.ok) throw new Error('Network response was not ok.');
+
+            const data = await response.json();
+            if (data.status === 'ok') {
+                // Save to cache
+                localStorage.setItem(CACHE_KEY, JSON.stringify({
+                    timestamp: now,
+                    data: data
+                }));
+                processData(data);
+            } else {
+                throw new Error('API Error: ' + data.message);
+            }
+        } catch (error) {
             console.error('Blog feed load failed:', error);
             if (LOADING_INDICATOR) LOADING_INDICATOR.innerHTML = '<p>記事の読み込みに失敗しました。</p>';
-        });
+        }
+    }
+
+    // Process and Render Data (Extracted for reuse)
+    function processData(data) {
+        if (data.items && data.items.length > 0) {
+            // Pre-process items with category assignment
+            allItems = data.items.map(item => {
+                const assignedCat = assignCategory(item.title, item.description);
+                return { ...item, assignedCategory: assignedCat };
+            });
+
+            // Initialize view
+            applyFilter('all');
+
+            // Hide loading
+            if (LOADING_INDICATOR) LOADING_INDICATOR.style.display = 'none';
+
+            // Remove empty class
+            BLOG_GRID.classList.remove('blog-grid-empty');
+
+        } else {
+            console.warn('No content found in feed');
+            if (LOADING_INDICATOR) LOADING_INDICATOR.innerHTML = '<p>記事が見つかりませんでした。</p>';
+        }
+    }
+
+    // Start Loading
+    loadBlogData();
 
     // Filter Click Handler
     FILTER_BTNS.forEach(btn => {
@@ -183,7 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <h2 class="article-title">${title}</h2>
                 <p class="article-excerpt">${excerpt}</p>
                 <div style="display: flex; align-items: center; justify-content: space-between;">
-                    <a href="${link}" class="read-more" target="_blank" rel="noopener noreferrer">記事を読む →</a>
+                    <a href="${link}" class="read-more" target="_blank" rel="noopener noreferrer">記事を読む</a>
                     <span class="note-badge">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
