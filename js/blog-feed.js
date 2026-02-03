@@ -3,16 +3,35 @@ document.addEventListener('DOMContentLoaded', () => {
     const LOADING_INDICATOR = document.getElementById('loading-indicator');
     const PAGINATION_CONTAINER = document.getElementById('pagination-container');
     const LOAD_MORE_BTN = document.getElementById('load-more-btn');
+    const FILTER_BTNS = document.querySelectorAll('.filter-btn');
 
     if (!BLOG_GRID) return;
 
     // Configuration
-    // Google Apps Script Proxy V2 (Uses Note API: Returns high-res images & like counts)
     const API_URL = 'https://script.google.com/macros/s/AKfycbyQACn3cVV5yeXP5ZHVsKzwh92MQj5sSswXoiSKJMixNQwl271njvIIIf9U3LLJPCOUVQ/exec';
     const ITEMS_PER_PAGE = 6;
 
-    let allItems = [];
+    let allItems = []; // All fetched items
+    let filteredItems = []; // Items matching current filter
     let displayedCount = 0;
+    let currentFilter = 'all';
+
+    // Auto-Categorization Logic
+    const CATEGORY_RULES = {
+        'love': ['恋愛', '結婚', '復縁', 'モテ', 'パートナー', '婚活', '夫婦', '恋人', '失恋'],
+        'work': ['仕事', '転職', '起業', 'お金', '経営', 'キャリア', 'ビジネス', '金運', '職場'],
+        'fortune': ['占い', '運勢', '運気', '四柱推命', '鑑定', '2026年', 'スピリチュアル', '開運'],
+    };
+
+    function assignCategory(title, description) {
+        const text = (title + description).toLowerCase();
+        for (const [key, keywords] of Object.entries(CATEGORY_RULES)) {
+            if (keywords.some(k => text.includes(k))) {
+                return key;
+            }
+        }
+        return 'life'; // Default fallback (コラム・人生)
+    }
 
     // Load Blog Data
     fetch(API_URL)
@@ -22,18 +41,17 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .then(data => {
             if (data.status === 'ok' && data.items && data.items.length > 0) {
-                allItems = data.items;
+                // Pre-process items with category assignment
+                allItems = data.items.map(item => {
+                    const assignedCat = assignCategory(item.title, item.description);
+                    return { ...item, assignedCategory: assignedCat };
+                });
+
+                // Initialize view
+                applyFilter('all');
 
                 // Hide loading
                 if (LOADING_INDICATOR) LOADING_INDICATOR.style.display = 'none';
-
-                // Show first batch
-                renderItems();
-
-                // Show button if more items exist
-                if (allItems.length > displayedCount) {
-                    PAGINATION_CONTAINER.style.display = 'block';
-                }
 
                 // Remove empty class
                 BLOG_GRID.classList.remove('blog-grid-empty');
@@ -48,20 +66,54 @@ document.addEventListener('DOMContentLoaded', () => {
             if (LOADING_INDICATOR) LOADING_INDICATOR.innerHTML = '<p>記事の読み込みに失敗しました。</p>';
         });
 
+    // Filter Click Handler
+    FILTER_BTNS.forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Update active state
+            FILTER_BTNS.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            // Apply filter
+            const filterType = btn.getAttribute('data-filter');
+            applyFilter(filterType);
+        });
+    });
+
+    function applyFilter(filterType) {
+        currentFilter = filterType;
+        displayedCount = 0;
+        BLOG_GRID.innerHTML = ''; // Clear current grid
+
+        if (filterType === 'all') {
+            filteredItems = allItems;
+        } else {
+            filteredItems = allItems.filter(item => item.assignedCategory === filterType);
+        }
+
+        renderItems();
+        updatePagination();
+    }
+
     // Load More Click Handler
     if (LOAD_MORE_BTN) {
         LOAD_MORE_BTN.addEventListener('click', () => {
             renderItems();
-            if (displayedCount >= allItems.length) {
-                PAGINATION_CONTAINER.style.display = 'none';
-            }
+            updatePagination();
         });
+    }
+
+    function updatePagination() {
+        if (displayedCount >= filteredItems.length) {
+            PAGINATION_CONTAINER.style.display = 'none';
+        } else {
+            PAGINATION_CONTAINER.style.display = 'block';
+        }
     }
 
     // Render Function
     function renderItems() {
         const fragment = document.createDocumentFragment();
-        const nextBatch = allItems.slice(displayedCount, displayedCount + ITEMS_PER_PAGE);
+        const nextBatch = filteredItems.slice(displayedCount, displayedCount + ITEMS_PER_PAGE);
 
         nextBatch.forEach(item => {
             const card = createCard(item);
@@ -74,7 +126,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // specific helper
     function createCard(item) {
-        // Extract data
         const title = item.title || "無題";
         const link = item.link || "#";
 
@@ -82,7 +133,16 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isNaN(pubDate.getTime())) { pubDate = new Date(); }
         const formattedDate = `${pubDate.getFullYear()}年${pubDate.getMonth() + 1}月${pubDate.getDate()}日`;
 
-        const category = item.category || 'コラム';
+        // Use assigned category for display label if you want, 
+        // or keep original Note category. Let's use the UI friendly name.
+        const catMap = {
+            'love': '恋愛・結婚',
+            'work': '仕事・金運',
+            'fortune': '占い・運勢',
+            'life': 'コラム・人生'
+        };
+        const displayCategory = catMap[item.assignedCategory] || 'コラム';
+
         const likeCount = item.likeCount || 0;
 
         // Thumbnail Logic
@@ -91,14 +151,14 @@ document.addEventListener('DOMContentLoaded', () => {
             thumbUrl = 'images/otya.png';
         }
 
-        // New Badge Logic (within 24 hours)
+        // New Badge Logic (within 24 hours) - Enhanced
         const now = new Date();
         const diffMs = now - pubDate;
         const diffHours = diffMs / (1000 * 60 * 60);
         const isNew = diffHours < 24;
         const newBadgeHtml = isNew ? '<span class="new-badge">NEW</span>' : '';
 
-        // Clean description for excerpt
+        // Clean description
         const plainText = item.description.replace(/<[^>]+>/g, '');
         const excerpt = plainText.length > 60 ? plainText.substring(0, 60) + '...' : plainText;
 
@@ -106,7 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
         articleDiv.className = 'article-card';
         articleDiv.innerHTML = `
             <div class="article-image">
-                <span class="article-category">${category}</span>
+                <span class="article-category">${displayCategory}</span>
                 ${newBadgeHtml}
                 <img src="${thumbUrl}" alt="${title}" class="article-thumb" onerror="this.src='images/otya.png'">
             </div>
