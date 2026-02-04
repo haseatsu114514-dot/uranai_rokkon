@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const ITEMS_PER_PAGE = 9; // Show 9 items (3x3 grid)
 
     // Cache Configuration
-    const CACHE_KEY = 'blog_feed_cache_v11';
+    const CACHE_KEY = 'blog_feed_cache_v12';
     const CACHE_DURATION = 60 * 60 * 1000; // 1 hour in milliseconds
 
     let allItems = []; // All fetched items
@@ -93,7 +93,19 @@ document.addEventListener('DOMContentLoaded', () => {
         if (data.items && data.items.length > 0) {
             // Pre-process items with category assignment
             allItems = data.items.map(item => {
-                const assignedCat = assignCategory(item.title, item.description);
+                let assignedCat;
+
+                // 1. Use API category if available
+                if (item.category) {
+                    if (item.category === '占い') assignedCat = 'fortune';
+                    else if (item.category === 'お知らせ') assignedCat = 'life'; // Map news to life for now
+                    else if (item.category === 'コラム') assignedCat = 'life';
+                    else assignedCat = assignCategory(item.title, item.description);
+                } else {
+                    // 2. Fallback to frontend detection
+                    assignedCat = assignCategory(item.title, item.description);
+                }
+
                 return { ...item, assignedCategory: assignedCat };
             });
 
