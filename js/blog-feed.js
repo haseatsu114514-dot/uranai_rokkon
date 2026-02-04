@@ -208,8 +208,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const plainText = item.description.replace(/<[^>]+>/g, '');
         const excerpt = plainText.length > 60 ? plainText.substring(0, 60) + '...' : plainText;
 
-        const articleDiv = document.createElement('article');
+        const articleDiv = document.createElement('a'); // Changed to anchor tag
         articleDiv.className = 'article-card';
+        articleDiv.href = link;
+        articleDiv.target = '_blank';
+        articleDiv.rel = 'noopener noreferrer';
         articleDiv.innerHTML = `
             <div class="article-image">
                 <span class="article-category">${displayCategory}</span>
@@ -229,7 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <h2 class="article-title">${title}</h2>
                 <p class="article-excerpt">${excerpt}</p>
                 <div style="display: flex; align-items: center; justify-content: space-between;">
-                    <a href="${link}" class="read-more" target="_blank" rel="noopener noreferrer">記事を読む</a>
+                    <span class="read-more">記事を読む</span> <!-- Changed to span -->
                     <span class="note-badge">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
