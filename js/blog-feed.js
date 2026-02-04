@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const ITEMS_PER_PAGE = 9; // Show 9 items (3x3 grid)
 
     // Cache Configuration
-    const CACHE_KEY = 'blog_feed_cache_v13';
+    const CACHE_KEY = 'blog_feed_cache_v14';
     const CACHE_DURATION = 60 * 60 * 1000; // 1 hour in milliseconds
 
     let allItems = []; // All fetched items
@@ -21,30 +21,44 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentFilter = 'all';
 
     // Auto-Categorization Logic
-    // Priority: Love > Work > Fortune > Life (Default)
+    // Priority: Specific Overrides > Love > Work > Fortune > Life (Default)
     const CATEGORY_RULES = {
-        'love': ['恋愛', '結婚', '復縁', 'モテ', 'パートナー', '婚活', '夫婦', '恋人', '失恋', '不倫', '彼氏', '彼女', '愛', 'カップル'],
-        'work': ['仕事', '転職', '起業', 'お金', '経営', 'キャリア', 'ビジネス', '金運', '職場', '上司', '部下', '収入', '適職', 'フリーランス'],
-        'fortune': ['四柱推命', '鑑定', '占い', '運勢', '運気', '2026', 'スピリチュアル', '開運', '神社', 'パワースポット', '宿命'],
+        'love': ['恋愛', '結婚', '復縁', 'モテ', 'パートナー', '婚活', '夫婦', '恋人', '失恋', '不倫', '彼氏', '彼女', 'カップル', '独身', '出会い', 'マッチングアプリ'],
+        'work': ['仕事', '転職', '起業', 'お金', '経営', 'キャリア', 'ビジネス', '金運', '職場', '上司', '部下', '収入', '適職', 'フリーランス', 'ギャンブル', 'スロット'],
+        'fortune': ['運勢', '運気', '開運', '大殺界', '空亡', '時期', 'タイミング', '2026年'],
     };
 
-    function assignCategory(title, description) {
-        // Specific Overrides
-        if (title.includes('テイカー') ||
-            title.includes('いつ死ぬか') ||
-            title.includes('丙午') ||
-            title.includes('MBTI')) return 'life';
+    // Title patterns that should be コラム・人生 (life) - essays about fortune-telling itself
+    const LIFE_TITLE_PATTERNS = [
+        '占いに金を払う',
+        '占い好き',
+        'いつ行くべき',
+        'テイカー',
+        'いつ死ぬか',
+        '丙午',
+        'MBTI',
+        '混ぜるな危険',
+    ];
 
-        if (title.includes('ギャンブル')) return 'work';
-        if (title.includes('運気を上げたい')) return 'fortune';
+    function assignCategory(title, description, tags = []) {
+        // 1. Check title-based overrides for コラム・人生
+        for (const pattern of LIFE_TITLE_PATTERNS) {
+            if (title.includes(pattern)) return 'life';
+        }
 
-        const text = (title + description).toLowerCase();
+        // 2. Build searchable text from title, description, and tags
+        const tagsText = tags.join(' ');
+        const text = title + ' ' + description + ' ' + tagsText;
+
+        // 3. Check category rules in priority order: Love > Work > Fortune
         for (const [key, keywords] of Object.entries(CATEGORY_RULES)) {
             if (keywords.some(k => text.includes(k))) {
                 return key;
             }
         }
-        return 'life'; // Default fallback (コラム・人生)
+
+        // 4. Default fallback
+        return 'life';
     }
 
     // Function to load data (Cache -> Network)
@@ -93,18 +107,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (data.items && data.items.length > 0) {
             // Pre-process items with category assignment
             allItems = data.items.map(item => {
-                let assignedCat;
-
-                // 1. Use API category if available
-                if (item.category) {
-                    if (item.category === '占い') assignedCat = 'fortune';
-                    else if (item.category === 'お知らせ') assignedCat = 'life'; // Map news to life for now
-                    else if (item.category === 'コラム') assignedCat = 'life';
-                    else assignedCat = assignCategory(item.title, item.description);
-                } else {
-                    // 2. Fallback to frontend detection
-                    assignedCat = assignCategory(item.title, item.description);
-                }
+                // Always use frontend detection with title, description, and tags
+                const tags = item.tags || [];
+                const assignedCat = assignCategory(item.title, item.description, tags);
 
                 return { ...item, assignedCategory: assignedCat };
             });
