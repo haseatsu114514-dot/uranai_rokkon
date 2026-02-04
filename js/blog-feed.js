@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const ITEMS_PER_PAGE = 9; // Show 9 items (3x3 grid)
 
     // Cache Configuration
-    const CACHE_KEY = 'blog_feed_cache_v14';
+    const CACHE_KEY = 'blog_feed_cache_v15';
     const CACHE_DURATION = 60 * 60 * 1000; // 1 hour in milliseconds
 
     let allItems = []; // All fetched items
@@ -20,44 +20,61 @@ document.addEventListener('DOMContentLoaded', () => {
     let displayedCount = 0;
     let currentFilter = 'all';
 
-    // Auto-Categorization Logic
-    // Priority: Specific Overrides > Love > Work > Fortune > Life (Default)
-    const CATEGORY_RULES = {
-        'love': ['恋愛', '結婚', '復縁', 'モテ', 'パートナー', '婚活', '夫婦', '恋人', '失恋', '不倫', '彼氏', '彼女', 'カップル', '独身', '出会い', 'マッチングアプリ'],
-        'work': ['仕事', '転職', '起業', 'お金', '経営', 'キャリア', 'ビジネス', '金運', '職場', '上司', '部下', '収入', '適職', 'フリーランス', 'ギャンブル', 'スロット'],
-        'fortune': ['運勢', '運気', '開運', '大殺界', '空亡', '時期', 'タイミング', '2026年'],
-    };
+    // Auto-Categorization Logic - 本文と記事の性質を重視
 
-    // Title patterns that should be コラム・人生 (life) - essays about fortune-telling itself
-    const LIFE_TITLE_PATTERNS = [
-        '占いに金を払う',
-        '占い好き',
-        'いつ行くべき',
-        'テイカー',
-        'いつ死ぬか',
-        '丙午',
-        'MBTI',
-        '混ぜるな危険',
-    ];
+    // 恋愛・結婚のキーワード（明確なもの）
+    const LOVE_KEYWORDS = ['恋愛', '結婚', '復縁', 'モテ', 'パートナー', '婚活', '夫婦', '恋人', '失恋', '不倫', '彼氏', '彼女', 'カップル', '独身', '出会い', 'マッチングアプリ'];
+
+    // 仕事・金運のキーワード（明確なもの）
+    const WORK_KEYWORDS = ['仕事', '転職', '起業', '経営', 'キャリア', 'ビジネス', '金運', '職場', '上司', '部下', '収入', '適職', 'フリーランス', 'ギャンブル', 'スロット', 'お金'];
+
+    // 占い・運勢のキーワード（具体的な運気・時期の話）
+    const FORTUNE_KEYWORDS = ['運勢', '運気', '開運', '大殺界', '空亡', '2026年', '2025年', '年運', '月運', '日運'];
+
+    // コラム・人生の本文キーワード（考察、エッセイ的な内容）
+    const ESSAY_INDICATORS = ['思う', '考え', '感じ', 'だろうか', 'ではないか', 'かもしれない', '価値', '意味', '本当', '実は', 'なぜ', 'どうして'];
 
     function assignCategory(title, description, tags = []) {
-        // 1. Check title-based overrides for コラム・人生
-        for (const pattern of LIFE_TITLE_PATTERNS) {
-            if (title.includes(pattern)) return 'life';
-        }
-
-        // 2. Build searchable text from title, description, and tags
         const tagsText = tags.join(' ');
-        const text = title + ' ' + description + ' ' + tagsText;
+        const allText = title + ' ' + description + ' ' + tagsText;
 
-        // 3. Check category rules in priority order: Love > Work > Fortune
-        for (const [key, keywords] of Object.entries(CATEGORY_RULES)) {
-            if (keywords.some(k => text.includes(k))) {
-                return key;
-            }
+        // 1. 恋愛・結婚：明確なキーワードがあれば
+        if (LOVE_KEYWORDS.some(k => allText.includes(k))) {
+            return 'love';
         }
 
-        // 4. Default fallback
+        // 2. 仕事・金運：明確なキーワードがあれば
+        if (WORK_KEYWORDS.some(k => allText.includes(k))) {
+            return 'work';
+        }
+
+        // 3. 占い・運勢 vs コラム・人生の判定（本文重視）
+        const hasFortuneTopic = FORTUNE_KEYWORDS.some(k => allText.includes(k));
+        const hasEssayStyle = ESSAY_INDICATORS.some(k => description.includes(k));
+        const isQuestionTitle = title.includes('？') || title.includes('?');
+        const isAboutFortuneTelling = title.includes('占い') && (isQuestionTitle || title.includes('価値') || title.includes('好き') || title.includes('べき'));
+
+        // 占いについて考えるエッセイ → コラム・人生
+        if (isAboutFortuneTelling) {
+            return 'life';
+        }
+
+        // 具体的な運気・運勢の話 → 占い・運勢
+        if (hasFortuneTopic && !hasEssayStyle) {
+            return 'fortune';
+        }
+
+        // 本文がエッセイ調 → コラム・人生
+        if (hasEssayStyle) {
+            return 'life';
+        }
+
+        // 運気キーワードがあれば占い・運勢
+        if (hasFortuneTopic) {
+            return 'fortune';
+        }
+
+        // デフォルト
         return 'life';
     }
 
