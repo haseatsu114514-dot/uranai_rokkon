@@ -35,6 +35,9 @@ document.addEventListener('DOMContentLoaded', () => {
             title.includes('丙午') ||
             title.includes('MBTI')) return 'life';
 
+        if (title.includes('ギャンブル')) return 'work';
+        if (title.includes('運気を上げたい')) return 'fortune';
+
         const text = (title + description).toLowerCase();
         for (const [key, keywords] of Object.entries(CATEGORY_RULES)) {
             if (keywords.some(k => text.includes(k))) {
