@@ -399,8 +399,9 @@
             if (annualPeriodEl) {
                 const startYear = new Date().getFullYear();
                 const startMonth = currentMonth;
-                const endYear = startMonth === 1 ? startYear : startYear + 1;
-                const endMonth = startMonth === 1 ? 12 : startMonth - 1;
+                // 年間レポートは常に「その年の12月まで」
+                const endYear = startYear;
+                const endMonth = 12;
                 annualPeriodEl.textContent = `対象期間：${startYear}年${startMonth}月 〜 ${endYear}年${endMonth}月`;
             }
         })();
