@@ -811,34 +811,11 @@ a {
     color: #888;
 }
 
-/* ========== 共通フッター ========== */
-.footer {
-    background: var(--color-primary);
-    color: rgba(255, 255, 255, 0.7);
-    text-align: center;
-    padding: 25px 20px;
-    height: 75px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.footer-content {
-    font-size: 0.85rem;
-}
-
-.footer-content a {
-    color: rgba(255, 255, 255, 0.7);
-    margin-right: 20px;
-    transition: color 0.3s;
-}
-
-.footer-content a:hover {
-    color: var(--color-gold);
-}
+/* ========== 共通フッター - 強化フッター(行1257〜)で上書き ========== */
 
 /* ========== レスポンシブ（PC: 769px以上 / スマホ: 768px以下） ========== */
 @media (max-width: 768px) {
+
     /* ヘッダー */
     .header {
         padding: 0 15px;
@@ -1042,15 +1019,7 @@ a {
         font-size: 0.65rem;
     }
 
-    /* フッター */
-    .footer {
-        height: auto;
-        padding: 20px;
-    }
-
-    .footer-content {
-        font-size: 0.75rem;
-    }
+    /* フッターは強化版スタイル（行1233〜）でレスポンシブ対応済み */
 }
 
 /* ========== 改善提案の追加スタイル ========== */
@@ -1359,5 +1328,10 @@ a {
 
     .footer-copy {
         font-size: 0.68rem;
+    }
+
+    /* モバイル表示ではページ導線ボタンを非表示 */
+    .page-links {
+        display: none;
     }
 }

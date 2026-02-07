@@ -450,4 +450,9 @@
         min-width: 45%;
         flex: 1 1 45%;
     }
+
+    /* モバイル表示ではページ導線ボタンを非表示 */
+    .blog-page-links {
+        display: none;
+    }
 }
