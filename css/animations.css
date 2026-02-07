@@ -130,6 +130,13 @@
     transform: translateY(0);
 }
 
+.back-to-top.footer-hide {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(12px);
+    pointer-events: none;
+}
+
 .back-to-top:hover {
     background: var(--color-gold);
     color: var(--color-primary);
