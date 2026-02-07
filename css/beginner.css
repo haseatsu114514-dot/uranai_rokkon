@@ -1,0 +1,302 @@
+/* ========== 占いが初めての方へ ページ専用スタイル ========== */
+
+/* 準備中カード */
+.coming-soon-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 50px 30px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    margin-bottom: 40px;
+    border: 2px solid rgba(196, 163, 90, 0.3);
+}
+
+.coming-soon-badge {
+    display: inline-block;
+    background: var(--color-gold);
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 8px 28px;
+    border-radius: 25px;
+    letter-spacing: 0.1em;
+    margin-bottom: 24px;
+}
+
+.coming-soon-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--color-primary-dark);
+    margin-bottom: 20px;
+    letter-spacing: 0.05em;
+}
+
+.coming-soon-text {
+    font-size: 0.95rem;
+    color: #666;
+    line-height: 1.9;
+    margin-bottom: 8px;
+}
+
+.coming-soon-divider {
+    width: 60px;
+    height: 1px;
+    background: var(--color-gold);
+    margin: 28px auto;
+    opacity: 0.5;
+}
+
+.coming-soon-sub {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-primary-dark);
+    margin-bottom: 16px;
+}
+
+.coming-soon-list {
+    list-style: none;
+    padding: 0;
+    display: inline-block;
+    text-align: left;
+}
+
+.coming-soon-list li {
+    padding: 8px 0;
+    padding-left: 24px;
+    position: relative;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.coming-soon-list li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--color-gold);
+    font-weight: bold;
+}
+
+/* 初めての方への案内 */
+.beginner-guide {
+    background: #fff;
+    border-radius: 16px;
+    padding: 40px 30px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    margin-bottom: 40px;
+}
+
+.guide-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--color-primary-dark);
+    text-align: center;
+    margin-bottom: 30px;
+    letter-spacing: 0.05em;
+}
+
+.guide-title::after {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 2px;
+    background: var(--color-gold);
+    margin: 12px auto 0;
+}
+
+.guide-points {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.guide-point {
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+}
+
+.guide-point-number {
+    width: 40px;
+    height: 40px;
+    background: var(--color-primary);
+    color: var(--color-gold);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    border: 2px solid var(--color-gold);
+}
+
+.guide-point-content {
+    flex: 1;
+}
+
+.guide-point-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-primary-dark);
+    margin-bottom: 6px;
+}
+
+.guide-point-content p {
+    font-size: 0.9rem;
+    color: #666;
+    line-height: 1.8;
+}
+
+/* CTA */
+.beginner-cta {
+    text-align: center;
+    padding: 40px 20px;
+    background: rgba(196, 163, 90, 0.08);
+    border-radius: 16px;
+    margin-bottom: 40px;
+}
+
+.beginner-cta-text {
+    font-size: 0.95rem;
+    color: #555;
+    line-height: 1.9;
+    margin-bottom: 24px;
+}
+
+.beginner-cta img {
+    max-width: 280px;
+    height: auto;
+    transition: transform 0.3s;
+}
+
+.beginner-cta img:hover {
+    transform: scale(1.03);
+}
+
+/* ページ導線 */
+.page-links-container {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin-top: 48px;
+}
+
+.page-link-card {
+    background: #fff;
+    padding: 18px 10px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s;
+    display: block;
+    border: 2px solid transparent;
+    position: relative;
+}
+
+.page-link-card::after {
+    content: '→';
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-gold);
+    font-size: 0.85rem;
+    opacity: 0;
+    transition: all 0.3s;
+}
+
+.page-link-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    border-color: var(--color-gold);
+}
+
+.page-link-card:hover::after {
+    opacity: 1;
+    right: 5px;
+}
+
+.page-link-title {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    margin-bottom: 4px;
+}
+
+.page-link-desc {
+    display: block;
+    font-size: 0.7rem;
+    color: #777;
+}
+
+/* レスポンシブ */
+@media (max-width: 768px) {
+    .coming-soon-card {
+        padding: 35px 20px;
+    }
+
+    .coming-soon-title {
+        font-size: 1.1rem;
+    }
+
+    .coming-soon-text {
+        font-size: 0.88rem;
+    }
+
+    .beginner-guide {
+        padding: 30px 20px;
+    }
+
+    .guide-title {
+        font-size: 1.05rem;
+    }
+
+    .guide-point {
+        gap: 14px;
+    }
+
+    .guide-point-number {
+        width: 34px;
+        height: 34px;
+        font-size: 0.9rem;
+    }
+
+    .guide-point-title {
+        font-size: 0.92rem;
+    }
+
+    .guide-point-content p {
+        font-size: 0.85rem;
+    }
+
+    .beginner-cta {
+        padding: 30px 15px;
+    }
+
+    .beginner-cta img {
+        max-width: 220px;
+    }
+
+    .page-links-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin-top: 36px;
+    }
+
+    .page-link-card {
+        padding: 14px 8px;
+    }
+
+    .page-link-card::after {
+        display: none;
+    }
+
+    .page-link-title {
+        font-size: 0.75rem;
+    }
+
+    .page-link-desc {
+        font-size: 0.6rem;
+    }
+}

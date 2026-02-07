@@ -115,7 +115,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } catch (error) {
             console.error('Blog feed load failed:', error);
-            if (LOADING_INDICATOR) LOADING_INDICATOR.innerHTML = '<p>記事の読み込みに失敗しました。</p>';
+            if (LOADING_INDICATOR) {
+                LOADING_INDICATOR.innerHTML = '<div class="blog-error"><p>記事の読み込みに失敗しました。</p><p style="font-size:0.85rem;color:#999;margin-top:8px;">通信環境をご確認の上、再度お試しください。</p><a href="https://note.com/rokkon_uranai" target="_blank" rel="noopener" style="display:inline-block;margin-top:16px;color:var(--color-gold,#c4a35a);font-weight:600;font-size:0.9rem;">note.com で記事を読む →</a></div>';
+            }
         }
     }
 
