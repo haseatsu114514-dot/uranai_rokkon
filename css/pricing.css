@@ -242,9 +242,12 @@
 }
 
 .pricing-nav-btn {
-    display: flex;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto;
+    column-gap: 10px;
+    row-gap: 2px;
     align-items: center;
-    gap: 8px;
     padding: 10px 20px;
     background: #fff;
     border-radius: 30px;
@@ -262,6 +265,7 @@
 
 .pricing-nav-btn .nav-icon {
     font-size: 1.2rem;
+    grid-row: 1 / span 2;
 }
 
 .pricing-nav-btn .nav-text {
@@ -271,7 +275,9 @@
 }
 
 .pricing-nav-btn .nav-desc {
-    display: none;
+    display: block;
+    font-size: 0.75rem;
+    color: #777;
 }
 
 /* ========== カレンダーカード ========== */
@@ -280,27 +286,6 @@
     border-left: 4px solid #10b981;
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(16, 185, 129, 0.05) 100%);
     grid-column: 1 / -1;
-    max-width: 100%;
-    margin: 40px 0 0;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    padding: 25px 35px;
-    gap: 30px;
-}
-
-.course-card.calendar .course-header {
-    flex: 0 0 auto;
-    min-width: 180px;
-}
-
-.course-card.calendar .course-description {
-    flex: 1;
-    min-width: 250px;
-}
-
-.course-card.calendar .course-cta {
-    flex: 0 0 auto;
 }
 
 .course-badge.calendar {
@@ -311,6 +296,20 @@
 .course-note.calendar {
     background: rgba(16, 185, 129, 0.08);
     border-left-color: #10b981;
+}
+
+.course-card.calendar .course-note {
+    text-align: center;
+}
+
+.calendar-features {
+    list-style: none;
+    padding: 0;
+    margin: 12px 0 0;
+    display: grid;
+    gap: 6px;
+    text-align: center;
+    font-weight: 600;
 }
 
 /* ========== 通常鑑定セクション ========== */
@@ -389,7 +388,7 @@
 
 .premium-cards-container {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 25px;
     max-width: 1200px;
     margin: 0 auto;
@@ -684,17 +683,19 @@
 
     .pricing-nav-btn {
         padding: 15px 20px;
-        flex-direction: row;
-        gap: 15px;
+        column-gap: 12px;
     }
 
     .pricing-nav-btn .nav-icon {
         font-size: 1.5rem;
-        margin-bottom: 0;
     }
 
     .pricing-nav-btn .nav-text {
         font-size: 1rem;
+    }
+
+    .pricing-nav-btn .nav-desc {
+        font-size: 0.8rem;
     }
 
     /* セクションタイトル */
@@ -767,19 +768,6 @@
 
 /* ========== フェーズ5 修正: レイアウト調整とコンパクト化 ========== */
 
-/* 1. ヘッダー食い込み修正（余白削除） */
-.main-content.sub-page {
-    /* 固定ヘッダー(75px)に合わせる */
-    padding-top: 75px;
-}
-
-@media (max-width: 768px) {
-    .main-content.sub-page {
-        /* モバイル用調整 */
-        padding-top: 75px;
-    }
-}
-
 /* 2. 通常鑑定プランのコンパクト化 */
 .course-description.compact {
     padding: 0;
@@ -805,6 +793,31 @@
     border-radius: 8px;
     font-size: 0.85rem;
     color: #666;
+}
+
+.scroll-btn-container {
+    margin-top: 12px;
+}
+
+.scroll-down-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 22px;
+    border-radius: 999px;
+    border: 1px solid var(--color-gold);
+    color: var(--color-primary-dark);
+    background: #fff;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    transition: transform 0.25s, box-shadow 0.25s, background 0.25s;
+}
+
+.scroll-down-btn:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, rgba(196, 163, 90, 0.08) 0%, rgba(196, 163, 90, 0.15) 100%);
+    box-shadow: 0 6px 16px rgba(196, 163, 90, 0.2);
 }
 
 /* 3. 開始月注記のデザイン（目立つバッジ風） */
@@ -836,19 +849,12 @@
 
     /* フッターがボタンで隠れないように余白を追加 */
     .footer {
-        padding-bottom: 120px;
+        padding-bottom: 90px;
     }
 }
 
 /* 5. レイアウト統一（中央揃え） */
 /* デフォルトで中央揃えのため、追加スタイルは不要 */
-
-/* カレンダー縦積み用の追加スタイル */
-.course-card .course-badge.calendar {
-    background: #4ade80;
-    /* グリーン系 */
-    color: #fff;
-}
 
 /* ========== LINE予約ボタン ========== */
 .line-btn {
