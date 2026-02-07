@@ -1270,7 +1270,7 @@ a {
     background: var(--color-primary);
     color: rgba(255, 255, 255, 0.7);
     text-align: center;
-    padding: 40px 20px 100px;
+    padding: 32px 20px 80px;
     /* Added bottom padding for sticky button */
 }
 
@@ -1283,9 +1283,9 @@ a {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    gap: 18px;
-    margin-bottom: 20px;
-    padding-bottom: 20px;
+    gap: 14px;
+    margin-bottom: 14px;
+    padding-bottom: 14px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.15);
 }
 
@@ -1308,7 +1308,7 @@ a {
 .footer-hours {
     font-size: 0.8rem;
     color: rgba(255, 255, 255, 0.6);
-    margin-bottom: 12px;
+    margin-bottom: 8px;
 }
 
 .footer-line-btn {
@@ -1317,7 +1317,7 @@ a {
     font-size: 0.85rem;
     font-weight: 600;
     border: 1px solid var(--color-gold);
-    padding: 10px 28px;
+    padding: 8px 24px;
     border-radius: 25px;
     transition: all 0.3s ease;
 }
@@ -1360,11 +1360,11 @@ a {
     }
 
     .footer {
-        padding: 30px 15px 20px;
+        padding: 22px 12px 16px;
     }
 
     .footer-nav {
-        gap: 12px;
+        gap: 10px;
     }
 
     .footer-nav a {
