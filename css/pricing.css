@@ -149,7 +149,11 @@
 }
 
 .course-description {
-    margin-top: 20px;
+    margin-bottom: 25px;
+}
+
+.course-description.center-layout {
+    text-align: center;
 }
 
 .description-title {
@@ -157,22 +161,32 @@
     font-weight: 600;
     color: var(--color-primary-dark);
     margin-bottom: 15px;
-    padding-left: 10px;
-    border-left: 3px solid var(--color-gold);
+    border-bottom: 1px dashed #ddd;
+    padding-bottom: 8px;
+    display: inline-block;
 }
 
 .course-examples {
     list-style: none;
     padding: 0;
-    margin-bottom: 20px;
+    margin: 0 0 20px 0;
+}
+
+.course-examples.center-list {
+    text-align: center;
 }
 
 .course-examples li {
-    padding: 8px 0;
-    padding-left: 25px;
     position: relative;
+    padding-left: 1.2em;
+    margin-bottom: 8px;
     font-size: 0.95rem;
-    line-height: 1.7;
+    line-height: 1.6;
+}
+
+.course-examples.center-list li {
+    padding-left: 0;
+    margin-bottom: 10px;
 }
 
 .course-examples li::before {
@@ -181,6 +195,10 @@
     left: 0;
     color: var(--color-gold);
     font-weight: bold;
+}
+
+.course-examples.center-list li::before {
+    content: none;
 }
 
 .course-note {
