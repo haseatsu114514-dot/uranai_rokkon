@@ -288,12 +288,12 @@
 .blog-note-btn {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     background: linear-gradient(135deg, #41c764 0%, #38b058 100%);
     color: #fff;
-    padding: 14px 32px;
-    border-radius: 50px;
-    font-size: 0.95rem;
+    padding: 10px 28px;
+    border-radius: 25px;
+    font-size: 0.85rem;
     font-weight: 600;
     letter-spacing: 0.05em;
     text-decoration: none;
@@ -303,7 +303,7 @@
 
 .blog-note-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(65, 199, 100, 0.4);
+    box-shadow: 0 6px 20px rgba(65, 199, 100, 0.4);
 }
 
 /* レスポンシブ対応 */
