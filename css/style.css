@@ -72,16 +72,16 @@ a {
     letter-spacing: 0.05em;
 }
 
-/* パルスアニメーション */
+/* パルスアニメーション - ボタン全体が光る */
 @keyframes sticky-btn-pulse {
 
     0%,
     100% {
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), 0 0 0 0 rgba(6, 199, 85, 0.4);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     }
 
     50% {
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), 0 0 0 8px rgba(6, 199, 85, 0);
+        box-shadow: 0 4px 20px rgba(6, 199, 85, 0.5), 0 0 40px rgba(6, 199, 85, 0.3);
     }
 }
 
@@ -255,6 +255,20 @@ a {
     height: 100%;
     object-fit: cover;
     object-position: center center;
+    /* 微動アニメーション */
+    animation: hero-bg-drift 25s ease-in-out infinite;
+}
+
+@keyframes hero-bg-drift {
+
+    0%,
+    100% {
+        transform: scale(1) translateY(0);
+    }
+
+    50% {
+        transform: scale(1.02) translateY(-5px);
+    }
 }
 
 .hero-overlay {
@@ -282,6 +296,17 @@ a {
     margin-top: 20px;
     color: var(--color-text-white);
     text-shadow: 3px 3px 30px rgba(0, 0, 0, 0.7);
+    /* 行単位スライドフェードイン */
+    opacity: 0;
+    transform: translateY(20px);
+    animation: hero-text-slide-in 1s cubic-bezier(0.22, 1, 0.36, 1) 0.2s forwards;
+}
+
+@keyframes hero-text-slide-in {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* ★★★ 信頼性バッジ ★★★ */
@@ -306,6 +331,10 @@ a {
     margin-bottom: 3rem;
     line-height: 2.2;
     color: var(--color-text-light);
+    /* 行単位スライドフェードイン（遅延） */
+    opacity: 0;
+    transform: translateY(20px);
+    animation: hero-text-slide-in 1s cubic-bezier(0.22, 1, 0.36, 1) 0.5s forwards;
 }
 
 .hero-btn {
