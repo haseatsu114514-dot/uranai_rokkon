@@ -91,6 +91,17 @@ const GAS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbwSF2hFdG_ggXXze
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
     update();
+
+    var footer = document.querySelector('.footer');
+    if (footer && 'IntersectionObserver' in window) {
+      var footerObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) btn.classList.add('footer-hide');
+          else btn.classList.remove('footer-hide');
+        });
+      }, { root: null, threshold: 0.05 });
+      footerObserver.observe(footer);
+    }
   }
 
   /* ----- 5. ご予約の流れ・ステップ＆線アニメ ----- */
