@@ -336,9 +336,9 @@
 
 /* ========== プレミアムレポートセクション ========== */
 .premium-section {
-    margin-top: 60px;
-    margin-bottom: 40px;
-    padding-top: 50px;
+    margin-top: 50px;
+    margin-bottom: 30px;
+    padding-top: 40px;
     border-top: 2px solid var(--color-gold);
     scroll-margin-top: 80px;
 }
@@ -505,7 +505,7 @@
 .info-section.premium-info {
     background: linear-gradient(135deg, rgba(139, 92, 246, 0.05) 0%, rgba(245, 158, 11, 0.05) 100%);
     border: 1px solid rgba(139, 92, 246, 0.2);
-    margin-top: 30px;
+    margin-top: 25px;
 }
 
 /* ========== 補足情報 ========== */
@@ -556,6 +556,8 @@
     grid-template-columns: repeat(6, 1fr);
     gap: 10px;
     margin-top: 48px;
+    margin-bottom: 0;
+    padding: 0 20px 40px;
 }
 
 .page-link-card {
@@ -726,6 +728,7 @@
         grid-template-columns: repeat(2, 1fr);
         gap: 10px;
         margin-top: 36px;
+        padding: 0 15px 30px;
     }
 
     .page-link-card {
@@ -837,19 +840,13 @@
 
 /* 4. フッターボタンの重なり修正 */
 .back-to-top {
-    bottom: 90px !important;
+    bottom: 80px !important;
     z-index: 9999;
-    /* モバイルでのフッター重なり防止はbody paddingで対応 */
 }
 
 @media (max-width: 768px) {
     .back-to-top {
-        bottom: 100px !important;
-    }
-
-    /* フッターがボタンで隠れないように余白を追加 */
-    .footer {
-        padding-bottom: 90px;
+        bottom: 90px !important;
     }
 }
 

@@ -1270,8 +1270,7 @@ a {
     background: var(--color-primary);
     color: rgba(255, 255, 255, 0.7);
     text-align: center;
-    padding: 32px 20px 80px;
-    /* Added bottom padding for sticky button */
+    padding: 28px 20px 24px;
 }
 
 .footer-inner {
@@ -1300,9 +1299,8 @@ a {
 }
 
 .footer-info {
-    margin-bottom: 15px;
     margin-top: 5px;
-    margin-bottom: 5px;
+    margin-bottom: 8px;
 }
 
 .footer-hours {
@@ -1360,7 +1358,7 @@ a {
     }
 
     .footer {
-        padding: 22px 12px 16px;
+        padding: 20px 12px 60px;
     }
 
     .footer-nav {
