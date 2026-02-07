@@ -202,7 +202,13 @@
                 <div class="premium-section" id="report-plan">
                     <h2 class="premium-title">六根清浄プレミアムレポート</h2>
                     <p class="premium-subtitle">完全オーダーメイドのPDFレポート。何度でも読み返せる、あなただけの運勢のバイブル。</p>
-                    <p class="premium-note">※ ヒアリング内容に応じて、重点的に分析する内容をカスタマイズします</p>
+
+                    <!-- 特徴バッジ -->
+                    <div class="premium-features">
+                        <span class="feature-badge">✨ 完全オーダーメイド</span>
+                        <span class="feature-badge">💬 LINE質問1回無料</span>
+                        <span class="feature-badge">📄 PDF納品</span>
+                    </div>
 
                     <div class="premium-cards-container">
                         <!-- 3ヶ月運勢レポート -->
@@ -272,10 +278,10 @@
                                 <div class="course-prices">
                                     <span class="original-price">15,000円</span>
                                     <span class="arrow">→</span>
-                                    <span class="discount-price">12,000円</span>
+                                    <span class="discount-price" id="annual-price">12,000円</span>
                                 </div>
                                 <div class="tax-note">(税込)</div>
-                                <div class="discount-notice">🎁 3,000円OFF</div>
+                                <div class="discount-notice" id="annual-notice">🎁 3,000円OFF</div>
                             </div>
 
                             <div class="course-description">
@@ -437,6 +443,30 @@
     </a>
 
     <script src="js/main.js"></script>
+    <script>
+        // 年間運勢レポートの価格を現在の月に応じて動的に更新
+        (function () {
+            const currentMonth = new Date().getMonth() + 1; // 1-12
+            const monthsPassed = Math.max(0, currentMonth - 1); // 1月から何ヶ月経過
+
+            // 年間レポート: 基本15,000円 - 経過月数×1,000円
+            const annualBase = 15000;
+            const annualDiscount = monthsPassed * 1000;
+            const annualPrice = annualBase - annualDiscount;
+
+            const annualPriceEl = document.getElementById('annual-price');
+            const annualNoticeEl = document.getElementById('annual-notice');
+
+            if (annualPriceEl && monthsPassed > 0) {
+                annualPriceEl.textContent = annualPrice.toLocaleString() + '円';
+                annualNoticeEl.textContent = '🎁 ' + currentMonth + '月限定！' + annualDiscount.toLocaleString() + '円OFF';
+            } else if (annualPriceEl) {
+                // 1月の場合は割引なし
+                annualPriceEl.textContent = annualBase.toLocaleString() + '円';
+                if (annualNoticeEl) annualNoticeEl.style.display = 'none';
+            }
+        })();
+    </script>
 
 </body>
 
