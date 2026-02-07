@@ -87,7 +87,7 @@
                 </a>
                 <a href="#report-plan" class="pricing-nav-btn">
                     <span class="nav-icon">📝</span>
-                    <span class="nav-text">プレミアムレポート</span>
+                    <span class="nav-text">六根清浄プレミアムレポート</span>
                     <span class="nav-desc">納品型PDFレポート</span>
                 </a>
             </div>
@@ -200,7 +200,7 @@
 
                 <!-- プレミアムレポートプラン -->
                 <div class="premium-section" id="report-plan">
-                    <h2 class="premium-title">プレミアムレポート</h2>
+                    <h2 class="premium-title">六根清浄プレミアムレポート</h2>
                     <p class="premium-subtitle">完全オーダーメイドのPDFレポート。何度でも読み返せる、あなただけの運勢のバイブル。</p>
                     <p class="premium-note">※ ヒアリング内容に応じて、重点的に分析する内容をカスタマイズします</p>
 
@@ -212,12 +212,12 @@
                                 <div class="course-duration">半期運勢レポート</div>
                                 <div class="course-subtitle">2026年1月〜6月の運勢</div>
                                 <div class="course-prices">
-                                    <span class="original-price">8,000円</span>
+                                    <span class="original-price" id="half-year-original">8,000円</span>
                                     <span class="arrow">→</span>
-                                    <span class="discount-price">7,000円</span>
+                                    <span class="discount-price" id="half-year-price">7,000円</span>
                                 </div>
                                 <div class="tax-note">(税込)</div>
-                                <div class="discount-notice">※ 2月ご注文：1月分経過につき1,000円OFF</div>
+                                <div class="discount-notice" id="half-year-notice">🎁 2月購入特別価格（1月分を割引）</div>
                             </div>
 
                             <div class="course-description">
@@ -246,12 +246,12 @@
                                 <div class="course-duration">年間運勢レポート</div>
                                 <div class="course-subtitle">2026年1月〜12月の運勢</div>
                                 <div class="course-prices">
-                                    <span class="original-price">15,000円</span>
+                                    <span class="original-price" id="annual-original">15,000円</span>
                                     <span class="arrow">→</span>
-                                    <span class="discount-price">14,000円</span>
+                                    <span class="discount-price" id="annual-price">14,000円</span>
                                 </div>
                                 <div class="tax-note">(税込)</div>
-                                <div class="discount-notice">※ 2月ご注文：1月分経過につき1,000円OFF</div>
+                                <div class="discount-notice" id="annual-notice">🎁 2月購入特別価格（1月分を割引）</div>
                             </div>
 
                             <div class="course-description">
@@ -311,7 +311,7 @@
                         <div class="course-header">
                             <div class="course-duration">30日運勢カレンダー</div>
                             <div class="course-prices">
-                                <span class="discount-price">2,500円</span>
+                                <span class="discount-price">3,000円</span>
                             </div>
                             <div class="tax-note">(税込)</div>
                         </div>
@@ -319,14 +319,13 @@
                         <div class="course-description">
                             <div class="description-title">カレンダー内容</div>
                             <ul class="course-examples">
-                                <li><strong>1ヶ月間の日ごとの運勢を一覧表示</strong></li>
-                                <li><strong>良い日・注意が必要な日が一目でわかる</strong></li>
+                                <li><strong>いい日・悪い日が一目で丸わかり</strong></li>
                                 <li><strong>大切な予定を入れるベストな日がわかる</strong></li>
-                                <li><strong>開運アクション付き</strong></li>
+                                <li><strong>注意が必要な日も事前に把握</strong></li>
                             </ul>
                             <div class="course-note calendar">
-                                <strong>「日毎の運勢を知りたい」方に。</strong><br>
-                                半期・年間レポートの月単位より細かく、1日ずつの運勢を確認したい方におすすめ。大事なイベントの日程調整や、毎日の心がけを知りたい方に。
+                                <strong>「この日に予定を入れて大丈夫？」を解決。</strong><br>
+                                大事なイベントの日程調整、面接、デート、契約など、重要な予定をいつ入れるか迷ったらこれ。
                             </div>
                         </div>
 
@@ -343,7 +342,6 @@
                         <li>ご注文から <span class="highlight">3日〜1週間以内</span> でPDFをLINEまたはメールでお届け</li>
                         <li>お客様の生年月日・性別・お悩み等をお聞きした上で作成</li>
                         <li>レポートに関する <span class="highlight">LINE質問1回無料</span></li>
-                        <li>リピーター様は <span class="highlight">次回10%OFF</span>（半期→年間へのアップグレード等）</li>
                     </ul>
                 </div>
             </div>
@@ -415,6 +413,51 @@
     </a>
 
     <script src="js/main.js"></script>
+    <script>
+        // プレミアムレポートの価格を現在の月に応じて動的に更新
+        (function () {
+            const currentMonth = new Date().getMonth() + 1; // 1-12
+            const monthsPassedHalfYear = Math.max(0, currentMonth - 1); // 1月から何ヶ月経過
+            const monthsPassedAnnual = Math.max(0, currentMonth - 1);
+
+            // 半期レポート（1月～6月）
+            const halfYearBase = 8000;
+            const halfYearDiscount = monthsPassedHalfYear * 1000;
+            const halfYearPrice = halfYearBase - halfYearDiscount;
+
+            // 年間レポート（1月～12月）
+            const annualBase = 15000;
+            const annualDiscount = monthsPassedAnnual * 1000;
+            const annualPrice = annualBase - annualDiscount;
+
+            // 価格表示を更新
+            const halfYearPriceEl = document.getElementById('half-year-price');
+            const halfYearNoticeEl = document.getElementById('half-year-notice');
+            const annualPriceEl = document.getElementById('annual-price');
+            const annualNoticeEl = document.getElementById('annual-notice');
+
+            if (halfYearPriceEl && halfYearDiscount > 0) {
+                halfYearPriceEl.textContent = halfYearPrice.toLocaleString() + '円';
+                halfYearNoticeEl.textContent = '🎁 ' + currentMonth + '月購入特別価格（' + monthsPassedHalfYear + 'ヶ月分割引）';
+            } else if (halfYearPriceEl) {
+                // 1月の場合は割引なし
+                halfYearPriceEl.textContent = halfYearBase.toLocaleString() + '円';
+                if (halfYearNoticeEl) halfYearNoticeEl.style.display = 'none';
+                document.querySelector('#half-year-original')?.parentElement.querySelector('.arrow')?.remove();
+                document.getElementById('half-year-original')?.remove();
+            }
+
+            if (annualPriceEl && annualDiscount > 0) {
+                annualPriceEl.textContent = annualPrice.toLocaleString() + '円';
+                annualNoticeEl.textContent = '🎁 ' + currentMonth + '月購入特別価格（' + monthsPassedAnnual + 'ヶ月分割引）';
+            } else if (annualPriceEl) {
+                annualPriceEl.textContent = annualBase.toLocaleString() + '円';
+                if (annualNoticeEl) annualNoticeEl.style.display = 'none';
+                document.querySelector('#annual-original')?.parentElement.querySelector('.arrow')?.remove();
+                document.getElementById('annual-original')?.remove();
+            }
+        })();
+    </script>
 </body>
 
 </html>
