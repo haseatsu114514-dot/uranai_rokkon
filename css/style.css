@@ -1026,30 +1026,10 @@ a {
         max-width: 150px;
     }
 
-    /* ページ導線 */
-    .page-links {
-        padding: 40px 16px;
-    }
-
-    .page-links-inner {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-    }
-
-    .page-link-card {
-        padding: 16px 10px;
-    }
-
-    .page-link-card::after {
+    /* ページ導線 - モバイルでは非表示 */
+    .page-links,
+    .page-links-container {
         display: none;
-    }
-
-    .page-link-title {
-        font-size: 0.8rem;
-    }
-
-    .page-link-desc {
-        font-size: 0.65rem;
     }
 
     /* フッターは強化版スタイル（行1233〜）でレスポンシブ対応済み */
