@@ -2,7 +2,7 @@
 
 /* ページヘッダー上書き */
 .page-title {
-    margin-bottom: 15px;
+    margin-bottom: 5px;
 }
 
 .advance-notice {
@@ -898,4 +898,75 @@
     /* 価格と税込をベースラインで揃える */
     justify-content: center;
     gap: 5px;
+}
+
+/* ========== フェーズ5 修正: レイアウト調整とコンパクト化 ========== */
+
+/* 1. ヘッダー食い込み修正 */
+.main-content.sub-page {
+    padding-top: 100px;
+    /* 固定ヘッダー分の余白を確保 */
+}
+
+@media (max-width: 768px) {
+    .main-content.sub-page {
+        padding-top: 80px;
+        /* モバイル用調整 */
+    }
+}
+
+/* 2. 通常鑑定プランのコンパクト化 */
+.course-description.compact {
+    padding: 0;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.course-description.compact .course-note {
+    background: none;
+    padding: 0;
+    margin: 0;
+    border: none;
+    font-size: 0.95rem;
+    color: #555;
+    text-align: center;
+}
+
+.pricing-notes-compact {
+    text-align: center;
+    margin: 20px 0 40px;
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+/* 3. 開始月注記のデザイン（目立つバッジ風） */
+.discount-notice-badge {
+    display: inline-block;
+    background: #ec4899;
+    /* ピンク系 */
+    color: #fff;
+    padding: 5px 20px;
+    border-radius: 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    margin-top: 10px;
+    box-shadow: 0 4px 10px rgba(236, 72, 153, 0.3);
+    border: 2px solid #fff;
+}
+
+/* 4. フッターボタンの重なり修正 */
+.back-to-top {
+    bottom: 90px !important;
+    /* LINEボタンと重ならないように強制的に上げる */
+    z-index: 9999;
+}
+
+@media (max-width: 768px) {
+    .back-to-top {
+        bottom: 100px !important;
+        /* モバイルでは常時表示されるLINEボタンを避ける */
+    }
 }
