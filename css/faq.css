@@ -174,20 +174,20 @@
     font-weight: 600;
 }
 
-/* ========== ページ導線 (FAQ固有・5カラム対応) ========== */
+/* ========== ページ導線 (FAQ固有・6カラム対応) ========== */
 .page-links-container {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 12px;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
     margin-top: 48px;
 }
 
 .page-link-card {
     background: #fff;
-    padding: 18px 10px;
-    border-radius: 10px;
+    padding: 12px 6px;
+    border-radius: 8px;
     text-align: center;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
     transition: all 0.3s;
     display: block;
     border: 2px solid transparent;
@@ -197,37 +197,37 @@
 .page-link-card::after {
     content: '→';
     position: absolute;
-    right: 8px;
+    right: 6px;
     top: 50%;
     transform: translateY(-50%);
     color: var(--color-gold);
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     opacity: 0;
     transition: all 0.3s;
 }
 
 .page-link-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
     border-color: var(--color-gold);
 }
 
 .page-link-card:hover::after {
     opacity: 1;
-    right: 5px;
+    right: 4px;
 }
 
 .page-link-title {
     display: block;
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     font-weight: 600;
     color: var(--color-primary);
-    margin-bottom: 4px;
+    margin-bottom: 3px;
 }
 
 .page-link-desc {
     display: block;
-    font-size: 0.68rem;
+    font-size: 0.6rem;
     color: #888;
 }
 
