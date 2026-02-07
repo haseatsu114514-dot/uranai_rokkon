@@ -55,7 +55,7 @@
 .course-card {
     background: rgba(255, 255, 255, 0.95);
     border-radius: 12px;
-    padding: 30px;
+    padding: 24px 25px;
     margin-bottom: 30px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
     border-left: 4px solid var(--color-gold);
@@ -79,12 +79,12 @@
 
 .course-badge {
     display: inline-block;
-    padding: 6px 20px;
+    padding: 4px 16px;
     border-radius: 20px;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     font-weight: 600;
     letter-spacing: 0.08em;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 }
 
 .course-badge.popular {
@@ -99,17 +99,17 @@
 
 .course-header {
     text-align: center;
-    padding-bottom: 20px;
+    padding-bottom: 15px;
     border-bottom: 1px solid #e0dcd5;
-    margin-bottom: 25px;
+    margin-bottom: 15px;
 }
 
 .course-duration {
-    font-size: 2rem;
+    font-size: 1.8rem;
     font-weight: 600;
     color: var(--color-primary-dark);
     letter-spacing: 0.05em;
-    margin-bottom: 15px;
+    margin-bottom: 8px;
 }
 
 .price-label {
