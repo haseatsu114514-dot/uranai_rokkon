@@ -105,7 +105,8 @@
 .back-to-top {
     position: fixed;
     bottom: 24px;
-    right: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(12px);
     width: 48px;
     height: 48px;
     border-radius: 50%;
@@ -120,27 +121,26 @@
     z-index: 999;
     opacity: 0;
     visibility: hidden;
-    transform: translateY(12px);
     transition: opacity 0.3s, visibility 0.3s, transform 0.3s;
 }
 
 .back-to-top.visible {
     opacity: 1;
     visibility: visible;
-    transform: translateY(0);
+    transform: translateX(-50%) translateY(0);
 }
 
 .back-to-top.footer-hide {
     opacity: 0;
     visibility: hidden;
-    transform: translateY(12px);
+    transform: translateX(-50%) translateY(12px);
     pointer-events: none;
 }
 
 .back-to-top:hover {
     background: var(--color-gold);
     color: var(--color-primary);
-    transform: translateY(-4px);
+    transform: translateX(-50%) translateY(-4px);
 }
 
 /* ========== 予約状況表示（完全版） ========== */
