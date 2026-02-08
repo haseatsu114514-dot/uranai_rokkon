@@ -29,6 +29,74 @@
     line-height: 1.8;
 }
 
+/* SEO Intro Section */
+.seo-intro-section {
+    background: #fff;
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.seo-intro-inner {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.seo-intro-title {
+    font-size: 1.5rem;
+    color: var(--color-primary);
+    margin-bottom: 30px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    position: relative;
+    display: inline-block;
+    padding-bottom: 15px;
+}
+
+.seo-intro-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: var(--color-gold);
+}
+
+.seo-intro-text {
+    font-size: 1rem;
+    line-height: 2;
+    color: #444;
+}
+
+.seo-intro-text p {
+    margin-bottom: 20px;
+}
+
+.seo-intro-text strong {
+    color: var(--color-primary-dark);
+    background: linear-gradient(transparent 70%, rgba(196, 163, 90, 0.3) 70%);
+}
+
+@media (max-width: 768px) {
+    .seo-intro-section {
+        padding: 40px 20px;
+    }
+
+    .seo-intro-title {
+        font-size: 1.2rem;
+    }
+
+    .seo-intro-text {
+        font-size: 0.95rem;
+        text-align: left;
+    }
+
+    .pc-only {
+        display: none;
+    }
+}
+
 /* ブログセクション */
 .blog-section {
     background: var(--color-cream);
