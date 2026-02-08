@@ -115,7 +115,7 @@ a {
     width: 100%;
     background: var(--color-primary);
     z-index: 1000;
-    padding: 0 40px;
+    padding: 0 20px;
 }
 
 .header-inner {
@@ -133,7 +133,7 @@ a {
 }
 
 .logo-main {
-    font-size: 1.4rem;
+    font-size: 1.2rem;
     font-weight: 600;
     letter-spacing: 0.1em;
     display: block;
