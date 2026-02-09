@@ -133,10 +133,13 @@ async function fetchArticleContent(url) {
     }
 }
 
-function generateArticlePage(item, content, categorySlug, displayCategory) {
+const SITEMAP_PATH = path.join(__dirname, '../sitemap.xml');
+
+function generateArticlePage(item, content, categorySlug, displayCategory, excerpt) {
     const title = item.title || "無題";
     const pubDate = new Date(item.pubDate);
     const formattedDate = format(pubDate, 'yyyy年M月d日');
+    const isoDate = pubDate.toISOString();
     const noteUrl = item.link;
 
     // Extract ID from link (last part of url)
@@ -146,11 +149,26 @@ function generateArticlePage(item, content, categorySlug, displayCategory) {
 
     const fileName = `${articleId}.html`;
     const filePath = path.join(BLOG_DIR, fileName);
+    const canonicalUrl = `https://uranai-rokkon.com/blog/${fileName}`;
 
     let thumbUrl = 'images/otya.png';
     if (item['media:thumbnail']) {
         thumbUrl = item['media:thumbnail'];
     }
+
+    // JSON-LD Structured Data
+    const jsonLd = {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "headline": title,
+        "image": thumbUrl.startsWith('http') ? thumbUrl : `https://uranai-rokkon.com/${thumbUrl}`,
+        "datePublished": isoDate,
+        "author": {
+            "@type": "Person",
+            "name": "占い処 六根清浄"
+        },
+        "description": excerpt || title
+    };
 
     const html = `<!DOCTYPE html>
 <html lang="ja">
@@ -158,12 +176,19 @@ function generateArticlePage(item, content, categorySlug, displayCategory) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${title} | 占い処 六根清浄 ブログ</title>
-    <meta name="description" content="${title} - 六根清浄のブログ記事。">
+    <meta name="description" content="${excerpt || title}">
+    <link rel="canonical" href="${canonicalUrl}">
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    ${JSON.stringify(jsonLd)}
+    </script>
+
     <!-- OGP -->
     <meta property="og:type" content="article">
     <meta property="og:title" content="${title} | 占い処 六根清浄">
-    <meta property="og:description" content="六根清浄のブログ記事です。">
-    <meta property="og:url" content="https://uranai-rokkon.com/blog/${fileName}">
+    <meta property="og:description" content="${excerpt || '六根清浄のブログ記事です。'}">
+    <meta property="og:url" content="${canonicalUrl}">
     <meta property="og:image" content="${thumbUrl}">
     
     <!-- Favicon -->
@@ -360,6 +385,68 @@ function generateCardHTML(item, internalLink, manualExcerpt = null) {
     `;
 }
 
+async function updateSitemap(items) {
+    if (!fs.existsSync(SITEMAP_PATH)) {
+        console.error('Sitemap not found!');
+        return;
+    }
+
+    console.log('Updating sitemap...');
+    const sitemapContent = fs.readFileSync(SITEMAP_PATH, 'utf8');
+    const parser = new xml2js.Parser({ explicitArray: false });
+    // explicitArray: false can be tricky with lists. Let's use true for safety or handle it.
+    // Actually simpler to just append if not exists using string manipulation or build new XML.
+    // Ideally we parse, add, build.
+
+    try {
+        const result = await parser.parseStringPromise(sitemapContent);
+
+        let urls = result.urlset.url;
+        if (!Array.isArray(urls)) {
+            urls = [urls];
+        }
+
+        let updated = false;
+
+        for (const item of items) {
+            const link = item.link;
+            const urlParts = link.split('/');
+            const articleId = urlParts[urlParts.length - 1].split('?')[0];
+            const fileName = `${articleId}.html`;
+            const fullUrl = `https://uranai-rokkon.com/blog/${fileName}`;
+
+            // Check if exists
+            const exists = urls.some(u => u.loc === fullUrl);
+            if (!exists) {
+                console.log(`Adding ${articleId} to sitemap`);
+                urls.push({
+                    loc: fullUrl,
+                    lastmod: format(new Date(), 'yyyy-MM-dd'),
+                    changefreq: 'monthly',
+                    priority: '0.7'
+                });
+                updated = true;
+            }
+        }
+
+        if (updated) {
+            result.urlset.url = urls;
+            const builder = new xml2js.Builder({
+                xmldec: { version: '1.0', encoding: 'UTF-8' },
+                renderOpts: { 'pretty': true, 'indent': '  ', 'newline': '\n' }
+            });
+            const xml = builder.buildObject(result);
+            fs.writeFileSync(SITEMAP_PATH, xml);
+            console.log('Sitemap updated.');
+        } else {
+            console.log('No new articles to add to sitemap.');
+        }
+
+    } catch (e) {
+        console.error('Error updating sitemap:', e);
+    }
+}
+
 async function updateBlogHTML() {
     console.log('Fetching RSS...');
     const xml = await fetchRSS();
@@ -408,7 +495,7 @@ async function updateBlogHTML() {
             const assignedCategory = assignCategory(item.title, categoryTextSource, item.category ? (Array.isArray(item.category) ? item.category : [item.category]) : []);
             const displayCategory = CAT_MAP[assignedCategory] || 'コラム';
 
-            generateArticlePage(item, content, assignedCategory, displayCategory);
+            generateArticlePage(item, content, assignedCategory, displayCategory, excerpt);
 
             // Generate card with the extracted excerpt
             cardHtmls.push(generateCardHTML(item, fileName, excerpt));
@@ -466,6 +553,9 @@ async function updateBlogHTML() {
     } else {
         console.error('Could not find #blog-grid in blog.html');
     }
+
+    // Update Sitemap
+    await updateSitemap(items);
 }
 
 updateBlogHTML();
