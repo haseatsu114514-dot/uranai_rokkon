@@ -114,6 +114,17 @@ async function fetchArticleContent(url) {
         // Remove internal Note widgets (embeds might break, let's keep them if possible but iframe needs care)
         // For now, simpler is better.
 
+        // Remove specific internal link embeds (uranai-rokkon.com)
+        $content('a[href*="uranai-rokkon.com"]').each((i, el) => {
+            // Trace back to the main container widget (figure or external-article-widget) and remove it
+            const $widget = $content(el).closest('figure');
+            if ($widget.length) {
+                $widget.remove();
+            } else {
+                $content(el).closest('.external-article-widget').remove();
+            }
+        });
+
         return $content.html();
 
     } catch (error) {
@@ -236,12 +247,25 @@ function generateArticlePage(item, content, categorySlug, displayCategory) {
         <div class="header-inner">
             <a href="../index.html" class="logo">
                 <span class="logo-main">六根清浄</span>
+                <span class="logo-sub">(Rokkon shojo)</span>
             </a>
             <div class="nav-wrapper">
                 <nav class="nav">
                     <a href="../index.html">TOP</a>
-                    <a href="../blog.html">ブログ一覧</a>
+                    <a href="../beginner.html">はじめて</a>
+                    <a href="../about.html">占い師</a>
+                    <a href="../pricing.html">料金案内</a>
+                    <a href="../testimonials.html">口コミ</a>
+                    <a href="../faq.html">Q&A</a>
+                    <a href="../blog.html">ブログ</a>
+                    <a href="https://uranairokkon.base.shop" target="_blank">物販</a>
                 </nav>
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSdG_cRsdXN-z8HUmzwUdAv7exsxFM41qp-WLr6hGORGmQI28w/viewform?usp=header" class="contact-btn" target="_blank">お問い合わせ</a>
+            </div>
+            <div class="menu-toggle" onclick="toggleMenu();" aria-label="メニュー">
+                <span></span>
+                <span></span>
+                <span></span>
             </div>
         </div>
     </header>
@@ -287,7 +311,7 @@ function generateArticlePage(item, content, categorySlug, displayCategory) {
     return fileName; // return relative filename
 }
 
-function generateCardHTML(item, internalLink) {
+function generateCardHTML(item, internalLink, manualExcerpt = null) {
     const title = item.title || "無題";
     const link = internalLink; // Link to internal file
     const pubDate = new Date(item.pubDate);
@@ -298,8 +322,14 @@ function generateCardHTML(item, internalLink) {
         thumbUrl = item['media:thumbnail'];
     }
 
+    let excerpt = '';
     const plainText = (item.description || '').replace(/<[^>]+>/g, '');
-    const excerpt = plainText.length > 60 ? plainText.substring(0, 60) + '...' : plainText;
+
+    if (manualExcerpt) {
+        excerpt = manualExcerpt;
+    } else {
+        excerpt = plainText.length > 60 ? plainText.substring(0, 60) + '...' : plainText;
+    }
 
     const assignedCategory = assignCategory(title, plainText, item.category ? (Array.isArray(item.category) ? item.category : [item.category]) : []);
     const displayCategory = CAT_MAP[assignedCategory] || 'コラム';
@@ -354,58 +384,60 @@ async function updateBlogHTML() {
         const fileName = `${articleId}.html`;
         const filePath = path.join(BLOG_DIR, fileName);
 
-        let content = null;
-
-        // Skip scraping if file exists
-        if (fs.existsSync(filePath)) {
-            console.log(`Skipping scraping for ${articleId} (File exists)`);
-
-            const plainText = (item.description || '').replace(/<[^>]+>/g, '');
-            const assignedCategory = assignCategory(item.title, plainText, item.category ? (Array.isArray(item.category) ? item.category : [item.category]) : []);
-            const displayCategory = CAT_MAP[assignedCategory] || 'コラム';
-
-            cardHtmls.push(generateCardHTML(item, fileName));
-            continue;
-        }
-
         // Wait a bit between requests to be nice
         await new Promise(resolve => setTimeout(resolve, 1000));
 
-        content = await fetchArticleContent(link);
+        // Always scrape to get the full content for excerpt generation, 
+        // even if file exists (unless we store metadata separately, but for now scraping is safer for excerpt)
+        // Optimization: If file exists, we could arguably skip scraping IF we had the excerpt stored.
+        // But the user reported missing excerpts, so we need to re-scrape to get the text.
+        // Let's scrape.
+
+        let content = await fetchArticleContent(link);
 
         if (content) {
-            const plainText = (item.description || '').replace(/<[^>]+>/g, '');
-            const assignedCategory = assignCategory(item.title, plainText, item.category ? (Array.isArray(item.category) ? item.category : [item.category]) : []);
+            // Generate plain text excerpt from the full HTML content
+            const $ = cheerio.load(content);
+            const fullText = $.text().replace(/\s+/g, ' ').trim();
+            const excerpt = fullText.length > 60 ? fullText.substring(0, 60) + '...' : fullText;
+
+            const plainTextDesc = (item.description || '').replace(/<[^>]+>/g, '');
+            // Use RSS description keywords if available for category, but use scraped text for card excerpt if description is empty or just image
+
+            const categoryTextSource = plainTextDesc + ' ' + fullText;
+            const assignedCategory = assignCategory(item.title, categoryTextSource, item.category ? (Array.isArray(item.category) ? item.category : [item.category]) : []);
             const displayCategory = CAT_MAP[assignedCategory] || 'コラム';
 
             generateArticlePage(item, content, assignedCategory, displayCategory);
-            cardHtmls.push(generateCardHTML(item, fileName)); // Use local filename
+
+            // Generate card with the extracted excerpt
+            cardHtmls.push(generateCardHTML(item, fileName, excerpt));
         } else {
             console.warn(`Skipping generation for ${link} due to scrape failure`);
-
-            const plainText = (item.description || '').replace(/<[^>]+>/g, '');
-            const assignedCategory = assignCategory(item.title, plainText, item.category ? (Array.isArray(item.category) ? item.category : [item.category]) : []);
-            const displayCategory = CAT_MAP[assignedCategory] || 'コラム';
+            // Fallback
             const title = item.title || "無題";
             const pubDate = new Date(item.pubDate);
             const formattedDate = format(pubDate, 'yyyy年M月d日');
             let thumbUrl = item['media:thumbnail'] || 'images/otya.png';
+            const plainText = (item.description || '').replace(/<[^>]+>/g, '');
             const excerpt = plainText.length > 60 ? plainText.substring(0, 60) + '...' : plainText;
+            const assignedCategory = assignCategory(item.title, plainText, item.category ? (Array.isArray(item.category) ? item.category : [item.category]) : []);
+            const displayCategory = CAT_MAP[assignedCategory] || 'コラム';
 
             cardHtmls.push(`
-                <a href="${link}" class="article-card" target="_blank" rel="noopener noreferrer" data-category="${assignedCategory}" data-timestamp="${pubDate.getTime()}">
-                    <div class="article-image">
-                        <span class="article-category">${displayCategory}</span>
-                        <img src="${thumbUrl}" alt="${title}" class="article-thumb" onerror="this.src='images/otya.png'">
-                    </div>
-                    <div class="article-content">
-                        <div class="article-meta"><span class="article-date">${formattedDate}</span></div>
-                        <h2 class="article-title">${title}</h2>
-                        <p class="article-excerpt">${excerpt}</p>
-                        <span class="read-more">noteで読む</span>
-                    </div>
-                </a>
-             `);
+                 <a href="${link}" class="article-card" target="_blank" rel="noopener noreferrer" data-category="${assignedCategory}" data-timestamp="${pubDate.getTime()}">
+                     <div class="article-image">
+                         <span class="article-category">${displayCategory}</span>
+                         <img src="${thumbUrl}" alt="${title}" class="article-thumb" onerror="this.src='images/otya.png'">
+                     </div>
+                     <div class="article-content">
+                         <div class="article-meta"><span class="article-date">${formattedDate}</span></div>
+                         <h2 class="article-title">${title}</h2>
+                         <p class="article-excerpt">${excerpt}</p>
+                         <span class="read-more">noteで読む</span>
+                     </div>
+                 </a>
+              `);
         }
     }
 
@@ -417,14 +449,15 @@ async function updateBlogHTML() {
     // Use Cheerio to update blog.html safely
     const $ = cheerio.load(html, { decodeEntities: false });
 
+    // Remove the loading indicator text specifically
+    // It's in .blog-inner > p containing "記事を読み込んでいます..."
+    $('.blog-inner p').filter((i, el) => $(el).text().includes('記事を読み込んでいます')).remove();
+    // Also remove explicit id if it existed (backwards compatibility)
+    $('#loading-indicator').remove();
+
     const $grid = $('#blog-grid');
     if ($grid.length) {
         $grid.html('\n' + cardsHtmlJoined + '\n');
-
-        // Remove loading indicator if present
-        $('#loading-indicator').remove();
-
-        // Also remove class blog-grid-empty if present
         $grid.removeClass('blog-grid-empty');
 
         console.log('Writing updated blog.html...');
