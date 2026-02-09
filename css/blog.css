@@ -79,7 +79,9 @@
 /* カード画像 */
 .article-image {
     position: relative;
-    height: 200px;
+    width: 100%;
+    aspect-ratio: 1.91 / 1;
+    /* Match Note.com OGP aspect ratio */
     overflow: hidden;
     background: linear-gradient(135deg,
             var(--color-primary) 0%,
@@ -104,6 +106,8 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center;
+    /* Center the crop */
     transition: transform 0.5s;
 }
 
