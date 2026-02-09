@@ -3,26 +3,18 @@ const path = require('path');
 const axios = require('axios');
 const xml2js = require('xml2js');
 const { format } = require('date-fns');
+const cheerio = require('cheerio');
 
 const RSS_URL = 'https://note.com/rokkon_uranai/rss';
 const BLOG_HTML_PATH = path.join(__dirname, '../blog.html');
+const BLOG_DIR = path.join(__dirname, '../blog');
 
-async function fetchRSS() {
-    try {
-        const response = await axios.get(RSS_URL);
-        return response.data;
-    } catch (error) {
-        console.error('Error fetching RSS:', error);
-        process.exit(1);
-    }
+// Ensure blog directory exists
+if (!fs.existsSync(BLOG_DIR)) {
+    fs.mkdirSync(BLOG_DIR);
 }
 
-async function parseRSS(xml) {
-    const parser = new xml2js.Parser({ explicitArray: false });
-    return await parser.parseStringPromise(xml);
-}
-
-// Category Logic (Mirrored from frontend for server-side generation)
+// Category Logic
 const LOVE_KEYWORDS = ['恋愛', '結婚', '復縁', 'モテ', 'パートナー', '婚活', '夫婦', '恋人', '失恋', '不倫', '彼氏', '彼女', 'カップル', '独身', '出会い', 'マッチングアプリ'];
 const WORK_KEYWORDS = ['仕事', '転職', '起業', '経営', 'キャリア', 'ビジネス', '金運', '職場', '上司', '部下', '収入', '適職', 'フリーランス', 'ギャンブル', 'スロット', 'お金'];
 const FORTUNE_KEYWORDS = ['運勢', '運気', '開運', '大殺界', '空亡', '2026年', '2025年', '年運', '月運', '日運'];
@@ -48,42 +40,277 @@ function assignCategory(title, description, tags = []) {
     return 'life';
 }
 
-function generateCardHTML(item) {
+const CAT_MAP = {
+    'love': '恋愛・結婚',
+    'work': '仕事・金運',
+    'fortune': '占い・運勢',
+    'life': 'コラム・人生'
+};
+
+async function fetchRSS() {
+    try {
+        const response = await axios.get(RSS_URL);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching RSS:', error);
+        process.exit(1);
+    }
+}
+
+async function parseRSS(xml) {
+    const parser = new xml2js.Parser({ explicitArray: false });
+    return await parser.parseStringPromise(xml);
+}
+
+// Scraping Function
+async function fetchArticleContent(url) {
+    try {
+        console.log(`Scraping: ${url}`);
+        const response = await axios.get(url);
+        const $ = cheerio.load(response.data);
+
+        // Note article body seems to be in .note-common-styles__text-body or similar
+        // We need to target the main content.
+        // As of 2024/2026, structure changes, but finding the main readable area is key.
+        // Often strictly: .p-article__content or .note-common-styles__text-body
+
+        let contentHtml = '';
+
+        // Try common selectors
+        if ($('.note-common-styles__text-body').length) {
+            contentHtml = $('.note-common-styles__text-body').html();
+        } else if ($('[data-name="body"]').length) {
+            contentHtml = $('[data-name="body"]').html();
+        } else {
+            // Fallback: try to get main article part
+            contentHtml = $('article.o-noteContentText, .o-noteContentText').html() || '';
+        }
+
+        if (!contentHtml) {
+            console.warn(`Could not extract content for ${url}`);
+            return '<p>記事の取得に失敗しました。元の記事をNoteでご覧ください。</p>';
+        }
+
+        // Clean up:
+        // Remove empty paragraphs
+        contentHtml = contentHtml.replace(/<p><br><\/p>/g, '');
+
+        // Fix images: Note often uses data-src for lazy loading. We want src.
+        // Check if images are lazy loaded.
+        const $content = cheerio.load(contentHtml, null, false); // false = fragment
+        $content('img').each((i, el) => {
+            const dataSrc = $content(el).attr('data-src');
+            if (dataSrc) {
+                $content(el).attr('src', dataSrc);
+            }
+            // Remove typical Note lazy load classes that might hide the image
+            $content(el).removeClass('lazyload');
+
+            // Add styling for responsiveness
+            $content(el).css('max-width', '100%');
+            $content(el).css('height', 'auto');
+        });
+
+        // Remove internal Note widgets (embeds might break, let's keep them if possible but iframe needs care)
+        // For now, simpler is better.
+
+        return $content.html();
+
+    } catch (error) {
+        console.error(`Error scraping ${url}:`, error.message);
+        return null;
+    }
+}
+
+function generateArticlePage(item, content, categorySlug, displayCategory) {
     const title = item.title || "無題";
-    const link = item.link || "#";
     const pubDate = new Date(item.pubDate);
     const formattedDate = format(pubDate, 'yyyy年M月d日');
+    const noteUrl = item.link;
 
-    // Extract thumbnail
+    // Extract ID from link (last part of url)
+    // https://note.com/rokkon_uranai/n/n8ed86fa36803 -> n8ed86fa36803
+    const urlParts = noteUrl.split('/');
+    const articleId = urlParts[urlParts.length - 1].split('?')[0]; // remove query params
+
+    const fileName = `${articleId}.html`;
+    const filePath = path.join(BLOG_DIR, fileName);
+
     let thumbUrl = 'images/otya.png';
     if (item['media:thumbnail']) {
         thumbUrl = item['media:thumbnail'];
     }
 
-    // Clean description
+    const html = `<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${title} | 占い処 六根清浄 ブログ</title>
+    <meta name="description" content="${title} - 六根清浄のブログ記事。">
+    <!-- OGP -->
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="${title} | 占い処 六根清浄">
+    <meta property="og:description" content="六根清浄のブログ記事です。">
+    <meta property="og:url" content="https://uranai-rokkon.com/blog/${fileName}">
+    <meta property="og:image" content="${thumbUrl}">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="../images/favicon.png">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/blog.css">
+    <style>
+        .article-body {
+            font-family: 'Shippori Mincho', serif;
+            line-height: 2.0;
+            color: #333;
+            font-size: 1.05rem;
+            margin-top: 40px;
+        }
+        .article-body h2 {
+            font-size: 1.4rem;
+            margin-top: 50px;
+            margin-bottom: 25px;
+            border-bottom: 1px solid var(--color-gold);
+            padding-bottom: 10px;
+            color: var(--color-primary-dark);
+        }
+        .article-body h3 {
+            font-size: 1.2rem;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        .article-body p {
+            margin-bottom: 2em;
+        }
+        .article-body img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 20px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        .article-body blockquote {
+            border-left: 4px solid var(--color-gold);
+            padding-left: 15px;
+            margin: 20px 0;
+            color: #666;
+            font-style: italic;
+        }
+        .article-header-image {
+            width: 100%;
+            height: auto;
+            aspect-ratio: 1.91 / 1;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+        .original-link {
+            display: inline-block;
+            margin-top: 40px;
+            padding: 15px 25px;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            color: #666;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+        .original-link:hover {
+            background: #f0f0f0;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-inner">
+            <a href="../index.html" class="logo">
+                <span class="logo-main">六根清浄</span>
+            </a>
+            <div class="nav-wrapper">
+                <nav class="nav">
+                    <a href="../index.html">TOP</a>
+                    <a href="../blog.html">ブログ一覧</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content" style="padding-top: 100px; padding-bottom: 80px;">
+        <article class="blog-inner" style="background: #fff; padding: 40px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.03);">
+            
+            <header class="article-header">
+                <div class="article-meta" style="margin-bottom: 15px; color: #888;">
+                    <span class="article-date">${formattedDate}</span>
+                    <span class="article-category" style="position: static; display: inline-block; margin-left: 10px;">${displayCategory}</span>
+                </div>
+                <h1 style="font-size: 1.8rem; margin-bottom: 30px; letter-spacing: 0.05em; line-height: 1.5;">${title}</h1>
+                <img src="${thumbUrl}" alt="${title}" class="article-header-image" onerror="this.style.display='none'">
+            </header>
+
+            <div class="article-body">
+                ${content}
+            </div>
+
+            <footer style="margin-top: 60px; border-top: 1px solid #eee; padding-top: 30px;">
+                <a href="${noteUrl}" target="_blank" rel="noopener" class="original-link">
+                    この記事のNote元ページを開く
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-left: 5px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                </a>
+                <div style="margin-top: 30px; text-align: center;">
+                    <a href="../blog.html" class="load-more-btn" style="text-decoration: none;">ブログ一覧に戻る</a>
+                </div>
+            </footer>
+        </article>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-inner">
+             <div class="footer-copy">© 2026 六根清浄 All Rights Reserved.</div>
+        </div>
+    </footer>
+</body>
+</html>`;
+
+    console.log(`Writing article page: ${fileName}`);
+    fs.writeFileSync(filePath, html);
+    return fileName; // return relative filename
+}
+
+function generateCardHTML(item, internalLink) {
+    const title = item.title || "無題";
+    const link = internalLink; // Link to internal file
+    const pubDate = new Date(item.pubDate);
+    const formattedDate = format(pubDate, 'yyyy年M月d日');
+
+    let thumbUrl = 'images/otya.png';
+    if (item['media:thumbnail']) {
+        thumbUrl = item['media:thumbnail'];
+    }
+
     const plainText = (item.description || '').replace(/<[^>]+>/g, '');
     const excerpt = plainText.length > 60 ? plainText.substring(0, 60) + '...' : plainText;
 
     const assignedCategory = assignCategory(title, plainText, item.category ? (Array.isArray(item.category) ? item.category : [item.category]) : []);
+    const displayCategory = CAT_MAP[assignedCategory] || 'コラム';
 
-    const catMap = {
-        'love': '恋愛・結婚',
-        'work': '仕事・金運',
-        'fortune': '占い・運勢',
-        'life': 'コラム・人生'
-    };
-    const displayCategory = catMap[assignedCategory] || 'コラム';
-
-    // New Badge logic (calculated at build time, but really this becomes stale quickly if static. 
-    // We can keep the badge if the build runs frequently, or let JS handle the badge hiding.)
-    // For now, let's just render it if it's new at build time.
     const now = new Date();
     const diffHours = (now - pubDate) / (1000 * 60 * 60);
     const isNew = diffHours < 24;
     const newBadgeHtml = isNew ? '<span class="new-badge">NEW</span>' : '';
 
     return `
-        <a href="${link}" class="article-card" target="_blank" rel="noopener noreferrer" data-category="${assignedCategory}" data-timestamp="${pubDate.getTime()}">
+        <a href="blog/${internalLink}" class="article-card" data-category="${assignedCategory}" data-timestamp="${pubDate.getTime()}">
             <div class="article-image">
                 <span class="article-category">${displayCategory}</span>
                 ${newBadgeHtml}
@@ -97,12 +324,6 @@ function generateCardHTML(item) {
                 <p class="article-excerpt">${excerpt}</p>
                 <div style="display: flex; align-items: center; justify-content: space-between;">
                     <span class="read-more">記事を読む</span>
-                    <span class="note-badge">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-                        </svg>
-                        note.com
-                    </span>
                 </div>
             </div>
         </a>
@@ -114,34 +335,100 @@ async function updateBlogHTML() {
     const xml = await fetchRSS();
     const result = await parseRSS(xml);
 
-    const items = result.rss.channel.item;
+    // Convert single item to array if needed
+    let items = result.rss.channel.item;
+    if (!Array.isArray(items)) {
+        items = [items];
+    }
+
     console.log(`Found ${items.length} items.`);
 
-    const cardsHtml = items.map(generateCardHTML).join('\n');
+    // Helper to process items sequentially to not overload
+    const cardHtmls = [];
+
+    for (const item of items) {
+        const link = item.link;
+
+        const urlParts = link.split('/');
+        const articleId = urlParts[urlParts.length - 1].split('?')[0];
+        const fileName = `${articleId}.html`;
+        const filePath = path.join(BLOG_DIR, fileName);
+
+        let content = null;
+
+        // Skip scraping if file exists
+        if (fs.existsSync(filePath)) {
+            console.log(`Skipping scraping for ${articleId} (File exists)`);
+
+            const plainText = (item.description || '').replace(/<[^>]+>/g, '');
+            const assignedCategory = assignCategory(item.title, plainText, item.category ? (Array.isArray(item.category) ? item.category : [item.category]) : []);
+            const displayCategory = CAT_MAP[assignedCategory] || 'コラム';
+
+            cardHtmls.push(generateCardHTML(item, fileName));
+            continue;
+        }
+
+        // Wait a bit between requests to be nice
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        content = await fetchArticleContent(link);
+
+        if (content) {
+            const plainText = (item.description || '').replace(/<[^>]+>/g, '');
+            const assignedCategory = assignCategory(item.title, plainText, item.category ? (Array.isArray(item.category) ? item.category : [item.category]) : []);
+            const displayCategory = CAT_MAP[assignedCategory] || 'コラム';
+
+            generateArticlePage(item, content, assignedCategory, displayCategory);
+            cardHtmls.push(generateCardHTML(item, fileName)); // Use local filename
+        } else {
+            console.warn(`Skipping generation for ${link} due to scrape failure`);
+
+            const plainText = (item.description || '').replace(/<[^>]+>/g, '');
+            const assignedCategory = assignCategory(item.title, plainText, item.category ? (Array.isArray(item.category) ? item.category : [item.category]) : []);
+            const displayCategory = CAT_MAP[assignedCategory] || 'コラム';
+            const title = item.title || "無題";
+            const pubDate = new Date(item.pubDate);
+            const formattedDate = format(pubDate, 'yyyy年M月d日');
+            let thumbUrl = item['media:thumbnail'] || 'images/otya.png';
+            const excerpt = plainText.length > 60 ? plainText.substring(0, 60) + '...' : plainText;
+
+            cardHtmls.push(`
+                <a href="${link}" class="article-card" target="_blank" rel="noopener noreferrer" data-category="${assignedCategory}" data-timestamp="${pubDate.getTime()}">
+                    <div class="article-image">
+                        <span class="article-category">${displayCategory}</span>
+                        <img src="${thumbUrl}" alt="${title}" class="article-thumb" onerror="this.src='images/otya.png'">
+                    </div>
+                    <div class="article-content">
+                        <div class="article-meta"><span class="article-date">${formattedDate}</span></div>
+                        <h2 class="article-title">${title}</h2>
+                        <p class="article-excerpt">${excerpt}</p>
+                        <span class="read-more">noteで読む</span>
+                    </div>
+                </a>
+             `);
+        }
+    }
+
+    const cardsHtmlJoined = cardHtmls.join('\n');
 
     console.log('Reading blog.html...');
     let html = fs.readFileSync(BLOG_HTML_PATH, 'utf8');
 
-    // Regex to find the <div id="blog-grid" ...> ... </div> block
-    // We need to be careful not to break the structure.
-    // The current div has classes "blog-grid blog-grid-empty"
-    // We should remove "blog-grid-empty" and inject content.
+    // Use Cheerio to update blog.html safely
+    const $ = cheerio.load(html, { decodeEntities: false });
 
-    // Replace content inside id="blog-grid"
-    const gridRegex = /(<div id="blog-grid" class="[^"]*">)([\s\S]*?)(<\/div>)/;
+    const $grid = $('#blog-grid');
+    if ($grid.length) {
+        $grid.html('\n' + cardsHtmlJoined + '\n');
 
-    if (gridRegex.test(html)) {
-        html = html.replace(gridRegex, (match, openTag, content, closeTag) => {
-            const newOpenTag = openTag.replace('blog-grid-empty', '').trim();
-            return `${newOpenTag}\n${cardsHtml}\n${closeTag}`;
-        });
+        // Remove loading indicator if present
+        $('#loading-indicator').remove();
 
-        // Also remove the Loading Indicator if it exists in the source
-        const loadingRegex = /<div id="loading-indicator"[\s\S]*?<\/div>/;
-        html = html.replace(loadingRegex, '');
+        // Also remove class blog-grid-empty if present
+        $grid.removeClass('blog-grid-empty');
 
         console.log('Writing updated blog.html...');
-        fs.writeFileSync(BLOG_HTML_PATH, html);
+        fs.writeFileSync(BLOG_HTML_PATH, $.html());
         console.log('Done!');
     } else {
         console.error('Could not find #blog-grid in blog.html');
