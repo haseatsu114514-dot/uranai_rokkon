@@ -567,6 +567,7 @@
 .course-badge.premium-heart {
     background: linear-gradient(135deg, #ec4899 0%, #f472b6 100%);
     color: #fff;
+    padding: 4px 12px;
 }
 
 /* プレミアム info セクション */
@@ -894,10 +895,10 @@
 /* Discount Notice Style */
 .discount-notice {
     text-align: center;
-    color: #c44569;
+    color: #fff;
     font-weight: bold;
     margin-bottom: 15px;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
 }
 
 /* Reduce top margin for purchase button in premium section */
