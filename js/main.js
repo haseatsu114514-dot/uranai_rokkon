@@ -142,6 +142,41 @@ const GAS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbwSF2hFdG_ggXXze
     updateProgress();
   }
 
+  /* ----- 8. スマホ追従ボタンのスクロール制御（途中から表示） ----- */
+  function initStickyScroll() {
+    var btn = document.querySelector('.sticky-reservation-btn');
+    if (!btn) return;
+
+    // モバイル以外では処理しない（CSSで非表示になっているはずだが念のため）
+    if (window.innerWidth > 768) return;
+
+    var ticking = false;
+    function update() {
+      var y = window.scrollY || window.pageYOffset;
+      var docHeight = document.documentElement.scrollHeight;
+      var winHeight = window.innerHeight;
+
+      // ページの40%または1000pxスクロールしたら表示
+      var threshold = Math.min(docHeight * 0.4, 1000);
+
+      if (y > threshold) {
+        btn.classList.add('visible');
+      } else {
+        btn.classList.remove('visible');
+      }
+      ticking = false;
+    }
+
+    function requestTick() {
+      if (!ticking) {
+        requestAnimationFrame(update);
+        ticking = true;
+      }
+    }
+    window.addEventListener('scroll', requestTick, { passive: true });
+    update();
+  }
+
   function boot() {
     // JavaScriptが有効であることを示すクラスを追加
     document.documentElement.classList.add('js-enabled');
@@ -153,6 +188,7 @@ const GAS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbwSF2hFdG_ggXXze
     initFlowSteps();
     initCtaMicro();
     initScrollProgress();
+    initStickyScroll();
   }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', boot);

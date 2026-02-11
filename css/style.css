@@ -87,11 +87,18 @@ a {
 
 @media (max-width: 768px) {
     .sticky-reservation-btn {
+        opacity: 0;
+        visibility: hidden;
+        transform: translateX(-50%) translateY(100px);
+        transition: all 0.5s var(--ease-premium);
+        /* アニメーション定義削除（JS制御へ移行） */
+    }
+
+    .sticky-reservation-btn.visible {
         opacity: 1;
         visibility: visible;
         transform: translateX(-50%) translateY(0);
-        animation: sticky-btn-slide-in 0.6s var(--ease-premium) forwards,
-            sticky-btn-pulse 3s ease-in-out 1s infinite;
+        animation: sticky-btn-pulse 3s ease-in-out 1s infinite;
     }
 
     @keyframes sticky-btn-slide-in {
@@ -1306,7 +1313,7 @@ a {
 .footer-hours {
     font-size: 0.8rem;
     color: rgba(255, 255, 255, 0.6);
-    margin-bottom: 8px;
+    margin-bottom: 2px;
 }
 
 .footer-contact {
