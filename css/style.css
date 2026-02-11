@@ -1252,6 +1252,12 @@ a {
 }
 
 /* 7. FAQアコーディオンのスムーズ化（FAQ用） */
+/* Logo size kept constant to avoid jitter */
+/* .header.scrolled .logo-main {
+        font-size: 1.25rem;
+        transition: font-size 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    } */
+
 .answer-wrap {
     max-height: 0;
     overflow: hidden;
