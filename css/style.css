@@ -1309,6 +1309,12 @@ a {
     margin-bottom: 8px;
 }
 
+.footer-contact {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 8px;
+}
+
 .footer-line-btn {
     display: inline-block;
     color: var(--color-gold);
