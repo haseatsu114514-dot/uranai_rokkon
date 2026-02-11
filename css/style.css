@@ -365,15 +365,21 @@ a {
 
 /* ========== 重要なお知らせセクション ========== */
 .notices-section {
-    background: var(--color-primary);
-    border-bottom: 2px solid var(--color-gold);
+    display: block;
+    width: 100%;
+    background-color: #2d3d38;
+    border-bottom: 2px solid #c4a35a;
     padding: 0;
+    margin: 0;
+    position: relative;
+    z-index: 1;
 }
 
 .notices-inner {
     max-width: 1200px;
     margin: 0 auto;
     display: flex;
+    flex-direction: row;
     align-items: center;
     min-height: 50px;
 }
@@ -382,7 +388,7 @@ a {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #c53030;
+    background-color: #c53030;
     color: #fff;
     font-size: 0.85rem;
     font-weight: 700;
@@ -391,6 +397,7 @@ a {
     white-space: nowrap;
     flex-shrink: 0;
     align-self: stretch;
+    min-height: 50px;
 }
 
 .notices-ticker {
@@ -401,6 +408,7 @@ a {
     min-height: 50px;
     display: flex;
     align-items: center;
+    min-width: 0;
 }
 
 .notices-list {
@@ -412,7 +420,7 @@ a {
     display: none;
     align-items: center;
     gap: 16px;
-    color: var(--color-text-white);
+    color: #ffffff;
     font-size: 0.9rem;
     line-height: 1.6;
     animation: noticeFadeIn 0.4s ease;
@@ -434,7 +442,7 @@ a {
 }
 
 .notice-date {
-    color: var(--color-gold);
+    color: #c4a35a;
     font-size: 0.8rem;
     font-weight: 600;
     white-space: nowrap;
@@ -475,50 +483,8 @@ a {
 
 .notices-nav-btn:hover {
     background: rgba(255, 255, 255, 0.1);
-    border-color: var(--color-gold);
-    color: var(--color-gold);
-}
-
-/* お知らせ モバイル対応 */
-@media (max-width: 768px) {
-    .notices-inner {
-        flex-wrap: wrap;
-    }
-
-    .notices-label {
-        font-size: 0.75rem;
-        padding: 10px 14px;
-    }
-
-    .notices-ticker {
-        padding: 0 10px;
-        min-height: 44px;
-    }
-
-    .notice-item {
-        flex-direction: column;
-        gap: 2px;
-        padding: 8px 0;
-    }
-
-    .notice-date {
-        font-size: 0.72rem;
-    }
-
-    .notice-text {
-        font-size: 0.78rem;
-        line-height: 1.5;
-    }
-
-    .notices-nav {
-        padding: 0 8px;
-    }
-
-    .notices-nav-btn {
-        width: 20px;
-        height: 16px;
-        font-size: 0.5rem;
-    }
+    border-color: #c4a35a;
+    color: #c4a35a;
 }
 
 /* ========== 予約状況セクション（和モダンデザイン） ========== */
@@ -1134,6 +1100,50 @@ a {
 
     .hero-btn img {
         max-width: 300px;
+    }
+
+    /* お知らせ */
+    .notices-inner {
+        flex-direction: row;
+        flex-wrap: nowrap;
+    }
+
+    .notices-label {
+        font-size: 0.7rem;
+        padding: 0 12px;
+        min-height: 44px;
+        letter-spacing: 0.05em;
+    }
+
+    .notices-ticker {
+        padding: 0 8px;
+        min-height: 44px;
+    }
+
+    .notice-item {
+        flex-direction: column;
+        gap: 2px;
+        padding: 6px 0;
+        align-items: flex-start;
+    }
+
+    .notice-date {
+        font-size: 0.7rem;
+    }
+
+    .notice-text {
+        font-size: 0.75rem;
+        line-height: 1.5;
+    }
+
+    .notices-nav {
+        padding: 0 6px;
+    }
+
+    .notices-nav-btn {
+        width: 20px;
+        height: 16px;
+        font-size: 0.5rem;
     }
 
     /* 予約状況 */
