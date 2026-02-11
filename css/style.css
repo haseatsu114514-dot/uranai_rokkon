@@ -1133,9 +1133,48 @@ a {
 }
 
 /* 3. ページ遷移カードの強化 */
+/* コンテナ定義（デスクトップ用：1列に収める） */
+.page-links-container,
+.page-links-inner {
+    display: grid;
+    /* 7-8個のボタンを1列に収めるための設定 */
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 10px;
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 0 10px;
+}
+
 .page-link-card {
     position: relative;
     overflow: hidden;
+    /* 1列に収めるためにパディング縮小 */
+    padding: 15px 5px;
+    background: #fff;
+    border: 1px solid rgba(196, 163, 90, 0.3);
+    border-radius: 8px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.page-link-title {
+    display: block;
+    font-size: 0.9rem;
+    /* フォントサイズ縮小 */
+    font-weight: 600;
+    color: var(--color-primary);
+    margin-bottom: 4px;
+}
+
+.page-link-desc {
+    display: block;
+    font-size: 0.7rem;
+    color: #888;
 }
 
 .page-link-card::before {
@@ -1154,7 +1193,9 @@ a {
 }
 
 .page-link-card:hover {
-    transform: translateY(-8px) scale(1.02);
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(196, 163, 90, 0.2);
+    border-color: var(--color-gold);
 }
 
 /* 4. スクロール進捗バー */
