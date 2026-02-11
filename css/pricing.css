@@ -977,39 +977,36 @@
     color: #fff;
 }
 
-/* ========== 鑑定プラン色分け (30/45/60分) ========== */
+/* ========== 鑑定プラン統一カラー ========== */
 
-/* 30分コース: ライトグリーン/ティール (手軽さ -> カレンダーグリーン #10b981) */
-/* 30分コース: ライトグリーン/ティール (手軽さ -> カレンダーグリーン #10b981) */
-.course-card.course-30 {
-    border: 2px solid #10b981;
-    border-left: 4px solid #10b981;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(16, 185, 129, 0.05) 100%);
-}
-
-.course-30 .course-badge {
-    background: #10b981;
-    color: #fff;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-/* 45分コース: ブルー/ネイビー (標準・信頼 -> 3ヶ月レポートブルー #60a5fa) */
-.course-card.course-45 {
-    border: 2px solid #60a5fa;
-    border-left: 4px solid #60a5fa;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(96, 165, 250, 0.05) 100%);
-}
-
-/* 60分コース: ゴールド (プレミアム・充実 -> 12ヶ月レポートゴールド #f59e0b) */
+/* 鑑定プランカード共通: ゴールドアクセントでシンプルに統一 */
+.course-card.course-30,
+.course-card.course-45,
 .course-card.course-60 {
-    border: 2px solid #f59e0b;
-    border-left: 4px solid #f59e0b;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(245, 158, 11, 0.08) 100%);
+    border: 2px solid var(--color-gold);
+    border-left: 4px solid var(--color-gold);
+    background: rgba(255, 255, 255, 0.95);
 }
 
+.course-30 .course-badge,
+.course-45 .course-badge,
 .course-60 .course-badge {
-    background: #f59e0b;
+    background: var(--color-gold);
+    color: var(--color-primary-dark);
+    font-weight: 700;
+}
+
+/* 鑑定プラン お得バッジ */
+.session-saving-badge {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 4px 14px;
+    background: #c44569;
     color: #fff;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border-radius: 20px;
+    letter-spacing: 0.02em;
 }
 
 /* ボタンの中央揃え強制 & 余白極小化 */
