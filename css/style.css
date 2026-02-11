@@ -1137,9 +1137,11 @@ a {
 .page-links-container,
 .page-links-inner {
     display: grid;
-    /* 7-8個のボタンを1列に収めるための設定 */
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-    gap: 10px;
+    /* Force single row for any number of items */
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    gap: 8px;
+    /* Reduced gap */
     max-width: 1000px;
     margin: 40px auto;
     padding: 0 10px;
@@ -1148,8 +1150,8 @@ a {
 .page-link-card {
     position: relative;
     overflow: hidden;
-    /* 1列に収めるためにパディング縮小 */
-    padding: 15px 5px;
+    /* Further reduced padding for single row */
+    padding: 10px 2px;
     background: #fff;
     border: 1px solid rgba(196, 163, 90, 0.3);
     border-radius: 8px;
