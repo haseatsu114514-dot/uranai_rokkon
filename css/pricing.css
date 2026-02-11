@@ -466,11 +466,11 @@
 /* 割引通知 */
 .discount-notice {
     display: inline-block;
-    margin-top: 10px;
-    padding: 6px 14px;
+    margin-top: 2px;
+    padding: 4px 14px;
     background: linear-gradient(135deg, #c44569 0%, #e84393 100%);
     color: #fff;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     font-weight: 600;
     border-radius: 20px;
     letter-spacing: 0.02em;
@@ -915,8 +915,8 @@
     text-align: center;
     color: #fff;
     font-weight: bold;
-    margin-bottom: 15px;
-    font-size: 0.85rem;
+    margin-bottom: 6px;
+    font-size: 0.8rem;
 }
 
 /* Reduce top margin for purchase button in premium section */
@@ -996,17 +996,20 @@
     font-weight: 700;
 }
 
-/* 鑑定プラン お得バッジ */
-.session-saving-badge {
-    display: inline-block;
-    margin-top: 8px;
-    padding: 4px 14px;
-    background: #c44569;
-    color: #fff;
-    font-size: 0.8rem;
-    font-weight: 600;
-    border-radius: 20px;
-    letter-spacing: 0.02em;
+/* 鑑定プラン 分単価注釈 */
+.session-saving-note {
+    font-size: 0.75rem;
+    color: #999;
+    margin-top: 4px;
+}
+
+/* 鑑定プランのコース名・価格を大きく */
+.session-section .course-duration {
+    font-size: 2.2rem;
+}
+
+.session-section .discount-price {
+    font-size: 2.2rem;
 }
 
 /* ボタンの中央揃え強制 & 余白極小化 */
