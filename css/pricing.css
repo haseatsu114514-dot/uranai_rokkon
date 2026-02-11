@@ -992,15 +992,16 @@
 .course-45 .course-badge,
 .course-60 .course-badge {
     background: var(--color-gold);
-    color: var(--color-primary-dark);
+    color: #fff;
     font-weight: 700;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
 }
 
-/* 鑑定プラン 分単価注釈 */
+/* 鑑定プラン 分単価注釈（価格横インライン） */
 .session-saving-note {
-    font-size: 0.75rem;
-    color: #999;
-    margin-top: 4px;
+    font-size: 0.7rem;
+    color: #aaa;
+    margin-left: 4px;
 }
 
 /* 鑑定プランのコース名・価格を大きく */
