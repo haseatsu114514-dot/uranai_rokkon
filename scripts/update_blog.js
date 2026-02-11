@@ -20,6 +20,14 @@ const WORK_KEYWORDS = ['仕事', '転職', '起業', '経営', 'キャリア', '
 const FORTUNE_KEYWORDS = ['運勢', '運気', '開運', '大殺界', '空亡', '2026年', '2025年', '年運', '月運', '日運'];
 const ESSAY_INDICATORS = ['思う', '考え', '感じ', 'だろうか', 'ではないか', 'かもしれない', '価値', '意味', '本当', '実は', 'なぜ', 'どうして'];
 
+// Axios Configuration with User-Agent to avoid blocking
+const axiosConfig = {
+    headers: {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+    },
+    timeout: 10000 // 10 seconds timeout
+};
+
 function assignCategory(title, description, tags = []) {
     const tagsText = tags.join(' ');
     const allText = title + ' ' + description + ' ' + tagsText;
@@ -49,7 +57,7 @@ const CAT_MAP = {
 
 async function fetchRSS() {
     try {
-        const response = await axios.get(RSS_URL);
+        const response = await axios.get(RSS_URL, axiosConfig);
         return response.data;
     } catch (error) {
         console.error('Error fetching RSS:', error);
@@ -66,7 +74,7 @@ async function parseRSS(xml) {
 async function fetchArticleContent(url) {
     try {
         console.log(`Scraping: ${url}`);
-        const response = await axios.get(url);
+        const response = await axios.get(url, axiosConfig);
         const $ = cheerio.load(response.data);
 
         // Note article body seems to be in .note-common-styles__text-body or similar
