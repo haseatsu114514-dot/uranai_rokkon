@@ -67,6 +67,34 @@
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
     border-left: 4px solid var(--color-gold);
     transition: transform 0.3s, box-shadow 0.3s;
+    overflow: hidden;
+    /* 画像が角丸からはみ出ないように */
+}
+
+/* ========== レポート画像 ========== */
+.course-image-wrapper {
+    margin: -24px -25px 20px;
+    position: relative;
+    padding-top: 60%;
+    /* アスペクト比固定 (例: 16:9なら56.25%、3:2なら66.6%) */
+    background: #f5f5f5;
+    overflow: hidden;
+}
+
+.course-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1.2);
+    /* 右下の星が隠れるように拡大 */
+    transition: transform 0.5s;
+}
+
+.course-card:hover .course-image {
+    transform: scale(1.25);
 }
 
 .course-card:hover {
