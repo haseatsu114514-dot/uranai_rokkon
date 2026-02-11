@@ -116,9 +116,7 @@
 
 .course-badge {
     display: table;
-    /* 中央揃えのために変更 */
-    margin: 0 auto 10px;
-    /* 中央揃え */
+    margin: 0 auto 4px;
     padding: 4px 16px;
     border-radius: 20px;
     font-size: 0.8rem;
@@ -193,7 +191,7 @@
 }
 
 .course-description {
-    margin-bottom: 25px;
+    margin-bottom: 10px;
 }
 
 .course-description.center-layout {
@@ -262,7 +260,7 @@
 
 .course-cta {
     text-align: center;
-    margin-top: 25px;
+    margin-top: 10px;
 }
 
 .course-cta img {
