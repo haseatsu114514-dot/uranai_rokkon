@@ -463,14 +463,14 @@
 
 /* 割引通知 */
 .discount-notice {
-    display: inline-block;
-    margin-top: 2px;
-    padding: 4px 14px;
-    background: linear-gradient(135deg, #c44569 0%, #e84393 100%);
-    color: #fff;
-    font-size: 0.8rem;
-    font-weight: 600;
-    border-radius: 20px;
+    display: block;
+    text-align: center;
+    margin: 0 0 4px;
+    padding: 3px 0;
+    background: none;
+    color: #c44569;
+    font-size: 0.75rem;
+    font-weight: 700;
     letter-spacing: 0.02em;
 }
 
@@ -908,14 +908,7 @@
     box-shadow: 0 6px 16px rgba(196, 163, 90, 0.2);
 }
 
-/* Discount Notice Style */
-.discount-notice {
-    text-align: center;
-    color: #fff;
-    font-weight: bold;
-    margin-bottom: 6px;
-    font-size: 0.8rem;
-}
+/* (discount-notice: 上部で一括定義済み) */
 
 /* Reduce top margin for purchase button in premium section */
 .premium-cards-container .course-cta {
