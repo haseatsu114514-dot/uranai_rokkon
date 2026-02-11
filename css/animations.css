@@ -92,12 +92,14 @@
 }
 
 .header.scrolled .header-inner {
-    height: 65px;
+    /* Height change removed to prevent menu shift */
+    /* height: 65px; */
     transition: height 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .header.scrolled .logo-main {
-    font-size: 1.25rem;
+    /* Font-size change removed to prevent text jitter */
+    /* font-size: 1.25rem; */
     transition: font-size 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
