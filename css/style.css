@@ -363,6 +363,164 @@ a {
     transition: opacity 0.7s ease 0.2s, transform 0.7s ease 0.2s;
 }
 
+/* ========== 重要なお知らせセクション ========== */
+.notices-section {
+    background: var(--color-primary);
+    border-bottom: 2px solid var(--color-gold);
+    padding: 0;
+}
+
+.notices-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    min-height: 50px;
+}
+
+.notices-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #c53030;
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    padding: 14px 20px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    align-self: stretch;
+}
+
+.notices-ticker {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+    padding: 0 20px;
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+}
+
+.notices-list {
+    position: relative;
+    width: 100%;
+}
+
+.notice-item {
+    display: none;
+    align-items: center;
+    gap: 16px;
+    color: var(--color-text-white);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    animation: noticeFadeIn 0.4s ease;
+}
+
+.notice-item.active {
+    display: flex;
+}
+
+@keyframes noticeFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.notice-date {
+    color: var(--color-gold);
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+    letter-spacing: 0.05em;
+    flex-shrink: 0;
+}
+
+.notice-text {
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 0.88rem;
+    letter-spacing: 0.03em;
+}
+
+.notices-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 0 12px;
+    flex-shrink: 0;
+}
+
+.notices-nav-btn {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.55rem;
+    width: 22px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 0.2s ease;
+    padding: 0;
+    line-height: 1;
+}
+
+.notices-nav-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--color-gold);
+    color: var(--color-gold);
+}
+
+/* お知らせ モバイル対応 */
+@media (max-width: 768px) {
+    .notices-inner {
+        flex-wrap: wrap;
+    }
+
+    .notices-label {
+        font-size: 0.75rem;
+        padding: 10px 14px;
+    }
+
+    .notices-ticker {
+        padding: 0 10px;
+        min-height: 44px;
+    }
+
+    .notice-item {
+        flex-direction: column;
+        gap: 2px;
+        padding: 8px 0;
+    }
+
+    .notice-date {
+        font-size: 0.72rem;
+    }
+
+    .notice-text {
+        font-size: 0.78rem;
+        line-height: 1.5;
+    }
+
+    .notices-nav {
+        padding: 0 8px;
+    }
+
+    .notices-nav-btn {
+        width: 20px;
+        height: 16px;
+        font-size: 0.5rem;
+    }
+}
+
 /* ========== 予約状況セクション（和モダンデザイン） ========== */
 .availability-section {
     background: linear-gradient(180deg,

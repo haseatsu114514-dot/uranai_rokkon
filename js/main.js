@@ -381,4 +381,38 @@ function checkAllFull(day, evening, night) {
 document.addEventListener('DOMContentLoaded', function () {
   updateTodayDate();
   updateAvailability();
+  initNoticesTicker();
 });
+
+// ========== お知らせティッカー ==========
+function initNoticesTicker() {
+  var items = document.querySelectorAll('.notice-item');
+  var prevBtn = document.getElementById('noticesPrev');
+  var nextBtn = document.getElementById('noticesNext');
+  if (!items.length || !prevBtn || !nextBtn) return;
+
+  var current = 0;
+
+  function showNotice(index) {
+    items.forEach(function (item) { item.classList.remove('active'); });
+    items[index].classList.add('active');
+  }
+
+  prevBtn.addEventListener('click', function () {
+    current = (current - 1 + items.length) % items.length;
+    showNotice(current);
+  });
+
+  nextBtn.addEventListener('click', function () {
+    current = (current + 1) % items.length;
+    showNotice(current);
+  });
+
+  // 複数お知らせがある場合のみ自動切替
+  if (items.length > 1) {
+    setInterval(function () {
+      current = (current + 1) % items.length;
+      showNotice(current);
+    }, 6000);
+  }
+}
