@@ -341,6 +341,15 @@
     text-align: center;
 }
 
+/* カレンダー画像の微調整（少し拡大） */
+.course-card.calendar .course-image {
+    transform: scale(1.15);
+}
+
+.course-card.calendar:hover .course-image {
+    transform: scale(1.2);
+}
+
 .calendar-features {
     list-style: none;
     padding: 0;
@@ -472,6 +481,21 @@
     font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 0.02em;
+}
+
+/* 開始月・開始日指定のお知らせ */
+.start-date-notice {
+    display: block;
+    margin-top: 15px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--color-primary-dark);
+    background: rgba(255, 255, 255, 0.8);
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px dashed #bbb;
+    line-height: 1.5;
 }
 
 /* ショップボタン */
