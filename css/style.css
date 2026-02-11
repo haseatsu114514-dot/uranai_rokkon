@@ -1308,12 +1308,15 @@ a {
 .footer-info {
     margin-top: 5px;
     margin-bottom: 8px;
+    line-height: 1.4;
+    /* Tighten line height */
 }
 
 .footer-hours {
     font-size: 0.8rem;
     color: rgba(255, 255, 255, 0.6);
-    margin-bottom: 2px;
+    margin-bottom: 0;
+    /* Remove margin completely */
 }
 
 .footer-contact {

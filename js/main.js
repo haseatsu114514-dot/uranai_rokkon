@@ -156,8 +156,8 @@ const GAS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbwSF2hFdG_ggXXze
       var docHeight = document.documentElement.scrollHeight;
       var winHeight = window.innerHeight;
 
-      // ページの40%または1000pxスクロールしたら表示
-      var threshold = Math.min(docHeight * 0.4, 1000);
+      // ページの60%または1000pxスクロールしたら表示
+      var threshold = Math.min(docHeight * 0.6, 1000);
 
       if (y > threshold) {
         btn.classList.add('visible');
