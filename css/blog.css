@@ -411,7 +411,8 @@
     max-width: 1100px;
     margin: 0 auto;
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
+    /* Update to fit 7 items */
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
     gap: 10px;
 }
 
@@ -419,7 +420,8 @@
     background: var(--color-cream);
     border: 1px solid rgba(196, 163, 90, 0.2);
     border-radius: 8px;
-    padding: 12px 8px;
+    padding: 12px 4px;
+    /* Reduced side padding */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -437,7 +439,9 @@
 }
 
 .blog-page-link-title {
-    font-size: 0.75rem;
+    font-size: 0.8rem;
+    /* Reduced from 0.75rem? Wait, it was 0.75 and seemed small enough but main site was 0.9->0.9rem? Let's check main site usage. Main site has 0.9rem */
+    /* Wait, checking style.css I set it to 0.9rem. blog.css was 0.75rem. Let's make it consistent or at least fit. 0.85rem is safe. */
     font-weight: 600;
     color: var(--color-primary-dark);
     margin-bottom: 3px;
