@@ -88,12 +88,13 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    /* transform: scale(1.2); 削除：引きにするため */
+    transform: scale(0.6);
+    /* 60%に縮小（引きのアングル） */
     transition: transform 0.5s;
 }
 
 .course-card:hover .course-image {
-    transform: scale(1.05);
+    transform: scale(0.65);
 }
 
 .course-card:hover {
