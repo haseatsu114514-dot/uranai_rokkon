@@ -113,13 +113,26 @@
 }
 
 .course-badge {
-    display: inline-block;
+    display: table;
+    /* 中央揃えのために変更 */
+    margin: 0 auto 10px;
+    /* 中央揃え */
     padding: 4px 16px;
     border-radius: 20px;
     font-size: 0.8rem;
     font-weight: 600;
     letter-spacing: 0.08em;
-    margin-bottom: 10px;
+}
+
+/* バッジがないカードの余白調整 */
+.course-card.no-badge {
+    padding-top: 30px;
+    /* バッジがない分、少しバランスを取る（あるいは詰めるなら数値を減らす） */
+    /* ユーザー要望「余白見せたくない」 -> 詰める方向なら padding-topを減らす。
+       しかし、他と並びを意識するなら... 
+       "余白見せたくない" = gaps looks bad. 
+       とりあえず標準の24pxから少し減らしてタイトにする */
+    padding-top: 15px;
 }
 
 .course-badge.popular {
