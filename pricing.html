@@ -263,32 +263,29 @@
                         </div>
                     </div>
 
-                    <!-- 年間運勢レポート -->
+                    <!-- 12ヶ月運勢レポート -->
                     <div class="course-card premium-gold animate-on-scroll animate-delay-2">
-                        <span class="course-badge premium-gold">1年間の戦略書</span>
+                        <span class="course-badge premium-gold">12ヶ月の戦略書</span>
                         <div class="course-header">
-                            <div class="course-duration">年間の運勢ナビ</div>
+                            <div class="course-duration">12ヶ月の運勢ナビ</div>
                             <div class="course-prices">
-                                <span class="original-price">15,000円</span>
-                                <span class="arrow">→</span>
-                                <span class="discount-price" id="annual-price">12,000円</span>
+                                <span class="discount-price">12,000円</span>
                                 <span class="tax-note-small">(税込)</span>
                             </div>
-                            <div class="discount-notice" id="annual-notice">🎁 3,000円OFF</div>
-                            <div class="course-period" id="annual-period"></div>
+                            <div class="discount-notice">まとめ買いでお得</div>
                         </div>
 
                         <div class="course-description">
                             <div class="description-title">レポート内容</div>
                             <ul class="course-examples">
                                 <li><strong>12ヶ月間の運勢を月別に完全解説</strong></li>
-                                <li><strong>年間を通じた大きなテーマと課題</strong></li>
+                                <li><strong>1年を通じた大きなテーマと課題</strong></li>
                                 <li><strong>月ごとの運勢・注意点・開運アクション</strong></li>
-                                <li><strong>仕事・恋愛・人間関係・健康・金運の年間予測</strong></li>
+                                <li><strong>仕事・恋愛・人間関係・健康・金運の12ヶ月予測</strong></li>
                             </ul>
                             <div class="course-note premium-gold">
-                                <strong>「1年間の人生計画を立てたい」方の最良の選択。</strong><br>
-                                丸1年間の運勢を月別に徹底分析。<br>
+                                <strong>「12ヶ月分の人生計画を立てたい」方の最良の選択。</strong><br>
+                                12ヶ月間の運勢を月別に徹底分析。<br>
                                 大きなチャンスがいつ来るのか、慎重に動くべき時期はいつか。<br>
                                 戦略的な人生設計をサポートします。
                             </div>
@@ -421,41 +418,6 @@
     </a>
 
     <script src="js/main.js"></script>
-    <script>
-        // 年間運勢レポートの価格を現在の月に応じて動的に更新
-        (function () {
-            const currentMonth = new Date().getMonth() + 1; // 1-12
-            const monthsPassed = Math.max(0, currentMonth - 1); // 1月から何ヶ月経過
-
-            // 年間レポート: 基本15,000円 - 経過月数×1,000円
-            const annualBase = 15000;
-            const annualDiscount = monthsPassed * 1000;
-            const annualPrice = annualBase - annualDiscount;
-
-            const annualPriceEl = document.getElementById('annual-price');
-            const annualNoticeEl = document.getElementById('annual-notice');
-            const annualPeriodEl = document.getElementById('annual-period');
-
-            if (annualPriceEl && monthsPassed > 0) {
-                annualPriceEl.textContent = annualPrice.toLocaleString() + '円';
-                annualNoticeEl.textContent = '🎁 ' + currentMonth + '月ご注文：' + monthsPassed + 'ヶ月分経過につき' + annualDiscount.toLocaleString() + '円OFF';
-            } else if (annualPriceEl) {
-                // 1月の場合は割引なし
-                annualPriceEl.textContent = annualBase.toLocaleString() + '円';
-                if (annualNoticeEl) annualNoticeEl.style.display = 'none';
-            }
-
-            // 対象期間の表示（例：2026年2月〜2027年1月）
-            if (annualPeriodEl) {
-                const startYear = new Date().getFullYear();
-                const startMonth = currentMonth;
-                // 年間レポートは常に「その年の12月まで」
-                const endYear = startYear;
-                const endMonth = 12;
-                annualPeriodEl.textContent = `対象期間：${startYear}年${startMonth}月 〜 ${endYear}年${endMonth}月`;
-            }
-        })();
-    </script>
 
 </body>
 
