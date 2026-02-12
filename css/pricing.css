@@ -441,7 +441,7 @@
 
 .premium-cards-container {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 20px;
     max-width: 100%;
     margin: 0 auto;
@@ -1141,7 +1141,7 @@
 .sub-page .page-title {
     font-size: 2.5rem;
     letter-spacing: 0.15em;
-    color: #1a1a2e;
+    color: #f5f0e8;
     position: relative;
     display: inline-block;
 }
@@ -1159,7 +1159,7 @@
 
 .sub-page .page-subtitle {
     font-size: 1.05rem;
-    color: #3d3d3d;
+    color: rgba(245, 240, 232, 0.8);
     letter-spacing: 0.1em;
     margin-top: 15px;
 }
