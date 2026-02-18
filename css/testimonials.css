@@ -216,6 +216,14 @@
     text-align: center;
 }
 
+.testimonial-date {
+    font-size: 0.72rem;
+    color: #bbb;
+    text-align: center;
+    margin-top: 4px;
+    letter-spacing: 0.04em;
+}
+
 .slider-nav {
     display: flex;
     justify-content: center;
