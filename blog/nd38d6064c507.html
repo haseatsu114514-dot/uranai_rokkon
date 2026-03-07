@@ -62,6 +62,69 @@
             margin: 20px 0;
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
+        .article-body a {
+            color: #2cb696;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            transition: color 0.2s;
+        }
+        .article-body a:hover {
+            color: #1a9a7a;
+        }
+        .article-body .external-article-widget {
+            display: flex;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #fff;
+            text-decoration: none;
+            margin: 20px 0;
+            transition: box-shadow 0.2s;
+        }
+        .article-body .external-article-widget:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .article-body .external-article-widget a {
+            text-decoration: none;
+            color: inherit;
+        }
+        .article-body .external-article-widget-title {
+            font-size: 0.95rem;
+            color: #333;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .article-body .external-article-widget-description,
+        .article-body .external-article-widget-url {
+            font-size: 0.8rem;
+            color: #999;
+            display: block;
+        }
+        .article-body .external-article-widget-price {
+            font-size: 0.85rem;
+            color: #333;
+            margin-top: 6px;
+        }
+        .article-body .external-article-widget-button .a-button {
+            display: inline-block;
+            background: #333;
+            color: #fff;
+            padding: 6px 16px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-top: 8px;
+        }
+        .article-body .external-article-widget-image {
+            flex-shrink: 0;
+        }
+        .article-body .external-article-widget-productImage {
+            display: block;
+            width: 120px;
+            height: 120px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
         .article-body blockquote {
             border-left: 4px solid var(--color-gold);
             padding-left: 15px;
@@ -111,7 +174,7 @@
                     <a href="../testimonials.html">口コミ</a>
                     <a href="../faq.html">Q&A</a>
                     <a href="../blog.html">ブログ</a>
-                    <a href="https://uranairokkon.base.shop" target="_blank">物販</a>
+                    <span style="opacity: 0.5; cursor: default;">SHOP（準備中）</span>
                 </nav>
                 <a href="https://docs.google.com/forms/d/e/1FAIpQLSdG_cRsdXN-z8HUmzwUdAv7exsxFM41qp-WLr6hGORGmQI28w/viewform?usp=header" class="contact-btn" target="_blank">お問い合わせ</a>
             </div>

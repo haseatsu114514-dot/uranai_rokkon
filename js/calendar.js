@@ -1,9 +1,8 @@
 // GAS WebアプリURL設定
-// config.js から読み込む（設定ファイルが存在しない場合はデフォルト値を使用）
-let GAS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbwSF2hFdG_ggXXze0y6f2u9k1MAz9MLF7HMDJQw9PvJ4JbjHQMS_5FzkOWR3RjWV8s_TA/exec';
-
-// config.js が存在する場合は読み込む（HTML側で先に読み込む必要があります）
-// <script src="js/config.js"></script> を index.html に追加してください
+// main.js で定義済みのグローバル変数があればそれを使用、なければデフォルト値
+if (typeof GAS_WEBAPP_URL === 'undefined') {
+  var GAS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbwSF2hFdG_ggXXze0y6f2u9k1MAz9MLF7HMDJQw9PvJ4JbjHQMS_5FzkOWR3RjWV8s_TA/exec';
+}
 
 // 営業時間設定
 const CALENDAR_CONFIG = {
