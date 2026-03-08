@@ -1,82 +1,447 @@
 /* ========== 占いが初めての方へ ページ専用スタイル ========== */
 
-/* 準備中カード */
-.coming-soon-card {
+/* ===== スライドセクション ===== */
+.slide-container {
     background: #fff;
     border-radius: 16px;
-    padding: 50px 30px;
-    text-align: center;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
     margin-bottom: 40px;
     border: 2px solid rgba(196, 163, 90, 0.3);
+    overflow: hidden;
+    position: relative;
 }
 
-.coming-soon-badge {
-    display: inline-block;
-    background: var(--color-gold);
-    color: #fff;
-    font-size: 0.85rem;
-    font-weight: 600;
-    padding: 8px 28px;
-    border-radius: 25px;
-    letter-spacing: 0.1em;
+.slide-viewport {
+    overflow: hidden;
+}
+
+.slide-track {
+    display: flex;
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.slide {
+    min-width: 100%;
+    padding: 50px 40px 40px;
+    text-align: center;
+}
+
+/* ── 表紙スライド ── */
+.slide-cover {
+    background: var(--color-primary);
+    padding: 60px 40px 50px;
+}
+
+.slide-cover-inner {
+    max-width: 480px;
+    margin: 0 auto;
+}
+
+.slide-cover-label {
+    font-size: 0.8rem;
+    color: var(--color-gold);
+    letter-spacing: 0.2em;
     margin-bottom: 24px;
+    font-weight: 600;
 }
 
-.coming-soon-title {
-    font-size: 1.3rem;
-    font-weight: 600;
-    color: var(--color-primary-dark);
-    margin-bottom: 20px;
+.slide-cover-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-text-white);
+    line-height: 1.8;
+    margin-bottom: 16px;
     letter-spacing: 0.05em;
 }
 
-.coming-soon-text {
-    font-size: 0.95rem;
-    color: #666;
-    line-height: 1.9;
-    margin-bottom: 8px;
-}
-
-.coming-soon-divider {
-    width: 60px;
-    height: 1px;
+.slide-cover .slide-divider {
     background: var(--color-gold);
-    margin: 28px auto;
-    opacity: 0.5;
+    opacity: 0.6;
 }
 
-.coming-soon-sub {
+.slide-cover-sub {
     font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--color-primary-dark);
-    margin-bottom: 16px;
+    color: var(--color-text-light);
+    line-height: 2;
+    margin-bottom: 32px;
 }
 
-.coming-soon-list {
-    list-style: none;
-    padding: 0;
+.slide-cover-arrow {
+    font-size: 0.75rem;
+    color: var(--color-gold-light);
+    letter-spacing: 0.1em;
+    opacity: 0.7;
+    animation: coverArrowPulse 2s ease-in-out infinite;
+}
+
+@keyframes coverArrowPulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
+/* ── 共通スライド要素 ── */
+.slide-badge {
     display: inline-block;
+    background: var(--color-primary);
+    color: var(--color-gold);
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 4px 16px;
+    border-radius: 20px;
+    letter-spacing: 0.15em;
+    margin-bottom: 18px;
+}
+
+.slide-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--color-primary-dark);
+    margin-bottom: 12px;
+    letter-spacing: 0.05em;
+    line-height: 1.7;
+}
+
+.slide-divider {
+    width: 50px;
+    height: 2px;
+    background: var(--color-gold);
+    margin: 0 auto 24px;
+}
+
+.slide-text {
+    font-size: 0.92rem;
+    color: #555;
+    line-height: 2;
+    margin-bottom: 20px;
+}
+
+.slide-lead {
+    font-size: 0.9rem;
+    color: #666;
+    line-height: 2;
+    margin-bottom: 24px;
+}
+
+.slide-note {
+    font-size: 0.82rem;
+    color: #888;
+    line-height: 1.9;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(196, 163, 90, 0.2);
+}
+
+/* ── 実績数値（スライド2） ── */
+.slide-stats {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin: 24px auto 8px;
+    max-width: 420px;
+}
+
+.slide-stat {
+    text-align: center;
+    flex: 1;
+}
+
+.slide-stat-number {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--color-primary-dark);
+    line-height: 1.2;
+}
+
+.slide-stat-number span {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-gold);
+}
+
+.slide-stat-label {
+    font-size: 0.7rem;
+    color: #888;
+    margin-top: 4px;
+    letter-spacing: 0.05em;
+}
+
+/* ── お悩みリスト（スライド3, 4） ── */
+.slide-worry-list {
+    max-width: 420px;
+    margin: 0 auto 8px;
     text-align: left;
 }
 
-.coming-soon-list li {
-    padding: 8px 0;
-    padding-left: 24px;
+.slide-worry-item {
+    font-size: 0.88rem;
+    color: #444;
+    padding: 10px 16px 10px 32px;
     position: relative;
-    font-size: 0.9rem;
-    color: #555;
+    line-height: 1.6;
+    border-bottom: 1px solid rgba(196, 163, 90, 0.1);
 }
 
-.coming-soon-list li::before {
-    content: '✓';
+.slide-worry-item:last-child {
+    border-bottom: none;
+}
+
+.slide-worry-item::before {
+    content: '';
     position: absolute;
-    left: 0;
-    color: var(--color-gold);
-    font-weight: bold;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 8px;
+    height: 8px;
+    border: 2px solid var(--color-gold);
+    border-radius: 50%;
 }
 
-/* 初めての方への案内 */
+/* ── 鑑定スタイル（スライド5） ── */
+.slide-style-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 480px;
+    margin: 0 auto 8px;
+    text-align: left;
+}
+
+.slide-style-item {
+    background: var(--color-cream);
+    border-radius: 12px;
+    padding: 18px 20px;
+    border-left: 4px solid var(--color-gold);
+}
+
+.slide-style-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--color-primary-dark);
+    margin-bottom: 6px;
+    line-height: 1.6;
+}
+
+.slide-style-item p {
+    font-size: 0.8rem;
+    color: #666;
+    line-height: 1.8;
+}
+
+/* ── 情報ボックス（スライド6: 四柱推命） ── */
+.slide-info-box {
+    background: var(--color-cream);
+    border-radius: 12px;
+    padding: 24px;
+    max-width: 480px;
+    margin: 0 auto 20px;
+    text-align: left;
+    border: 1px solid rgba(196, 163, 90, 0.2);
+}
+
+.slide-info-title {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--color-primary-dark);
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(196, 163, 90, 0.3);
+}
+
+.slide-info-list {
+    list-style: none;
+    padding: 0;
+}
+
+.slide-info-list li {
+    font-size: 0.82rem;
+    color: #555;
+    padding: 6px 0;
+    line-height: 1.7;
+}
+
+/* ── ステップ（スライド7） ── */
+.slide-steps {
+    max-width: 480px;
+    margin: 0 auto 8px;
+    text-align: left;
+}
+
+.slide-step {
+    background: var(--color-cream);
+    border-radius: 12px;
+    padding: 18px 22px;
+    border-left: 4px solid var(--color-gold);
+}
+
+.slide-step-number {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--color-gold);
+    letter-spacing: 0.15em;
+    margin-bottom: 4px;
+}
+
+.slide-step-title {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--color-primary-dark);
+    margin-bottom: 6px;
+}
+
+.slide-step-desc {
+    font-size: 0.8rem;
+    color: #666;
+    line-height: 1.8;
+}
+
+.slide-step-arrow {
+    text-align: center;
+    color: var(--color-gold);
+    font-size: 0.85rem;
+    padding: 4px 0;
+    opacity: 0.5;
+}
+
+/* ── 料金・CTAスライド（スライド8） ── */
+.slide-pricing-cards {
+    display: flex;
+    gap: 16px;
+    max-width: 420px;
+    margin: 0 auto 20px;
+    justify-content: center;
+}
+
+.slide-pricing-card {
+    background: var(--color-cream);
+    border-radius: 12px;
+    padding: 20px 24px;
+    flex: 1;
+    border: 1px solid rgba(196, 163, 90, 0.25);
+    text-align: center;
+}
+
+.slide-pricing-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--color-gold);
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+}
+
+.slide-pricing-duration {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-primary-dark);
+    margin-bottom: 8px;
+}
+
+.slide-pricing-price {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--color-primary-dark);
+    line-height: 1.2;
+}
+
+.slide-pricing-price span {
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: #888;
+}
+
+.slide-pricing-note {
+    font-size: 0.7rem;
+    color: #999;
+    margin-top: 6px;
+}
+
+.slide-final-cta {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(196, 163, 90, 0.2);
+}
+
+.slide-final-cta-text {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--color-primary-dark);
+    line-height: 1.9;
+    margin-bottom: 16px;
+}
+
+.slide-line-btn img {
+    max-width: 260px;
+    height: auto;
+    transition: transform 0.3s;
+}
+
+.slide-line-btn img:hover {
+    transform: scale(1.03);
+}
+
+/* ── スライドナビゲーション ── */
+.slide-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 16px 20px 8px;
+}
+
+.slide-nav-btn {
+    background: var(--color-primary);
+    color: var(--color-gold);
+    border: none;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.slide-nav-btn:hover {
+    background: var(--color-primary-dark);
+    transform: scale(1.1);
+}
+
+.slide-dots {
+    display: flex;
+    gap: 8px;
+}
+
+.slide-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: 2px solid var(--color-gold);
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.3s;
+    padding: 0;
+}
+
+.slide-dot.active {
+    background: var(--color-gold);
+    transform: scale(1.3);
+}
+
+.slide-dot:hover {
+    background: rgba(196, 163, 90, 0.5);
+}
+
+.slide-counter {
+    text-align: center;
+    font-size: 0.72rem;
+    color: #aaa;
+    letter-spacing: 0.1em;
+    padding-bottom: 20px;
+}
+
+/* ===== 初めての方への案内 ===== */
 .beginner-guide {
     background: #fff;
     border-radius: 16px;
@@ -147,7 +512,7 @@
     line-height: 1.8;
 }
 
-/* CTA */
+/* ===== CTA ===== */
 .beginner-cta {
     text-align: center;
     padding: 40px 20px;
@@ -173,7 +538,7 @@
     transform: scale(1.03);
 }
 
-/* ページ導線 (6カラム対応) */
+/* ===== ページ導線 (6カラム対応) ===== */
 .page-links-container {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
@@ -194,7 +559,7 @@
 }
 
 .page-link-card::after {
-    content: '→';
+    content: '\2192';
     position: absolute;
     right: 6px;
     top: 50%;
@@ -230,18 +595,89 @@
     color: #777;
 }
 
-/* レスポンシブ */
+/* ===== レスポンシブ ===== */
 @media (max-width: 768px) {
-    .coming-soon-card {
-        padding: 35px 20px;
+    .slide {
+        padding: 35px 20px 30px;
     }
 
-    .coming-soon-title {
+    .slide-cover {
+        padding: 45px 20px 40px;
+    }
+
+    .slide-cover-title {
+        font-size: 1.25rem;
+    }
+
+    .slide-title {
         font-size: 1.1rem;
     }
 
-    .coming-soon-text {
-        font-size: 0.88rem;
+    .slide-text {
+        font-size: 0.85rem;
+    }
+
+    .slide-lead {
+        font-size: 0.82rem;
+    }
+
+    .slide-stats {
+        gap: 16px;
+    }
+
+    .slide-stat-number {
+        font-size: 1.3rem;
+    }
+
+    .slide-worry-item {
+        font-size: 0.82rem;
+        padding: 8px 14px 8px 28px;
+    }
+
+    .slide-worry-item::before {
+        left: 8px;
+        width: 7px;
+        height: 7px;
+    }
+
+    .slide-style-item {
+        padding: 14px 16px;
+    }
+
+    .slide-style-title {
+        font-size: 0.85rem;
+    }
+
+    .slide-step {
+        padding: 14px 16px;
+    }
+
+    .slide-info-box {
+        padding: 18px;
+    }
+
+    .slide-pricing-cards {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .slide-pricing-card {
+        padding: 16px 20px;
+    }
+
+    .slide-line-btn img {
+        max-width: 220px;
+    }
+
+    .slide-nav-btn {
+        width: 34px;
+        height: 34px;
+        font-size: 0.65rem;
+    }
+
+    .slide-dot {
+        width: 7px;
+        height: 7px;
     }
 
     .beginner-guide {
