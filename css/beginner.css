@@ -8,6 +8,7 @@
     margin-bottom: 40px;
     border: 2px solid rgba(196, 163, 90, 0.3);
     overflow: hidden;
+    position: relative;
 }
 
 .slide-viewport {
@@ -25,16 +26,70 @@
     text-align: center;
 }
 
+/* ── 表紙スライド ── */
+.slide-cover {
+    background: var(--color-primary);
+    padding: 60px 40px 50px;
+}
+
+.slide-cover-inner {
+    max-width: 480px;
+    margin: 0 auto;
+}
+
+.slide-cover-label {
+    font-size: 0.8rem;
+    color: var(--color-gold);
+    letter-spacing: 0.2em;
+    margin-bottom: 24px;
+    font-weight: 600;
+}
+
+.slide-cover-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-text-white);
+    line-height: 1.8;
+    margin-bottom: 16px;
+    letter-spacing: 0.05em;
+}
+
+.slide-cover .slide-divider {
+    background: var(--color-gold);
+    opacity: 0.6;
+}
+
+.slide-cover-sub {
+    font-size: 0.9rem;
+    color: var(--color-text-light);
+    line-height: 2;
+    margin-bottom: 32px;
+}
+
+.slide-cover-arrow {
+    font-size: 0.75rem;
+    color: var(--color-gold-light);
+    letter-spacing: 0.1em;
+    opacity: 0.7;
+    animation: coverArrowPulse 2s ease-in-out infinite;
+}
+
+@keyframes coverArrowPulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
+/* ── 共通スライド要素 ── */
 .slide-badge {
     display: inline-block;
     background: var(--color-primary);
     color: var(--color-gold);
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     font-weight: 600;
-    padding: 5px 18px;
+    padding: 4px 16px;
     border-radius: 20px;
     letter-spacing: 0.15em;
-    margin-bottom: 20px;
+    margin-bottom: 18px;
 }
 
 .slide-title {
@@ -43,6 +98,7 @@
     color: var(--color-primary-dark);
     margin-bottom: 12px;
     letter-spacing: 0.05em;
+    line-height: 1.7;
 }
 
 .slide-divider {
@@ -53,21 +109,21 @@
 }
 
 .slide-text {
-    font-size: 0.95rem;
+    font-size: 0.92rem;
     color: #555;
     line-height: 2;
     margin-bottom: 20px;
 }
 
 .slide-lead {
-    font-size: 0.92rem;
+    font-size: 0.9rem;
     color: #666;
-    line-height: 1.8;
+    line-height: 2;
     margin-bottom: 24px;
 }
 
 .slide-note {
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     color: #888;
     line-height: 1.9;
     margin-top: 20px;
@@ -75,123 +131,104 @@
     border-top: 1px solid rgba(196, 163, 90, 0.2);
 }
 
-/* スライド1: 特徴リスト */
-.slide-features {
+/* ── 実績数値（スライド2） ── */
+.slide-stats {
     display: flex;
-    flex-direction: column;
-    gap: 12px;
-    max-width: 360px;
-    margin: 0 auto 16px;
-    text-align: left;
+    justify-content: center;
+    gap: 24px;
+    margin: 24px auto 8px;
+    max-width: 420px;
 }
 
-.slide-feature {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 0.92rem;
-    color: #444;
+.slide-stat {
+    text-align: center;
+    flex: 1;
 }
 
-.slide-feature-icon {
+.slide-stat-number {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--color-primary-dark);
+    line-height: 1.2;
+}
+
+.slide-stat-number span {
+    font-size: 0.75rem;
+    font-weight: 600;
     color: var(--color-gold);
-    font-size: 0.7rem;
-    flex-shrink: 0;
 }
 
-/* スライド2: カテゴリ */
-.slide-categories {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    max-width: 560px;
+.slide-stat-label {
+    font-size: 0.7rem;
+    color: #888;
+    margin-top: 4px;
+    letter-spacing: 0.05em;
+}
+
+/* ── お悩みリスト（スライド3, 4） ── */
+.slide-worry-list {
+    max-width: 420px;
     margin: 0 auto 8px;
     text-align: left;
 }
 
-.slide-category {
-    background: var(--color-cream);
-    border-radius: 12px;
-    padding: 20px;
-}
-
-.slide-category-title {
-    font-size: 0.9rem;
-    font-weight: 700;
-    color: var(--color-primary-dark);
-    margin-bottom: 12px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid rgba(196, 163, 90, 0.3);
-}
-
-.slide-category-list {
-    list-style: none;
-    padding: 0;
-}
-
-.slide-category-list li {
-    font-size: 0.82rem;
-    color: #555;
-    padding: 5px 0 5px 16px;
+.slide-worry-item {
+    font-size: 0.88rem;
+    color: #444;
+    padding: 10px 16px 10px 32px;
     position: relative;
-    line-height: 1.7;
+    line-height: 1.6;
+    border-bottom: 1px solid rgba(196, 163, 90, 0.1);
 }
 
-.slide-category-list li::before {
+.slide-worry-item:last-child {
+    border-bottom: none;
+}
+
+.slide-worry-item::before {
     content: '';
     position: absolute;
-    left: 0;
-    top: 12px;
-    width: 6px;
-    height: 6px;
-    background: var(--color-gold);
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 8px;
+    height: 8px;
+    border: 2px solid var(--color-gold);
     border-radius: 50%;
 }
 
-/* スライド3: ステップ */
-.slide-steps {
+/* ── 鑑定スタイル（スライド5） ── */
+.slide-style-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
     max-width: 480px;
     margin: 0 auto 8px;
     text-align: left;
 }
 
-.slide-step {
+.slide-style-item {
     background: var(--color-cream);
     border-radius: 12px;
-    padding: 20px 24px;
+    padding: 18px 20px;
     border-left: 4px solid var(--color-gold);
 }
 
-.slide-step-number {
-    font-size: 0.72rem;
-    font-weight: 700;
-    color: var(--color-gold);
-    letter-spacing: 0.15em;
-    margin-bottom: 4px;
-}
-
-.slide-step-title {
-    font-size: 0.95rem;
+.slide-style-title {
+    font-size: 0.9rem;
     font-weight: 700;
     color: var(--color-primary-dark);
-    margin-bottom: 8px;
+    margin-bottom: 6px;
+    line-height: 1.6;
 }
 
-.slide-step-desc {
-    font-size: 0.82rem;
+.slide-style-item p {
+    font-size: 0.8rem;
     color: #666;
     line-height: 1.8;
 }
 
-.slide-step-arrow {
-    text-align: center;
-    color: var(--color-gold);
-    font-size: 0.9rem;
-    padding: 6px 0;
-    opacity: 0.6;
-}
-
-/* スライド4: 情報ボックス */
+/* ── 情報ボックス（スライド6: 四柱推命） ── */
 .slide-info-box {
     background: var(--color-cream);
     border-radius: 12px;
@@ -203,7 +240,7 @@
 }
 
 .slide-info-title {
-    font-size: 0.9rem;
+    font-size: 0.88rem;
     font-weight: 700;
     color: var(--color-primary-dark);
     margin-bottom: 14px;
@@ -217,29 +254,148 @@
 }
 
 .slide-info-list li {
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     color: #555;
     padding: 6px 0;
     line-height: 1.7;
 }
 
-/* スライドナビゲーション */
+/* ── ステップ（スライド7） ── */
+.slide-steps {
+    max-width: 480px;
+    margin: 0 auto 8px;
+    text-align: left;
+}
+
+.slide-step {
+    background: var(--color-cream);
+    border-radius: 12px;
+    padding: 18px 22px;
+    border-left: 4px solid var(--color-gold);
+}
+
+.slide-step-number {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--color-gold);
+    letter-spacing: 0.15em;
+    margin-bottom: 4px;
+}
+
+.slide-step-title {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--color-primary-dark);
+    margin-bottom: 6px;
+}
+
+.slide-step-desc {
+    font-size: 0.8rem;
+    color: #666;
+    line-height: 1.8;
+}
+
+.slide-step-arrow {
+    text-align: center;
+    color: var(--color-gold);
+    font-size: 0.85rem;
+    padding: 4px 0;
+    opacity: 0.5;
+}
+
+/* ── 料金・CTAスライド（スライド8） ── */
+.slide-pricing-cards {
+    display: flex;
+    gap: 16px;
+    max-width: 420px;
+    margin: 0 auto 20px;
+    justify-content: center;
+}
+
+.slide-pricing-card {
+    background: var(--color-cream);
+    border-radius: 12px;
+    padding: 20px 24px;
+    flex: 1;
+    border: 1px solid rgba(196, 163, 90, 0.25);
+    text-align: center;
+}
+
+.slide-pricing-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--color-gold);
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+}
+
+.slide-pricing-duration {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-primary-dark);
+    margin-bottom: 8px;
+}
+
+.slide-pricing-price {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--color-primary-dark);
+    line-height: 1.2;
+}
+
+.slide-pricing-price span {
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: #888;
+}
+
+.slide-pricing-note {
+    font-size: 0.7rem;
+    color: #999;
+    margin-top: 6px;
+}
+
+.slide-final-cta {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(196, 163, 90, 0.2);
+}
+
+.slide-final-cta-text {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--color-primary-dark);
+    line-height: 1.9;
+    margin-bottom: 16px;
+}
+
+.slide-line-btn img {
+    max-width: 260px;
+    height: auto;
+    transition: transform 0.3s;
+}
+
+.slide-line-btn img:hover {
+    transform: scale(1.03);
+}
+
+/* ── スライドナビゲーション ── */
 .slide-nav {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 16px;
-    padding: 16px 20px 24px;
+    gap: 12px;
+    padding: 16px 20px 8px;
 }
 
 .slide-nav-btn {
     background: var(--color-primary);
     color: var(--color-gold);
     border: none;
-    width: 40px;
-    height: 40px;
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     cursor: pointer;
     transition: all 0.3s;
     display: flex;
@@ -254,12 +410,12 @@
 
 .slide-dots {
     display: flex;
-    gap: 10px;
+    gap: 8px;
 }
 
 .slide-dot {
-    width: 10px;
-    height: 10px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
     border: 2px solid var(--color-gold);
     background: transparent;
@@ -270,11 +426,19 @@
 
 .slide-dot.active {
     background: var(--color-gold);
-    transform: scale(1.2);
+    transform: scale(1.3);
 }
 
 .slide-dot:hover {
     background: rgba(196, 163, 90, 0.5);
+}
+
+.slide-counter {
+    text-align: center;
+    font-size: 0.72rem;
+    color: #aaa;
+    letter-spacing: 0.1em;
+    padding-bottom: 20px;
 }
 
 /* ===== 初めての方への案内 ===== */
@@ -437,39 +601,83 @@
         padding: 35px 20px 30px;
     }
 
+    .slide-cover {
+        padding: 45px 20px 40px;
+    }
+
+    .slide-cover-title {
+        font-size: 1.25rem;
+    }
+
     .slide-title {
         font-size: 1.1rem;
     }
 
     .slide-text {
-        font-size: 0.88rem;
-    }
-
-    .slide-lead {
         font-size: 0.85rem;
     }
 
-    .slide-categories {
-        grid-template-columns: 1fr;
-        gap: 14px;
+    .slide-lead {
+        font-size: 0.82rem;
     }
 
-    .slide-category {
-        padding: 16px;
+    .slide-stats {
+        gap: 16px;
+    }
+
+    .slide-stat-number {
+        font-size: 1.3rem;
+    }
+
+    .slide-worry-item {
+        font-size: 0.82rem;
+        padding: 8px 14px 8px 28px;
+    }
+
+    .slide-worry-item::before {
+        left: 8px;
+        width: 7px;
+        height: 7px;
+    }
+
+    .slide-style-item {
+        padding: 14px 16px;
+    }
+
+    .slide-style-title {
+        font-size: 0.85rem;
     }
 
     .slide-step {
-        padding: 16px 18px;
+        padding: 14px 16px;
     }
 
     .slide-info-box {
         padding: 18px;
     }
 
+    .slide-pricing-cards {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .slide-pricing-card {
+        padding: 16px 20px;
+    }
+
+    .slide-line-btn img {
+        max-width: 220px;
+    }
+
     .slide-nav-btn {
-        width: 36px;
-        height: 36px;
-        font-size: 0.7rem;
+        width: 34px;
+        height: 34px;
+        font-size: 0.65rem;
+    }
+
+    .slide-dot {
+        width: 7px;
+        height: 7px;
     }
 
     .beginner-guide {
