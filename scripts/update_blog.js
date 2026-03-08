@@ -25,7 +25,7 @@ const axiosConfig = {
     headers: {
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
     },
-    timeout: 10000 // 10 seconds timeout
+    timeout: 15000 // 15 seconds timeout
 };
 
 function assignCategory(title, description, tags = []) {
@@ -60,7 +60,7 @@ async function fetchRSS() {
         const response = await axios.get(RSS_URL, axiosConfig);
         return response.data;
     } catch (error) {
-        console.error('Error fetching RSS:', error);
+        console.error('Error fetching RSS:', error.message);
         process.exit(1);
     }
 }
@@ -70,75 +70,80 @@ async function parseRSS(xml) {
     return await parser.parseStringPromise(xml);
 }
 
-// Scraping Function
-async function fetchArticleContent(url) {
-    try {
-        console.log(`Scraping: ${url}`);
-        const response = await axios.get(url, axiosConfig);
-        const $ = cheerio.load(response.data);
-
-        // Note article body seems to be in .note-common-styles__text-body or similar
-        // We need to target the main content.
-        // As of 2024/2026, structure changes, but finding the main readable area is key.
-        // Often strictly: .p-article__content or .note-common-styles__text-body
-
-        let contentHtml = '';
-
-        // Try common selectors
-        if ($('.note-common-styles__text-body').length) {
-            contentHtml = $('.note-common-styles__text-body').html();
-        } else if ($('[data-name="body"]').length) {
-            contentHtml = $('[data-name="body"]').html();
-        } else {
-            // Fallback: try to get main article part
-            contentHtml = $('article.o-noteContentText, .o-noteContentText').html() || '';
-        }
-
-        if (!contentHtml) {
-            console.warn(`Could not extract content for ${url}`);
-            return '<p>記事の取得に失敗しました。元の記事をNoteでご覧ください。</p>';
-        }
-
-        // Clean up:
-        // Remove empty paragraphs
-        contentHtml = contentHtml.replace(/<p><br><\/p>/g, '');
-
-        // Fix images: Note often uses data-src for lazy loading. We want src.
-        // Check if images are lazy loaded.
-        const $content = cheerio.load(contentHtml, null, false); // false = fragment
-        $content('img').each((i, el) => {
-            const dataSrc = $content(el).attr('data-src');
-            if (dataSrc) {
-                $content(el).attr('src', dataSrc);
+// Scraping Function with retry and improved selectors
+async function fetchArticleContent(url, retries = 2) {
+    for (let attempt = 0; attempt <= retries; attempt++) {
+        try {
+            if (attempt > 0) {
+                console.log(`  Retry ${attempt}/${retries} for: ${url}`);
+                await new Promise(resolve => setTimeout(resolve, 2000 * attempt));
             }
-            // Remove typical Note lazy load classes that might hide the image
-            $content(el).removeClass('lazyload');
+            console.log(`Scraping: ${url}`);
+            const response = await axios.get(url, axiosConfig);
+            const $ = cheerio.load(response.data);
 
-            // Add styling for responsiveness
-            $content(el).css('max-width', '100%');
-            $content(el).css('height', 'auto');
-        });
+            let contentHtml = '';
 
-        // Remove internal Note widgets (embeds might break, let's keep them if possible but iframe needs care)
-        // For now, simpler is better.
+            // Try multiple selectors in order of likelihood (Note's DOM structure changes frequently)
+            const selectors = [
+                '.note-common-styles__textnote-body',
+                '.note-common-styles__text-body',
+                '[data-name="body"]',
+                '.p-article__content',
+                'article.o-noteContentText',
+                '.o-noteContentText',
+                '.note-body',
+                'article .note-common-styles__textnote-body'
+            ];
 
-        // Remove specific internal link embeds (uranai-rokkon.com)
-        $content('a[href*="uranai-rokkon.com"]').each((i, el) => {
-            // Trace back to the main container widget (figure or external-article-widget) and remove it
-            const $widget = $content(el).closest('figure');
-            if ($widget.length) {
-                $widget.remove();
-            } else {
-                $content(el).closest('.external-article-widget').remove();
+            for (const selector of selectors) {
+                if ($(selector).length) {
+                    contentHtml = $(selector).html();
+                    console.log(`  Found content with selector: ${selector}`);
+                    break;
+                }
             }
-        });
 
-        return $content.html();
+            if (!contentHtml) {
+                console.warn(`  Could not extract content for ${url} (attempt ${attempt + 1})`);
+                if (attempt < retries) continue;
+                return null;
+            }
 
-    } catch (error) {
-        console.error(`Error scraping ${url}:`, error.message);
-        return null;
+            // Clean up:
+            // Remove empty paragraphs
+            contentHtml = contentHtml.replace(/<p><br><\/p>/g, '');
+
+            // Fix images: Note often uses data-src for lazy loading
+            const $content = cheerio.load(contentHtml, null, false);
+            $content('img').each((i, el) => {
+                const dataSrc = $content(el).attr('data-src');
+                if (dataSrc) {
+                    $content(el).attr('src', dataSrc);
+                }
+                $content(el).removeClass('lazyload');
+                $content(el).css('max-width', '100%');
+                $content(el).css('height', 'auto');
+            });
+
+            // Remove internal link embeds (uranai-rokkon.com)
+            $content('a[href*="uranai-rokkon.com"]').each((i, el) => {
+                const $widget = $content(el).closest('figure');
+                if ($widget.length) {
+                    $widget.remove();
+                } else {
+                    $content(el).closest('.external-article-widget').remove();
+                }
+            });
+
+            return $content.html();
+
+        } catch (error) {
+            console.error(`  Error scraping ${url} (attempt ${attempt + 1}):`, error.message);
+            if (attempt >= retries) return null;
+        }
     }
+    return null;
 }
 
 const SITEMAP_PATH = path.join(__dirname, '../sitemap.xml');
@@ -150,17 +155,18 @@ function generateArticlePage(item, content, categorySlug, displayCategory, excer
     const isoDate = pubDate.toISOString();
     const noteUrl = item.link;
 
-    // Extract ID from link (last part of url)
-    // https://note.com/rokkon_uranai/n/n8ed86fa36803 -> n8ed86fa36803
+    // Extract ID from link
     const urlParts = noteUrl.split('/');
-    const articleId = urlParts[urlParts.length - 1].split('?')[0]; // remove query params
+    const articleId = urlParts[urlParts.length - 1].split('?')[0];
 
     const fileName = `${articleId}.html`;
     const filePath = path.join(BLOG_DIR, fileName);
     const canonicalUrl = `https://uranai-rokkon.com/blog/${fileName}`;
 
     let thumbUrl = 'images/otya.png';
-    if (item['media:thumbnail']) {
+    if (item['media:thumbnail'] && item['media:thumbnail']['$'] && item['media:thumbnail']['$']['url']) {
+        thumbUrl = item['media:thumbnail']['$']['url'];
+    } else if (typeof item['media:thumbnail'] === 'string') {
         thumbUrl = item['media:thumbnail'];
     }
 
@@ -184,7 +190,7 @@ function generateArticlePage(item, content, categorySlug, displayCategory, excer
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${title} | 占い処 六根清浄 ブログ</title>
-    <meta name="description" content="${excerpt || title}">
+    <meta name="description" content="${(excerpt || title).replace(/"/g, '&quot;')}">
     <link rel="canonical" href="${canonicalUrl}">
     
     <!-- Structured Data -->
@@ -195,7 +201,7 @@ function generateArticlePage(item, content, categorySlug, displayCategory, excer
     <!-- OGP -->
     <meta property="og:type" content="article">
     <meta property="og:title" content="${title} | 占い処 六根清浄">
-    <meta property="og:description" content="${excerpt || '六根清浄のブログ記事です。'}">
+    <meta property="og:description" content="${(excerpt || '六根清浄のブログ記事です。').replace(/"/g, '&quot;')}">
     <meta property="og:url" content="${canonicalUrl}">
     <meta property="og:image" content="${thumbUrl}">
     
@@ -241,6 +247,69 @@ function generateArticlePage(item, content, categorySlug, displayCategory, excer
             border-radius: 8px;
             margin: 20px 0;
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        .article-body a {
+            color: #2cb696;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            transition: color 0.2s;
+        }
+        .article-body a:hover {
+            color: #1a9a7a;
+        }
+        .article-body .external-article-widget {
+            display: flex;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #fff;
+            text-decoration: none;
+            margin: 20px 0;
+            transition: box-shadow 0.2s;
+        }
+        .article-body .external-article-widget:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .article-body .external-article-widget a {
+            text-decoration: none;
+            color: inherit;
+        }
+        .article-body .external-article-widget-title {
+            font-size: 0.95rem;
+            color: #333;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .article-body .external-article-widget-description,
+        .article-body .external-article-widget-url {
+            font-size: 0.8rem;
+            color: #999;
+            display: block;
+        }
+        .article-body .external-article-widget-price {
+            font-size: 0.85rem;
+            color: #333;
+            margin-top: 6px;
+        }
+        .article-body .external-article-widget-button .a-button {
+            display: inline-block;
+            background: #333;
+            color: #fff;
+            padding: 6px 16px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-top: 8px;
+        }
+        .article-body .external-article-widget-image {
+            flex-shrink: 0;
+        }
+        .article-body .external-article-widget-productImage {
+            display: block;
+            width: 120px;
+            height: 120px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
         }
         .article-body blockquote {
             border-left: 4px solid var(--color-gold);
@@ -291,9 +360,8 @@ function generateArticlePage(item, content, categorySlug, displayCategory, excer
                     <a href="../testimonials.html">口コミ</a>
                     <a href="../faq.html">Q&A</a>
                     <a href="../blog.html">ブログ</a>
-                    <a href="https://uranairokkon.base.shop" target="_blank">物販</a>
                 </nav>
-                <a href="https://docs.google.com/forms/d/e/1FAIpQLSdG_cRsdXN-z8HUmzwUdAv7exsxFM41qp-WLr6hGORGmQI28w/viewform?usp=header" class="contact-btn" target="_blank">お問い合わせ</a>
+                <span class="contact-btn" style="opacity: 0.5; cursor: default;">SHOP（準備中）</span>
             </div>
             <div class="menu-toggle" onclick="toggleMenu();" aria-label="メニュー">
                 <span></span>
@@ -336,22 +404,26 @@ function generateArticlePage(item, content, categorySlug, displayCategory, excer
              <div class="footer-copy">© 2026 六根清浄 All Rights Reserved.</div>
         </div>
     </footer>
+
+    <script src="../js/main.js"></script>
 </body>
 </html>`;
 
     console.log(`Writing article page: ${fileName}`);
     fs.writeFileSync(filePath, html);
-    return fileName; // return relative filename
+    return fileName;
 }
 
 function generateCardHTML(item, internalLink, manualExcerpt = null) {
     const title = item.title || "無題";
-    const link = internalLink; // Link to internal file
+    const link = internalLink;
     const pubDate = new Date(item.pubDate);
     const formattedDate = format(pubDate, 'yyyy年M月d日');
 
     let thumbUrl = 'images/otya.png';
-    if (item['media:thumbnail']) {
+    if (item['media:thumbnail'] && item['media:thumbnail']['$'] && item['media:thumbnail']['$']['url']) {
+        thumbUrl = item['media:thumbnail']['$']['url'];
+    } else if (typeof item['media:thumbnail'] === 'string') {
         thumbUrl = item['media:thumbnail'];
     }
 
@@ -402,9 +474,6 @@ async function updateSitemap(items) {
     console.log('Updating sitemap...');
     const sitemapContent = fs.readFileSync(SITEMAP_PATH, 'utf8');
     const parser = new xml2js.Parser({ explicitArray: false });
-    // explicitArray: false can be tricky with lists. Let's use true for safety or handle it.
-    // Actually simpler to just append if not exists using string manipulation or build new XML.
-    // Ideally we parse, add, build.
 
     try {
         const result = await parser.parseStringPromise(sitemapContent);
@@ -468,7 +537,6 @@ async function updateBlogHTML() {
 
     console.log(`Found ${items.length} items.`);
 
-    // Helper to process items sequentially to not overload
     const cardHtmls = [];
 
     for (const item of items) {
@@ -482,57 +550,58 @@ async function updateBlogHTML() {
         // Wait a bit between requests to be nice
         await new Promise(resolve => setTimeout(resolve, 1000));
 
-        // Always scrape to get the full content for excerpt generation, 
-        // even if file exists (unless we store metadata separately, but for now scraping is safer for excerpt)
-        // Optimization: If file exists, we could arguably skip scraping IF we had the excerpt stored.
-        // But the user reported missing excerpts, so we need to re-scrape to get the text.
-        // Let's scrape.
+        // Check if article page already exists (skip re-scraping for efficiency)
+        const articleExists = fs.existsSync(filePath);
 
-        let content = await fetchArticleContent(link);
+        let content = null;
+        let excerpt = '';
+
+        if (!articleExists) {
+            // Only scrape new articles
+            content = await fetchArticleContent(link);
+        }
 
         if (content) {
             // Generate plain text excerpt from the full HTML content
             const $ = cheerio.load(content);
             const fullText = $.text().replace(/\s+/g, ' ').trim();
-            const excerpt = fullText.length > 60 ? fullText.substring(0, 60) + '...' : fullText;
+            excerpt = fullText.length > 60 ? fullText.substring(0, 60) + '...' : fullText;
 
             const plainTextDesc = (item.description || '').replace(/<[^>]+>/g, '');
-            // Use RSS description keywords if available for category, but use scraped text for card excerpt if description is empty or just image
-
             const categoryTextSource = plainTextDesc + ' ' + fullText;
             const assignedCategory = assignCategory(item.title, categoryTextSource, item.category ? (Array.isArray(item.category) ? item.category : [item.category]) : []);
             const displayCategory = CAT_MAP[assignedCategory] || 'コラム';
 
             generateArticlePage(item, content, assignedCategory, displayCategory, excerpt);
-
-            // Generate card with the extracted excerpt
+            cardHtmls.push(generateCardHTML(item, fileName, excerpt));
+        } else if (articleExists) {
+            // Article page exists, just generate card from RSS data
+            const plainText = (item.description || '').replace(/<[^>]+>/g, '');
+            excerpt = plainText.length > 60 ? plainText.substring(0, 60) + '...' : plainText;
             cardHtmls.push(generateCardHTML(item, fileName, excerpt));
         } else {
-            console.warn(`Skipping generation for ${link} due to scrape failure`);
-            // Fallback
+            // Scraping failed and no existing page - create fallback card pointing to Note
+            console.warn(`Skipping article page generation for ${link} due to scrape failure`);
             const title = item.title || "無題";
             const pubDate = new Date(item.pubDate);
             const formattedDate = format(pubDate, 'yyyy年M月d日');
-            let thumbUrl = item['media:thumbnail'] || 'images/otya.png';
+
+            let thumbUrl = 'images/otya.png';
+            if (item['media:thumbnail'] && item['media:thumbnail']['$'] && item['media:thumbnail']['$']['url']) {
+                thumbUrl = item['media:thumbnail']['$']['url'];
+            } else if (typeof item['media:thumbnail'] === 'string') {
+                thumbUrl = item['media:thumbnail'];
+            }
+
             const plainText = (item.description || '').replace(/<[^>]+>/g, '');
-            const excerpt = plainText.length > 60 ? plainText.substring(0, 60) + '...' : plainText;
+            excerpt = plainText.length > 60 ? plainText.substring(0, 60) + '...' : plainText;
             const assignedCategory = assignCategory(item.title, plainText, item.category ? (Array.isArray(item.category) ? item.category : [item.category]) : []);
             const displayCategory = CAT_MAP[assignedCategory] || 'コラム';
 
-            cardHtmls.push(`
-                 <a href="${link}" class="article-card" target="_blank" rel="noopener noreferrer" data-category="${assignedCategory}" data-timestamp="${pubDate.getTime()}">
-                     <div class="article-image">
-                         <span class="article-category">${displayCategory}</span>
-                         <img src="${thumbUrl}" alt="${title}" class="article-thumb" onerror="this.src='images/otya.png'">
-                     </div>
-                     <div class="article-content">
-                         <div class="article-meta"><span class="article-date">${formattedDate}</span></div>
-                         <h2 class="article-title">${title}</h2>
-                         <p class="article-excerpt">${excerpt}</p>
-                         <span class="read-more">noteで読む</span>
-                     </div>
-                 </a>
-              `);
+            // Also generate a minimal article page with RSS description as fallback
+            const fallbackContent = `<p>${plainText || '記事の取得に失敗しました。元の記事をNoteでご覧ください。'}</p>`;
+            generateArticlePage(item, fallbackContent, assignedCategory, displayCategory, excerpt);
+            cardHtmls.push(generateCardHTML(item, fileName, excerpt));
         }
     }
 
@@ -541,22 +610,47 @@ async function updateBlogHTML() {
     console.log('Reading blog.html...');
     let html = fs.readFileSync(BLOG_HTML_PATH, 'utf8');
 
-    // Use Cheerio to update blog.html safely
-    const $ = cheerio.load(html, { decodeEntities: false });
+    // Replace only the blog-grid content using regex to avoid Cheerio HTML re-encoding issues
+    const gridRegex = /(<div id="blog-grid"[^>]*>)([\s\S]*?)(<\/div>\s*\n?\s*\n?\s*(?:<\!-- Load More|\s*<\/div>))/;
+    const match = html.match(gridRegex);
 
-    // Remove the loading indicator text specifically
-    // It's in .blog-inner > p containing "記事を読み込んでいます..."
-    $('.blog-inner p').filter((i, el) => $(el).text().includes('記事を読み込んでいます')).remove();
-    // Also remove explicit id if it existed (backwards compatibility)
-    $('#loading-indicator').remove();
+    if (match) {
+        // Find the exact blog-grid div and replace its contents
+        const blogGridStart = html.indexOf('<div id="blog-grid"');
+        if (blogGridStart !== -1) {
+            // Find the opening tag end
+            const openTagEnd = html.indexOf('>', blogGridStart) + 1;
+            // Find the closing </div> for blog-grid
+            // We need to count nested divs
+            let depth = 1;
+            let pos = openTagEnd;
+            while (depth > 0 && pos < html.length) {
+                const nextOpen = html.indexOf('<div', pos);
+                const nextClose = html.indexOf('</div>', pos);
 
-    const $grid = $('#blog-grid');
-    if ($grid.length) {
-        $grid.html('\n' + cardsHtmlJoined + '\n');
-        $grid.removeClass('blog-grid-empty');
+                if (nextClose === -1) break;
+
+                if (nextOpen !== -1 && nextOpen < nextClose) {
+                    depth++;
+                    pos = nextOpen + 4;
+                } else {
+                    depth--;
+                    if (depth === 0) {
+                        // Replace content between openTagEnd and nextClose
+                        html = html.substring(0, openTagEnd) + '\n' + cardsHtmlJoined + '\n' + html.substring(nextClose);
+                        break;
+                    }
+                    pos = nextClose + 6;
+                }
+            }
+        }
+
+        // Remove loading indicator if present
+        html = html.replace(/<p[^>]*>[\s\S]*?記事を読み込んでいます[\s\S]*?<\/p>/g, '');
+        html = html.replace(/<div[^>]*id="loading-indicator"[^>]*>[\s\S]*?<\/div>/g, '');
 
         console.log('Writing updated blog.html...');
-        fs.writeFileSync(BLOG_HTML_PATH, $.html());
+        fs.writeFileSync(BLOG_HTML_PATH, html);
         console.log('Done!');
     } else {
         console.error('Could not find #blog-grid in blog.html');
