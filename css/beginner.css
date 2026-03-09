@@ -140,6 +140,13 @@
     border-radius: 999px;
 }
 
+.slide::after {
+    content: '';
+    display: block;
+    min-height: 20px;
+    flex-shrink: 0;
+}
+
 .slide::before {
     content: '';
     position: absolute;
