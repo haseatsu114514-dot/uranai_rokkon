@@ -5,27 +5,78 @@
     background: #fff;
     border-radius: 20px;
     box-shadow:
-        0 8px 32px rgba(0, 0, 0, 0.08),
-        0 2px 8px rgba(0, 0, 0, 0.04);
+        0 8px 32px rgba(0, 0, 0, 0.1),
+        0 2px 8px rgba(0, 0, 0, 0.05);
     margin-bottom: 40px;
     border: 2px solid rgba(196, 163, 90, 0.3);
     overflow: hidden;
     position: relative;
 }
 
-.slide-container::before {
-    content: '';
+/* プログレスバー */
+.slide-progress-bar {
+    width: 100%;
+    height: 4px;
+    background: rgba(196, 163, 90, 0.15);
+    position: relative;
+    z-index: 3;
+}
+
+.slide-progress-fill {
+    height: 100%;
+    width: 12.5%;
+    background: linear-gradient(90deg, var(--color-gold), var(--color-gold-light));
+    border-radius: 0 2px 2px 0;
+    transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* スライド本体（矢印+ビューポート） */
+.slide-body {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+}
+
+/* 左右の矢印ボタン */
+.slide-arrow {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, var(--color-gold), var(--color-gold-light), var(--color-gold));
-    z-index: 2;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    background: var(--color-primary);
+    color: var(--color-gold);
+    border: 2px solid rgba(196, 163, 90, 0.4);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    opacity: 0.85;
+}
+
+.slide-arrow:hover {
+    background: var(--color-primary-dark);
+    opacity: 1;
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+.slide-arrow-prev {
+    left: 12px;
+}
+
+.slide-arrow-next {
+    right: 12px;
 }
 
 .slide-viewport {
     overflow: hidden;
+    flex: 1;
 }
 
 .slide-track {
@@ -40,6 +91,10 @@
     padding: 48px 40px;
     text-align: center;
     position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .slide::before {
@@ -60,6 +115,10 @@
     background: linear-gradient(160deg, #2a3733 0%, var(--color-primary) 40%, #3a4a45 100%);
     padding: 48px 40px;
     position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .slide-cover::before {
@@ -90,7 +149,7 @@
 
 .slide-cover-inner {
     max-width: 480px;
-    margin: 0 auto;
+    width: 100%;
     position: relative;
     z-index: 1;
 }
@@ -127,16 +186,36 @@
 }
 
 .slide-cover-arrow {
-    font-size: 0.75rem;
+    font-size: 0.78rem;
     color: var(--color-gold-light);
     letter-spacing: 0.1em;
-    opacity: 0.7;
-    animation: coverArrowPulse 2s ease-in-out infinite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: rgba(196, 163, 90, 0.12);
+    border: 1px solid rgba(196, 163, 90, 0.25);
+    padding: 10px 24px;
+    border-radius: 24px;
+    margin: 0 auto;
+    width: fit-content;
+    animation: coverArrowPulse 2.5s ease-in-out infinite;
+}
+
+.slide-swipe-icon {
+    display: inline-block;
+    font-size: 0.9rem;
+    animation: swipeHint 2.5s ease-in-out infinite;
 }
 
 @keyframes coverArrowPulse {
-    0%, 100% { opacity: 0.5; transform: translateY(0); }
-    50% { opacity: 1; transform: translateY(-2px); }
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+}
+
+@keyframes swipeHint {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(6px); }
 }
 
 /* ── 共通スライド要素 ── */
@@ -198,6 +277,7 @@
     justify-content: center;
     gap: 20px;
     margin: 24px auto 8px;
+    width: 100%;
     max-width: 420px;
 }
 
@@ -232,6 +312,7 @@
 
 /* ── お悩みリスト（スライド3, 4） ── */
 .slide-worry-list {
+    width: 100%;
     max-width: 420px;
     margin: 0 auto 8px;
     text-align: left;
@@ -272,6 +353,7 @@
     display: flex;
     flex-direction: column;
     gap: 14px;
+    width: 100%;
     max-width: 480px;
     margin: 0 auto 8px;
     text-align: left;
@@ -310,6 +392,7 @@
     background: var(--color-cream);
     border-radius: 12px;
     padding: 24px;
+    width: 100%;
     max-width: 480px;
     margin: 0 auto 20px;
     text-align: left;
@@ -354,6 +437,7 @@
 
 /* ── ステップ（スライド7） ── */
 .slide-steps {
+    width: 100%;
     max-width: 480px;
     margin: 0 auto 8px;
     text-align: left;
@@ -400,6 +484,7 @@
 .slide-pricing-cards {
     display: flex;
     gap: 16px;
+    width: 100%;
     max-width: 420px;
     margin: 0 auto 20px;
     justify-content: center;
@@ -488,31 +573,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 14px;
-    padding: 18px 20px 10px;
-    background: rgba(248, 246, 242, 0.5);
-}
-
-.slide-nav-btn {
-    background: var(--color-primary);
-    color: var(--color-gold);
-    border: none;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    font-size: 0.75rem;
-    cursor: pointer;
-    transition: all 0.3s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 8px rgba(45, 61, 56, 0.2);
-}
-
-.slide-nav-btn:hover {
-    background: var(--color-primary-dark);
-    transform: scale(1.1);
-    box-shadow: 0 4px 12px rgba(45, 61, 56, 0.3);
+    gap: 10px;
+    padding: 16px 20px 6px;
+    background: linear-gradient(to bottom, rgba(248, 246, 242, 0.3), rgba(248, 246, 242, 0.6));
 }
 
 .slide-dots {
@@ -521,8 +584,8 @@
 }
 
 .slide-dot {
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
     border: 2px solid var(--color-gold);
     background: transparent;
@@ -533,8 +596,8 @@
 
 .slide-dot.active {
     background: var(--color-gold);
-    transform: scale(1.3);
-    box-shadow: 0 0 6px rgba(196, 163, 90, 0.4);
+    transform: scale(1.2);
+    box-shadow: 0 0 8px rgba(196, 163, 90, 0.5);
 }
 
 .slide-dot:hover {
@@ -543,11 +606,12 @@
 
 .slide-counter {
     text-align: center;
-    font-size: 0.72rem;
-    color: #aaa;
-    letter-spacing: 0.1em;
-    padding-bottom: 20px;
-    background: rgba(248, 246, 242, 0.5);
+    font-size: 0.75rem;
+    color: #999;
+    letter-spacing: 0.15em;
+    font-weight: 500;
+    padding-bottom: 18px;
+    background: linear-gradient(to bottom, rgba(248, 246, 242, 0.6), rgba(248, 246, 242, 0.8));
 }
 
 /* ===== 初めての方への案内 ===== */
@@ -778,15 +842,23 @@
         max-width: 220px;
     }
 
-    .slide-nav-btn {
-        width: 34px;
-        height: 34px;
+    .slide-arrow {
+        width: 36px;
+        height: 36px;
         font-size: 0.65rem;
     }
 
+    .slide-arrow-prev {
+        left: 6px;
+    }
+
+    .slide-arrow-next {
+        right: 6px;
+    }
+
     .slide-dot {
-        width: 7px;
-        height: 7px;
+        width: 8px;
+        height: 8px;
     }
 
     .beginner-guide {

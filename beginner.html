@@ -80,6 +80,12 @@
 
             <!-- スライドセクション -->
             <div class="slide-container animate-on-scroll">
+                <!-- プログレスバー -->
+                <div class="slide-progress-bar">
+                    <div class="slide-progress-fill" id="slideProgress"></div>
+                </div>
+                <div class="slide-body">
+                <button class="slide-arrow slide-arrow-prev" aria-label="前のスライド">&#9664;</button>
                 <div class="slide-viewport">
                     <div class="slide-track">
 
@@ -97,6 +103,7 @@
                                     はじめての方にもわかりやすくご案内します。
                                 </p>
                                 <div class="slide-cover-arrow">
+                                    <span class="slide-swipe-icon">&#10145;</span>
                                     スワイプ or 矢印で次へ
                                 </div>
                             </div>
@@ -319,12 +326,12 @@
 
                     </div>
                 </div>
+                <button class="slide-arrow slide-arrow-next" aria-label="次のスライド">&#9654;</button>
+                </div>
 
                 <!-- スライドナビゲーション -->
                 <div class="slide-nav">
-                    <button class="slide-nav-btn slide-prev" aria-label="前のスライド">&#9664;</button>
                     <div class="slide-dots" id="slideDots"></div>
-                    <button class="slide-nav-btn slide-next" aria-label="次のスライド">&#9654;</button>
                 </div>
                 <div class="slide-counter" id="slideCounter">1 / 8</div>
             </div>
@@ -432,10 +439,11 @@
     (function() {
         var track = document.querySelector('.slide-track');
         var slides = document.querySelectorAll('.slide');
-        var prevBtn = document.querySelector('.slide-prev');
-        var nextBtn = document.querySelector('.slide-next');
+        var prevBtn = document.querySelector('.slide-arrow-prev');
+        var nextBtn = document.querySelector('.slide-arrow-next');
         var dotsContainer = document.getElementById('slideDots');
         var counter = document.getElementById('slideCounter');
+        var progressFill = document.getElementById('slideProgress');
         var current = 0;
         var total = slides.length;
 
@@ -458,6 +466,9 @@
                 d.classList.toggle('active', i === current);
             });
             counter.textContent = (current + 1) + ' / ' + total;
+            // プログレスバー更新
+            var progress = ((current + 1) / total) * 100;
+            progressFill.style.width = progress + '%';
         }
 
         prevBtn.addEventListener('click', function() { goTo(current - 1); });
