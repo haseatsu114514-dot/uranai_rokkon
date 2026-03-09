@@ -80,14 +80,18 @@
 
             <!-- スライドセクション -->
             <div class="slide-container animate-on-scroll">
-                <!-- プログレスバー -->
                 <div class="slide-progress-bar">
                     <div class="slide-progress-fill" id="slideProgress"></div>
                 </div>
+
+                <div class="slide-header-bar">
+                    <div class="slide-deck-label">ROKKON GUIDE</div>
+                    <div class="slide-counter" id="slideCounter">1 / 8</div>
+                </div>
+
                 <div class="slide-body">
-                <button class="slide-arrow slide-arrow-prev" aria-label="前のスライド">&#9664;</button>
-                <div class="slide-viewport">
-                    <div class="slide-track">
+                    <div class="slide-viewport">
+                        <div class="slide-track">
 
                         <!-- スライド1: 表紙 -->
                         <div class="slide slide-cover">
@@ -100,7 +104,7 @@
                                 </h2>
                                 <div class="slide-cover-rule"></div>
                                 <p class="slide-cover-sub">全 8 ページ　─　約 2 分で読めます</p>
-                                <button class="slide-cover-start" onclick="this.closest('.slide-container').querySelector('.slide-arrow-next').click()">
+                                <button class="slide-cover-start" type="button">
                                     はじめる <span class="slide-swipe-icon">&#10145;</span>
                                 </button>
                             </div>
@@ -315,16 +319,17 @@
                             </div>
                         </div>
 
+                        </div>
                     </div>
                 </div>
-                <button class="slide-arrow slide-arrow-next" aria-label="次のスライド">&#9654;</button>
-                </div>
 
-                <!-- スライドナビゲーション -->
-                <div class="slide-nav">
-                    <div class="slide-dots" id="slideDots"></div>
+                <div class="slide-footer-bar">
+                    <button class="slide-arrow slide-arrow-prev" type="button" aria-label="前のスライド">&#9664;</button>
+                    <div class="slide-nav">
+                        <div class="slide-dots" id="slideDots"></div>
+                    </div>
+                    <button class="slide-arrow slide-arrow-next" type="button" aria-label="次のスライド">&#9654;</button>
                 </div>
-                <div class="slide-counter" id="slideCounter">1 / 8</div>
             </div>
 
             <!-- はじめての案内 -->
@@ -425,74 +430,8 @@
         <span class="sticky-text">LINEで予約・お問い合わせ</span>
     </a>
 
+    <script src="js/beginner.js"></script>
     <script src="js/main.js"></script>
-    <script>
-    (function() {
-        var track = document.querySelector('.slide-track');
-        var slides = document.querySelectorAll('.slide');
-        var prevBtn = document.querySelector('.slide-arrow-prev');
-        var nextBtn = document.querySelector('.slide-arrow-next');
-        var dotsContainer = document.getElementById('slideDots');
-        var counter = document.getElementById('slideCounter');
-        var progressFill = document.getElementById('slideProgress');
-        var current = 0;
-        var total = slides.length;
-
-        // ドットを動的に生成
-        for (var i = 0; i < total; i++) {
-            var dot = document.createElement('button');
-            dot.className = 'slide-dot' + (i === 0 ? ' active' : '');
-            dot.setAttribute('data-target', i);
-            dot.setAttribute('aria-label', 'スライド' + (i + 1));
-            dotsContainer.appendChild(dot);
-        }
-        var dots = dotsContainer.querySelectorAll('.slide-dot');
-
-        function goTo(index) {
-            if (index < 0) index = total - 1;
-            if (index >= total) index = 0;
-            current = index;
-            track.style.transform = 'translateX(-' + (current * 100) + '%)';
-            dots.forEach(function(d, i) {
-                d.classList.toggle('active', i === current);
-            });
-            counter.textContent = (current + 1) + ' / ' + total;
-            // プログレスバー更新
-            var progress = ((current + 1) / total) * 100;
-            progressFill.style.width = progress + '%';
-        }
-
-        prevBtn.addEventListener('click', function() { goTo(current - 1); });
-        nextBtn.addEventListener('click', function() { goTo(current + 1); });
-        dots.forEach(function(dot) {
-            dot.addEventListener('click', function() {
-                goTo(parseInt(this.getAttribute('data-target')));
-            });
-        });
-
-        // スワイプ対応
-        var startX = 0, diffX = 0;
-        var viewport = document.querySelector('.slide-viewport');
-        viewport.addEventListener('touchstart', function(e) {
-            startX = e.touches[0].clientX;
-            diffX = 0;
-        }, { passive: true });
-        viewport.addEventListener('touchmove', function(e) {
-            diffX = e.touches[0].clientX - startX;
-        }, { passive: true });
-        viewport.addEventListener('touchend', function() {
-            if (Math.abs(diffX) > 50) {
-                goTo(diffX > 0 ? current - 1 : current + 1);
-            }
-        });
-
-        // キーボード操作
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'ArrowLeft') goTo(current - 1);
-            if (e.key === 'ArrowRight') goTo(current + 1);
-        });
-    })();
-    </script>
 </body>
 
 </html>
