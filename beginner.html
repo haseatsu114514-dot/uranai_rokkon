@@ -91,18 +91,18 @@
 
                         <!-- スライド1: 表紙 -->
                         <div class="slide slide-cover">
+                            <div class="slide-cover-deco slide-cover-deco-tl"></div>
+                            <div class="slide-cover-deco slide-cover-deco-br"></div>
                             <div class="slide-cover-inner">
+                                <div class="slide-cover-eyebrow">はじめての方へ</div>
                                 <h2 class="slide-cover-title">
-                                    占い処 六根清浄とは
+                                    占い処<br>六根清浄とは
                                 </h2>
-                                <div class="slide-divider"></div>
-                                <p class="slide-cover-sub">
-                                    全8ページ ─ 約2分で読めます
-                                </p>
-                                <div class="slide-cover-arrow">
-                                    <span class="slide-swipe-icon">&#10145;</span>
-                                    次へ
-                                </div>
+                                <div class="slide-cover-rule"></div>
+                                <p class="slide-cover-sub">全 8 ページ　─　約 2 分で読めます</p>
+                                <button class="slide-cover-start" onclick="this.closest('.slide-container').querySelector('.slide-arrow-next').click()">
+                                    はじめる <span class="slide-swipe-icon">&#10145;</span>
+                                </button>
                             </div>
                         </div>
 
@@ -252,39 +252,33 @@
                             <div class="slide-badge">6 / 7</div>
                             <h2 class="slide-title">ご予約の流れ</h2>
                             <div class="slide-divider"></div>
-                            <p class="slide-lead">LINEで完結。シンプルで簡単な予約プロセス。</p>
-                            <div class="slide-steps">
+                            <div class="slide-steps-row">
                                 <div class="slide-step">
                                     <div class="slide-step-number">STEP 1</div>
-                                    <div class="slide-step-title">LINE公式アカウントを友だち追加</div>
+                                    <div class="slide-step-title">LINE友だち追加</div>
                                     <p class="slide-step-desc">
-                                        下のボタンをタップして友だち追加。<br>
-                                        「鑑定予約」ボタンから、鑑定形式（オンライン / 対面）・日時をボタンで簡単選択。
+                                        LINEで友だち追加後、「鑑定予約」ボタンから形式・日時を選択。
                                     </p>
                                 </div>
-                                <div class="slide-step-arrow">&#9661;</div>
+                                <div class="slide-step-arrow-h">&#9654;</div>
                                 <div class="slide-step">
                                     <div class="slide-step-number">STEP 2</div>
                                     <div class="slide-step-title">フォーム入力（約3分）</div>
                                     <p class="slide-step-desc">
-                                        自動で届くGoogleフォームにご相談内容・生年月日などを入力。<br>
-                                        フォーム送信で予約確定。お支払い先もLINEでご案内します。
+                                        自動送付のGoogleフォームに相談内容・生年月日を入力して予約確定。
                                     </p>
                                 </div>
-                                <div class="slide-step-arrow">&#9661;</div>
+                                <div class="slide-step-arrow-h">&#9654;</div>
                                 <div class="slide-step">
                                     <div class="slide-step-number">STEP 3</div>
                                     <div class="slide-step-title">鑑定当日</div>
                                     <p class="slide-step-desc">
-                                        <strong>オンライン：</strong>Google MeetのURLをクリックするだけ。アプリ登録は不要。<br>
-                                        <strong>対面：</strong>栄駅近くの指定カフェにて。場所はLINEでご案内します。
+                                        オンライン：Meet URLをクリックするだけ。<br>
+                                        対面：栄駅近くの指定カフェにて。
                                     </p>
                                 </div>
                             </div>
-                            <p class="slide-note">
-                                準備は特に不要。強いて言えば、聞きたいことのメモと<br>
-                                相性を見たい方の生年月日があるとスムーズです。
-                            </p>
+                            <p class="slide-note">準備不要。聞きたいことのメモと、相性を見たい方の生年月日があるとスムーズです。</p>
                         </div>
 
                         <!-- スライド8: 料金 & CTA -->
