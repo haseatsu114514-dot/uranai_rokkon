@@ -149,8 +149,9 @@
 
 .slide-cover {
     background: linear-gradient(160deg, #2a3733 0%, var(--color-primary) 40%, #3a4a45 100%);
-    padding: 88px 68px 112px;
+    padding: 100px 68px;
     justify-content: center;
+    align-items: center;
 }
 
 .slide-cover::before {
@@ -906,8 +907,9 @@
     }
 
     .slide-cover {
-        padding: 74px 22px 94px;
+        padding: 84px 22px;
         justify-content: center;
+        align-items: center;
     }
 
     .slide-cover-title {
