@@ -31,10 +31,10 @@
 
     function goTo(index) {
         if (index < 0) {
-            index = total - 1;
+            index = 0;
         }
         if (index >= total) {
-            index = 0;
+            index = total - 1;
         }
 
         current = index;
@@ -46,6 +46,10 @@
 
         counter.textContent = formatCounter(current);
         progressFill.style.width = (((current + 1) / total) * 100) + '%';
+        prevBtn.classList.toggle('is-inactive', current === 0);
+        nextBtn.classList.toggle('is-inactive', current === total - 1);
+        prevBtn.disabled = current === 0;
+        nextBtn.disabled = current === total - 1;
     }
 
     prevBtn.addEventListener('click', function () {
