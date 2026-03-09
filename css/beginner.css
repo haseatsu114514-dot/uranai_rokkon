@@ -149,7 +149,7 @@
 
 .slide-cover {
     background: linear-gradient(160deg, #2a3733 0%, var(--color-primary) 40%, #3a4a45 100%);
-    padding: 100px 68px;
+    padding: 60px 68px 90px;
     justify-content: center;
     align-items: center;
 }
@@ -214,6 +214,7 @@
     font-weight: 600;
     text-transform: uppercase;
     margin-bottom: 14px;
+    text-indent: 0.35em;
 }
 
 .slide-cover-title {
@@ -223,6 +224,7 @@
     line-height: 1.6;
     margin-bottom: 14px;
     letter-spacing: 0.18em;
+    text-indent: 0.18em;
 }
 
 .slide-cover-rule {
@@ -238,6 +240,7 @@
     line-height: 1.5;
     margin-bottom: 20px;
     letter-spacing: 0.2em;
+    text-indent: 0.2em;
 }
 
 .slide-cover-start {
@@ -907,7 +910,7 @@
     }
 
     .slide-cover {
-        padding: 84px 22px;
+        padding: 50px 22px 80px;
         justify-content: center;
         align-items: center;
     }
