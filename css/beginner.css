@@ -113,7 +113,7 @@
 /* ── 表紙スライド ── */
 .slide-cover {
     background: linear-gradient(160deg, #2a3733 0%, var(--color-primary) 40%, #3a4a45 100%);
-    padding: 0;
+    padding: 48px 40px;
     position: relative;
     display: flex;
     flex-direction: column;
@@ -148,75 +148,20 @@
 }
 
 .slide-cover-inner {
-    max-width: 100%;
+    max-width: 480px;
     width: 100%;
     position: relative;
     z-index: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-/* 表紙ヘッダー（ページ番号＋タイプ表示） */
-.slide-cover-header {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 24px;
-    background: rgba(0, 0, 0, 0.2);
-    border-bottom: 1px solid rgba(196, 163, 90, 0.15);
-}
-
-.slide-cover-page {
-    font-size: 0.68rem;
-    color: rgba(255, 255, 255, 0.6);
-    letter-spacing: 0.2em;
-    font-weight: 600;
-}
-
-.slide-cover-type {
-    font-size: 0.68rem;
-    color: var(--color-gold);
-    letter-spacing: 0.15em;
-    font-weight: 600;
-}
-
-.slide-cover-label {
-    font-size: 0.78rem;
-    color: var(--color-gold);
-    letter-spacing: 0.25em;
-    margin-top: 24px;
-    margin-bottom: 16px;
-    font-weight: 600;
-    text-transform: uppercase;
-}
-
-/* 表紙フッター */
-.slide-cover-footer {
-    display: flex;
-    gap: 24px;
-    justify-content: center;
-    margin-top: 20px;
-    padding: 12px 24px;
-    width: 100%;
-    background: rgba(0, 0, 0, 0.15);
-    border-top: 1px solid rgba(196, 163, 90, 0.1);
-}
-
-.slide-cover-footer span {
-    font-size: 0.7rem;
-    color: rgba(255, 255, 255, 0.5);
-    letter-spacing: 0.1em;
+    text-align: center;
 }
 
 .slide-cover-title {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
     font-weight: 700;
-    color: var(--color-text-white);
+    color: #fff;
     line-height: 1.8;
     margin-bottom: 16px;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.12em;
 }
 
 .slide-cover .slide-divider {
@@ -226,10 +171,11 @@
 }
 
 .slide-cover-sub {
-    font-size: 0.9rem;
-    color: var(--color-text-light);
-    line-height: 2;
-    margin-bottom: 20px;
+    font-size: 0.82rem;
+    color: rgba(255, 255, 255, 0.55);
+    line-height: 1.8;
+    margin-bottom: 24px;
+    letter-spacing: 0.1em;
 }
 
 .slide-cover-arrow {
@@ -822,24 +768,7 @@
     }
 
     .slide-cover {
-        padding: 0;
-    }
-
-    .slide-cover-header {
-        padding: 10px 16px;
-    }
-
-    .slide-cover-label {
-        margin-top: 18px;
-    }
-
-    .slide-cover-footer {
-        gap: 16px;
-        padding: 10px 16px;
-    }
-
-    .slide-cover-footer span {
-        font-size: 0.65rem;
+        padding: 32px 20px;
     }
 
     .slide-cover-title {
