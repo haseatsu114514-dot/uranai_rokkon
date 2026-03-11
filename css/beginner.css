@@ -807,9 +807,14 @@
     margin-bottom: 24px;
 }
 
+.beginner-cta a {
+    display: inline-block;
+}
+
 .beginner-cta img {
     max-width: 280px;
     height: auto;
+    margin: 0 auto;
     transition: transform 0.3s;
 }
 

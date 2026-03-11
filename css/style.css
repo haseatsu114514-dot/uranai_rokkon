@@ -383,7 +383,7 @@ body::after { top: 2rem; right: 2rem; border-left: none; border-bottom: none; }
     background-color: var(--color-primary);
     border-bottom: 1px solid var(--color-gold);
     padding: 0;
-    margin: 0;
+    margin: -1px 0 0;
     position: relative;
     z-index: 1;
 }
@@ -394,7 +394,7 @@ body::after { top: 2rem; right: 2rem; border-left: none; border-bottom: none; }
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    min-height: 46px;
+    min-height: 56px;
 }
 
 .notices-label {
@@ -406,18 +406,18 @@ body::after { top: 2rem; right: 2rem; border-left: none; border-bottom: none; }
     font-size: 0.8rem;
     font-weight: 500;
     letter-spacing: 0.15em;
-    padding: 12px 20px;
+    padding: 14px 20px;
     white-space: nowrap;
     flex-shrink: 0;
     align-self: stretch;
-    min-height: 46px;
+    min-height: 56px;
 }
 
 .notices-ticker {
     overflow: hidden;
     position: relative;
     padding: 0 20px;
-    min-height: 46px;
+    min-height: 56px;
     display: flex;
     align-items: center;
 }
@@ -1329,8 +1329,8 @@ body::after { top: 2rem; right: 2rem; border-left: none; border-bottom: none; }
     .hero-btn img { max-width: 300px; }
 
     .notices-inner { flex-direction: row; flex-wrap: nowrap; }
-    .notices-label { font-size: 0.7rem; padding: 0 12px; min-height: 44px; }
-    .notices-ticker { padding: 0 8px; min-height: 44px; }
+    .notices-label { font-size: 0.7rem; padding: 0 12px; min-height: 48px; }
+    .notices-ticker { padding: 0 8px; min-height: 48px; }
     .notice-item { flex-direction: column; gap: 2px; padding: 6px 0; align-items: flex-start; }
     .notice-date { font-size: 0.7rem; }
     .notice-text { font-size: 0.75rem; line-height: 1.5; }
