@@ -1,12 +1,11 @@
-/* ========== 占い処 六根清浄｜アニメーション用CSS ========== */
+/* ========== 占い処 六根清浄｜アニメーション用CSS (Chanoyu Theme) ========== */
 
 :root {
-    --color-primary: #2d3d38;
-    --color-gold: #c4a35a;
+    --color-primary: #3b3a39;
+    --color-gold: #8f9779;
 }
 
 /* ----- 1. スクロールフェードイン（プレミアム版） ----- */
-/* ★修正: JavaScriptが動かなくてもコンテンツが見えるように */
 .animate-on-scroll {
     opacity: 1;
     transform: translateY(0);
@@ -14,7 +13,6 @@
         transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* JavaScriptが有効な場合のみアニメーション */
 .js-enabled .animate-on-scroll:not(.animated) {
     opacity: 0;
     transform: translateY(30px);
@@ -25,59 +23,22 @@
     transform: translateY(0);
 }
 
-/* Stagger間隔を0.1s刻みに増加 */
-.animate-on-scroll.animate-delay-1 {
-    transition-delay: 0.1s;
-}
-
-.animate-on-scroll.animate-delay-2 {
-    transition-delay: 0.2s;
-}
-
-.animate-on-scroll.animate-delay-3 {
-    transition-delay: 0.3s;
-}
-
-.animate-on-scroll.animate-delay-4 {
-    transition-delay: 0.4s;
-}
-
-.animate-on-scroll.animate-delay-5 {
-    transition-delay: 0.5s;
-}
-
-.animate-on-scroll.animate-delay-6 {
-    transition-delay: 0.6s;
-}
+.animate-on-scroll.animate-delay-1 { transition-delay: 0.1s; }
+.animate-on-scroll.animate-delay-2 { transition-delay: 0.2s; }
+.animate-on-scroll.animate-delay-3 { transition-delay: 0.3s; }
+.animate-on-scroll.animate-delay-4 { transition-delay: 0.4s; }
+.animate-on-scroll.animate-delay-5 { transition-delay: 0.5s; }
+.animate-on-scroll.animate-delay-6 { transition-delay: 0.6s; }
 
 /* ----- 2. ヒーロー初回表示 ----- */
-.hero-reveal {
-    opacity: 1;
-    transform: translateY(0);
-}
+.hero-reveal { opacity: 1; transform: translateY(0); }
+.hero-reveal.hero-visible { opacity: 1; transform: translateY(0); }
+.hero-reveal-title { transition: opacity 0.7s ease 0.1s, transform 0.7s ease 0.1s; }
+.hero-reveal-badge { transition: opacity 0.7s ease 0.2s, transform 0.7s ease 0.2s; }
+.hero-reveal-subtitle { transition: opacity 0.7s ease 0.4s, transform 0.7s ease 0.4s; }
+.hero-reveal-btn { transition: opacity 0.7s ease 0.7s, transform 0.7s ease 0.7s; }
 
-.hero-reveal.hero-visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.hero-reveal-title {
-    transition: opacity 0.7s ease 0.1s, transform 0.7s ease 0.1s;
-}
-
-.hero-reveal-badge {
-    transition: opacity 0.7s ease 0.2s, transform 0.7s ease 0.2s;
-}
-
-.hero-reveal-subtitle {
-    transition: opacity 0.7s ease 0.4s, transform 0.7s ease 0.4s;
-}
-
-.hero-reveal-btn {
-    transition: opacity 0.7s ease 0.7s, transform 0.7s ease 0.7s;
-}
-
-/* ----- 3. ヘッダー（プレミアムスクロール変化） ----- */
+/* ----- 3. ヘッダー（Chanoyu: 透明オフホワイト → スクロール時も統一） ----- */
 .header {
     transition: box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1),
         background 0.4s cubic-bezier(0.22, 1, 0.36, 1),
@@ -85,41 +46,37 @@
 }
 
 .header.scrolled {
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
-    background: rgba(45, 61, 56, 0.95);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.06);
+    background: rgba(250, 250, 249, 0.97);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
 }
 
 .header.scrolled .header-inner {
-    /* Height change removed to prevent menu shift */
-    /* height: 65px; */
     transition: height 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .header.scrolled .logo-main {
-    /* Font-size change removed to prevent text jitter */
-    /* font-size: 1.25rem; */
     transition: font-size 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* ----- 4. トップへ戻るボタン ----- */
+/* ----- 4. トップへ戻るボタン (Chanoyu: 直線) ----- */
 .back-to-top {
     position: fixed;
     bottom: 24px;
     left: 50%;
     transform: translateX(-50%) translateY(12px);
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    border-radius: 0;
     background: var(--color-primary);
     color: #fff;
-    border: 2px solid var(--color-gold);
+    border: 1px solid var(--color-gold);
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.2rem;
+    font-size: 1rem;
     z-index: 999;
     opacity: 0;
     visibility: hidden;
@@ -145,65 +102,69 @@
     transform: translateX(-50%) translateY(-4px);
 }
 
-/* ========== 予約状況表示（完全版） ========== */
+/* ========== 予約状況表示（Chanoyu版） ========== */
 .availability-inline {
     display: block;
     margin: 2rem auto;
     max-width: 600px;
-    padding: 2rem 2.5rem;
+    padding: 2.5rem;
     background: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(10px);
-    border-radius: 16px;
-    border: 2px solid var(--color-gold);
-    box-shadow: 0 8px 32px rgba(45, 61, 56, 0.12),
-        0 2px 8px rgba(196, 163, 90, 0.15),
-        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    border-radius: 0;
+    border: 1px solid rgba(59, 58, 57, 0.15);
+    box-shadow: none;
     font-family: 'Shippori Mincho', serif;
     text-align: center;
     position: relative;
     z-index: 1;
 }
 
+.availability-inline::after {
+    content: '';
+    position: absolute;
+    top: 8px; left: 8px; right: 8px; bottom: 8px;
+    border: 1px dashed rgba(59, 58, 57, 0.08);
+    pointer-events: none;
+}
+
 .availability-header {
     margin-bottom: 1.5rem;
     padding-bottom: 1rem;
-    border-bottom: 1px solid rgba(196, 163, 90, 0.3);
+    border-bottom: 1px solid rgba(59, 58, 57, 0.15);
 }
 
 .availability-label {
-    font-size: 1.1rem;
-    color: #2d3d38 !important;
+    font-size: 1rem;
+    color: #3b3a39 !important;
     opacity: 1 !important;
-    letter-spacing: 0.1em;
-    font-weight: 700;
+    letter-spacing: 0.15em;
+    font-weight: 500;
     display: block;
     margin-bottom: 0.8rem;
 }
 
-/* タグのスタイル（読みやすい配色） */
 .availability-tag {
     display: inline-block;
-    font-size: 0.85rem;
-    color: #2d3d38 !important;
-    background: linear-gradient(135deg, #f0e6d2 0%, #e8ddc8 100%);
+    font-size: 0.8rem;
+    color: #3b3a39 !important;
+    background: transparent;
     opacity: 1 !important;
-    font-weight: 700;
+    font-weight: 500;
     letter-spacing: 0.1em;
-    padding: 0.35rem 0.7rem;
-    border: 2px solid #c4a35a;
-    border-radius: 6px;
+    padding: 0.3rem 0.6rem;
+    border: 1px solid #8f9779;
+    border-radius: 0;
     margin-right: 0.6rem;
     vertical-align: middle;
-    box-shadow: 0 2px 4px rgba(196, 163, 90, 0.2);
+    box-shadow: none;
 }
 
-/* 日付を大きく */
 .availability-date {
-    font-size: 1.3rem;
-    color: #2d3d38 !important;
+    font-size: 1.2rem;
+    color: #3b3a39 !important;
     opacity: 1 !important;
-    letter-spacing: 0.05em;
-    font-weight: 700;
+    letter-spacing: 0.1em;
+    font-weight: 500;
     vertical-align: middle;
 }
 
@@ -223,87 +184,69 @@
     gap: 0.5rem;
     min-width: 100px;
     flex: 1;
-    padding: 0.8rem 0.5rem;
-    background: linear-gradient(135deg,
-            rgba(255, 255, 255, 0.9) 0%,
-            rgba(248, 246, 242, 0.95) 100%);
-    border-radius: 12px;
-    border: 1px solid rgba(196, 163, 90, 0.25);
+    padding: 1rem 0.5rem;
+    background: transparent;
+    border-radius: 0;
+    border: 1px solid rgba(59, 58, 57, 0.15);
 }
 
 .part-name {
     font-size: 0.9rem;
-    color: #2d3d38 !important;
+    color: #3b3a39 !important;
     opacity: 1 !important;
-    letter-spacing: 0.05em;
-    font-weight: 700;
+    letter-spacing: 0.1em;
+    font-weight: 500;
 }
 
 .part-time {
     font-size: 0.7rem;
-    color: #666 !important;
+    color: #706f6e !important;
     opacity: 1 !important;
-    letter-spacing: 0.02em;
+    letter-spacing: 0.05em;
     white-space: nowrap;
 }
 
 .part-badge {
-    font-size: 0.85rem;
-    font-weight: 700;
-    padding: 0.45rem 1rem;
-    border-radius: 8px;
-    letter-spacing: 0.05em;
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 0.4rem 0.8rem;
+    border-radius: 0;
+    letter-spacing: 0.1em;
     white-space: nowrap;
     transition: all 0.3s ease;
     min-width: 70px;
 }
 
-/* 受付中（グリーン系） */
 .part-badge.available {
-    background: linear-gradient(135deg, #4a7c59, #5a9c6c);
+    background: #8f9779;
     color: #fff;
-    border: 2px solid #6db87f;
-    box-shadow: 0 4px 12px rgba(74, 124, 89, 0.3),
-        0 0 20px rgba(93, 156, 108, 0.2);
+    border: 1px solid #8f9779;
+    box-shadow: none;
 }
 
-/* わずか（オレンジ系） */
 .part-badge.limited {
-    background: linear-gradient(135deg, #d97634, #ff8c42);
+    background: #c3b091;
     color: #fff;
-    border: 2px solid #ffaa5a;
-    box-shadow: 0 4px 12px rgba(217, 118, 52, 0.3),
-        0 0 20px rgba(255, 140, 66, 0.2);
-    animation: pulse-warning 2s ease-in-out infinite;
+    border: 1px solid #c3b091;
+    box-shadow: none;
+    animation: none;
 }
 
 @keyframes pulse-warning {
-
-    0%,
-    100% {
-        box-shadow: 0 4px 12px rgba(217, 118, 52, 0.3),
-            0 0 20px rgba(255, 140, 66, 0.2);
-        transform: scale(1);
-    }
-
-    50% {
-        box-shadow: 0 4px 16px rgba(217, 118, 52, 0.4),
-            0 0 24px rgba(255, 140, 66, 0.3);
-        transform: scale(1.03);
-    }
+    0%, 100% { box-shadow: none; transform: scale(1); }
+    50% { transform: scale(1.02); }
 }
 
-/* 終了（グレー系） */
 .part-badge.full {
-    background: linear-gradient(135deg, #888, #999);
+    background: #999;
     color: #fff;
-    border: 2px solid #aaa;
-    opacity: 0.7;
+    border: 1px solid #aaa;
+    opacity: 0.6;
 }
 
 .availability-note {
-    font-size: 0.8rem;
-    color: #666 !important;
+    font-size: 0.75rem;
+    color: #706f6e !important;
     opacity: 1 !important;
     letter-spacing: 0.05em;
     text-align: center;
@@ -313,142 +256,62 @@
 
 .all-full-message {
     display: none;
-    font-size: 0.95rem;
-    color: #2d3d38 !important;
+    font-size: 0.9rem;
+    color: #3b3a39 !important;
     opacity: 1 !important;
     letter-spacing: 0.1em;
     margin-top: 1rem;
     padding: 1.2rem;
-    border-top: 1px solid rgba(196, 163, 90, 0.3);
-    font-weight: 600;
+    border-top: 1px solid rgba(59, 58, 57, 0.15);
+    font-weight: 500;
 }
 
-.all-full-message.show {
-    display: block;
-}
+.all-full-message.show { display: block; }
 
 /* ----- ご予約の流れ ----- */
-/* ★修正: JavaScriptが動かなくてもコンテンツが見えるように */
 .flow-step {
     opacity: 1;
     transform: translateY(0);
     transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
-/* JavaScriptが有効な場合のみアニメーション */
 .js-enabled .flow-step:not(.flow-visible) {
     opacity: 0;
     transform: translateY(16px);
 }
 
-.flow-step.flow-visible {
-    opacity: 1;
-    transform: translateY(0);
-}
+.flow-step.flow-visible { opacity: 1; transform: translateY(0); }
 
-.flow-step .flow-line {
-    transition: opacity 0.5s ease 0.2s;
-    opacity: 0.4;
-}
-
-.js-enabled .flow-step:not(.flow-visible) .flow-line {
-    opacity: 0;
-}
-
-.flow-step.flow-visible .flow-line {
-    opacity: 0.4;
-}
+.flow-step .flow-line { transition: opacity 0.5s ease 0.2s; opacity: 0.4; }
+.js-enabled .flow-step:not(.flow-visible) .flow-line { opacity: 0; }
+.flow-step.flow-visible .flow-line { opacity: 0.4; }
 
 /* ========== レスポンシブ ========== */
 @media (max-width: 900px) {
-    .availability-inline {
-        padding: 1.5rem 2rem;
-    }
+    .availability-inline { padding: 1.5rem 2rem; }
 }
 
 @media (max-width: 600px) {
-    .availability-inline {
-        padding: 1.25rem 1.5rem;
-        margin: 1.5rem auto;
-    }
-
-    .availability-label {
-        font-size: 1rem;
-    }
-
-    .availability-tag {
-        font-size: 0.75rem;
-        padding: 0.3rem 0.6rem;
-    }
-
-    .availability-date {
-        font-size: 1.1rem;
-    }
-
-    .availability-parts {
-        gap: 0.75rem;
-    }
-
-    .part-status-item {
-        min-width: 70px;
-    }
-
-    .part-name {
-        font-size: 0.75rem;
-    }
-
-    .part-time {
-        font-size: 0.65rem;
-    }
-
-    .part-badge {
-        font-size: 0.7rem;
-        padding: 0.35rem 0.7rem;
-    }
+    .availability-inline { padding: 1.25rem 1.5rem; margin: 1.5rem auto; }
+    .availability-label { font-size: 1rem; }
+    .availability-tag { font-size: 0.75rem; padding: 0.25rem 0.5rem; }
+    .availability-date { font-size: 1.1rem; }
+    .availability-parts { gap: 0.75rem; }
+    .part-status-item { min-width: 70px; }
+    .part-name { font-size: 0.75rem; }
+    .part-time { font-size: 0.65rem; }
+    .part-badge { font-size: 0.7rem; padding: 0.35rem 0.7rem; }
 }
 
 @media (max-width: 480px) {
-    .availability-inline {
-        padding: 1rem;
-        margin: 1rem auto;
-        max-width: 95%;
-    }
-
-    .availability-label {
-        font-size: 0.9rem;
-    }
-
-    .availability-tag {
-        font-size: 0.7rem;
-        padding: 0.25rem 0.5rem;
-    }
-
-    .availability-date {
-        font-size: 1rem;
-    }
-
-    .availability-parts {
-        gap: 0.5rem;
-    }
-
-    .part-status-item {
-        min-width: 60px;
-    }
-
-    .part-name {
-        font-size: 0.7rem;
-    }
-
-    .part-time {
-        font-size: 0.6rem;
-    }
-
-    .part-badge {
-        font-size: 0.65rem;
-        padding: 0.3rem 0.6rem;
-    }
-
-    .availability-note {
-        font-size: 0.7rem;
-    }
+    .availability-inline { padding: 1rem; margin: 1rem auto; max-width: 95%; }
+    .availability-label { font-size: 0.9rem; }
+    .availability-tag { font-size: 0.7rem; padding: 0.25rem 0.5rem; }
+    .availability-date { font-size: 1rem; }
+    .availability-parts { gap: 0.5rem; }
+    .part-status-item { min-width: 60px; }
+    .part-name { font-size: 0.7rem; }
+    .part-time { font-size: 0.6rem; }
+    .part-badge { font-size: 0.65rem; padding: 0.3rem 0.6rem; }
+    .availability-note { font-size: 0.7rem; }
 }

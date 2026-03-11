@@ -18,7 +18,7 @@
     padding: 10px 30px;
     background: var(--color-gold);
     color: var(--color-primary-dark);
-    border-radius: 25px;
+    border-radius: 0;
     font-size: 0.95rem;
     font-weight: 600;
     letter-spacing: 0.08em;
@@ -61,7 +61,7 @@
 /* ========== コースカード ========== */
 .course-card {
     background: rgba(255, 255, 255, 0.95);
-    border-radius: 12px;
+    border-radius: 0;
     padding: 24px 25px;
     margin-bottom: 30px;
     max-width: 650px;
@@ -118,7 +118,7 @@
     display: table;
     margin: 0 auto 4px;
     padding: 4px 16px;
-    border-radius: 20px;
+    border-radius: 0;
     font-size: 0.8rem;
     font-weight: 600;
     letter-spacing: 0.08em;
@@ -290,7 +290,7 @@
     align-items: center;
     padding: 10px 20px;
     background: #fff;
-    border-radius: 30px;
+    border-radius: 0;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
     text-decoration: none;
     transition: all 0.3s;
@@ -419,7 +419,7 @@
     border: 1px solid var(--color-gold);
     color: var(--color-primary-dark);
     padding: 8px 16px;
-    border-radius: 20px;
+    border-radius: 0;
     font-size: 0.9rem;
     font-weight: 600;
     box-shadow: 0 2px 8px rgba(196, 163, 90, 0.15);
@@ -495,7 +495,7 @@
     color: var(--color-primary-dark);
     background: rgba(255, 255, 255, 0.8);
     padding: 8px 12px;
-    border-radius: 6px;
+    border-radius: 0;
     border: 1px dashed #bbb;
     line-height: 1.5;
 }
@@ -509,7 +509,7 @@
     font-size: 1rem;
     font-weight: 600;
     text-decoration: none;
-    border-radius: 30px;
+    border-radius: 0;
     transition: all 0.3s;
     box-shadow: 0 4px 15px rgba(196, 163, 90, 0.3);
 }
@@ -622,7 +622,7 @@
 /* ========== 補足情報 ========== */
 .info-section {
     background: rgba(255, 255, 255, 0.95);
-    border-radius: 12px;
+    border-radius: 0;
     padding: 25px 30px;
     margin-bottom: 20px;
     box-shadow: 0 2px 15px rgba(0, 0, 0, 0.04);
@@ -674,7 +674,7 @@
 .page-link-card {
     background: #fff;
     padding: 12px 6px;
-    border-radius: 8px;
+    border-radius: 0;
     text-align: center;
     box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
     transition: all 0.3s;
@@ -904,7 +904,7 @@
     margin: 20px 0 40px;
     padding: 15px;
     background: #f9f9f9;
-    border-radius: 8px;
+    border-radius: 0;
     font-size: 0.85rem;
     color: #666;
 }
@@ -918,7 +918,7 @@
     align-items: center;
     gap: 6px;
     padding: 10px 22px;
-    border-radius: 999px;
+    border-radius: 0;
     border: 1px solid var(--color-gold);
     color: var(--color-primary-dark);
     background: #fff;
@@ -948,7 +948,7 @@
     /* ピンク系 */
     color: #fff;
     padding: 5px 20px;
-    border-radius: 20px;
+    border-radius: 0;
     font-size: 1rem;
     font-weight: bold;
     margin-top: 10px;
@@ -981,7 +981,7 @@
     font-size: 1rem;
     font-weight: 700;
     text-decoration: none;
-    border-radius: 30px;
+    border-radius: 0;
     transition: all 0.3s;
     box-shadow: 0 4px 10px rgba(6, 199, 85, 0.3);
     letter-spacing: 0.05em;
@@ -1071,7 +1071,7 @@
 /* 期間別価格表 */
 .fortune-price-table {
     margin: 20px 0 10px;
-    border-radius: 12px;
+    border-radius: 0;
     overflow: hidden;
     border: 1px solid rgba(196, 163, 90, 0.3);
 }
@@ -1126,7 +1126,7 @@
     background: linear-gradient(135deg, #ec4899 0%, #f472b6 100%);
     color: #fff;
     padding: 2px 10px;
-    border-radius: 12px;
+    border-radius: 0;
     font-size: 0.72rem;
     font-weight: 700;
     letter-spacing: 0.03em;

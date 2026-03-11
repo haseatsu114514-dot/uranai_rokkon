@@ -8,7 +8,7 @@
 }
 
 .page-header {
-    background: linear-gradient(135deg, #3a4a45 0%, #4a5a55 100%);
+    background: linear-gradient(135deg, #3b3a39 0%, #4a4948 100%);
     padding: 40px 20px;
     text-align: center;
 }
@@ -37,7 +37,7 @@
 /* ========== アコーディオンスタイル ========== */
 .faq-item {
     background: rgba(255, 255, 255, 0.95);
-    border-radius: 12px;
+    border-radius: 0;
     margin-bottom: 16px;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
     border: 2px solid transparent;
@@ -185,7 +185,7 @@
 .page-link-card {
     background: #fff;
     padding: 12px 6px;
-    border-radius: 8px;
+    border-radius: 0;
     text-align: center;
     box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
     transition: all 0.3s;
