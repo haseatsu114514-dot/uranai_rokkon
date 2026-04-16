@@ -1456,3 +1456,129 @@ body::after { top: 2rem; right: 2rem; border-left: none; border-bottom: none; }
         padding-top: 0.3rem;
     }
 }
+
+/* =========================================================================
+   HAND-CRAFTED TOUCHES (less templated, more human)
+   ========================================================================= */
+
+/* ヒーローの手書き風リード */
+.hero-signature {
+    margin: -1.2rem 0 2.2rem;
+    color: var(--color-gold-light);
+    font-size: 0.95rem;
+    letter-spacing: 0.25em;
+    font-weight: 400;
+    opacity: 0;
+    text-shadow: 0 1px 12px rgba(0, 0, 0, 0.35);
+    animation: hero-text-slide-in 1.5s var(--ease-premium) 1s forwards;
+}
+
+/* お知らせの各項目に小さな落款風アクセント */
+.notice-item::before {
+    content: '';
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    background: var(--color-gold-light);
+    border-radius: 50%;
+    flex-shrink: 0;
+    opacity: 0.75;
+}
+
+.notice-text {
+    line-height: 1.7;
+}
+
+/* クリーム色の面にうっすらと和紙のような質感 */
+.availability-section,
+.flow-section,
+.page-links {
+    background-image:
+        radial-gradient(circle at 18% 22%, rgba(143, 151, 121, 0.035) 0, transparent 55%),
+        radial-gradient(circle at 82% 78%, rgba(195, 176, 145, 0.04) 0, transparent 55%);
+    background-color: var(--color-cream);
+}
+
+/* セクションタイトル下の飾り線 — 朱点を添える */
+.section-title::before {
+    content: '•';
+    display: block;
+    color: #b4533a;
+    font-size: 0.9rem;
+    line-height: 1;
+    margin: 0 auto 0.8rem;
+    opacity: 0.75;
+}
+
+/* サブタイトルの右下にさりげない余韻 */
+.section-subtitle {
+    font-style: normal;
+    color: #6d6c6a;
+}
+
+/* トラストバッジ — やや手触りのある角を */
+.trust-badge {
+    border-radius: 2px;
+}
+
+/* フローの数字 — 朱色を薄く差して温度を加える */
+.flow-step:first-child .flow-number,
+.flow-step:nth-child(3) .flow-number,
+.flow-step:nth-child(5) .flow-number {
+    border-color: #b4533a;
+    color: #b4533a;
+    opacity: 0.85;
+}
+
+/* ページリンクカードの下線 — 控えめな筆致 */
+.page-link-card .page-link-title {
+    position: relative;
+}
+
+.page-link-card .page-link-title::after {
+    content: '';
+    display: block;
+    width: 14px;
+    height: 1px;
+    background: var(--color-gold);
+    margin: 6px auto 0;
+    opacity: 0.35;
+    transition: width 0.3s ease, opacity 0.3s ease;
+}
+
+.page-link-card:hover .page-link-title::after {
+    width: 28px;
+    opacity: 0.7;
+}
+
+/* フッターに小さな落款 */
+.footer-copy::before {
+    content: '印';
+    display: inline-block;
+    margin-right: 0.8em;
+    padding: 2px 6px;
+    border: 1px solid rgba(180, 83, 58, 0.55);
+    color: rgba(180, 83, 58, 0.75);
+    font-size: 0.7rem;
+    letter-spacing: 0;
+    vertical-align: middle;
+    border-radius: 1px;
+}
+
+@media (max-width: 768px) {
+    .hero-signature {
+        font-size: 0.78rem;
+        letter-spacing: 0.18em;
+        margin: -0.5rem 0 1.5rem;
+    }
+
+    .notice-item::before {
+        display: none;
+    }
+
+    .footer-copy::before {
+        margin-right: 0.5em;
+        padding: 1px 4px;
+        font-size: 0.6rem;
+    }
+}
