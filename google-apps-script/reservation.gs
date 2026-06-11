@@ -20,8 +20,8 @@
 // 基本はこのままでOK。LINE通知を使うときだけ2か所を記入する
 // ==========================================================
 var CONFIG = {
-  // 通知・自動返信に使うメールアドレス
-  NOTIFY_EMAIL: 'uranai.rokkon@gmail.com',
+  // 通知・自動返信に使うメールアドレス（複数の場合はカンマ区切り）
+  NOTIFY_EMAIL: 'uranai.rokkon@gmail.com,haseatsu114514@gmail.com',
   SHOP_NAME: '占い処 六根清浄',
 
   // 【任意】LINE通知（通知用Botのチャネルアクセストークン・自分のユーザーID）
@@ -34,28 +34,37 @@ var CONFIG = {
   SPREADSHEET_ID: '',
   SHEET_NAME: '予約受付',
 
-  // 仮予約を入れるカレンダーID（空ならメインのカレンダー）
-  CALENDAR_ID: '',
+  // 予約カレンダーのID（LINE予約ボットと同じカレンダーを指定する）
+  // 空ならメインのカレンダーを使う
+  CALENDAR_ID: 'dafc8b598911cfc9b10f56e92993836fe3c9c11b90f0d270046ccc1943692e40@group.calendar.google.com',
 
   // この時間（h）対応されていない予約があればLINEに再通知する
   REMIND_AFTER_HOURS: 3
 };
 
+// ===== 空き状況の計算ルール（LINE予約ボットと同じ） =====
+var AVAIL_DAYS = 10;            // 今日から何日分を候補に出すか
+var SLOT_STEP_MIN = 30;         // 30分刻みで枠を探す
+var BUFFER_MIN = 30;            // 既存予定の前後30分は空ける
+var SAME_DAY_LIMIT_HOURS = 5;   // 開始5時間前を過ぎた枠は受付しない
+
 var SHEET_HEADERS = [
-  '受付日時', 'お名前', 'メール', 'コース',
-  '第一希望', '第二希望', 'ジャンル', 'ご相談内容',
+  '受付日時', 'お名前', '性別', '生年月日', '出生時間・出生地', 'メール', 'コース',
+  '第一希望', '第二希望', 'テーマ', 'ご相談内容', '支払い希望',
   '対応状況', 'リマインド'
 ];
 
 // 列番号（1始まり）
 var COL_TIMESTAMP = 1;
-var COL_STATUS = 9;
-var COL_REMINDED = 10;
+var COL_NAME = 2;
+var COL_CHOICE1 = 8;
+var COL_STATUS = 13;
+var COL_REMINDED = 14;
 
 var PART_TIMES = {
-  '昼の部': { startH: 14, startM: 0 },
-  '夕の部': { startH: 16, startM: 30 },
-  '夜の部': { startH: 19, startM: 0 }
+  '昼の部': { startH: 14, startM: 0, endH: 16, endM: 30 },
+  '夕の部': { startH: 16, startM: 30, endH: 19, endM: 0 },
+  '夜の部': { startH: 19, startM: 0, endH: 22, endM: 0 }
 };
 
 // ==========================================================
@@ -89,9 +98,81 @@ function doPost(e) {
   }
 }
 
-// 死活確認用
-function doGet() {
+// 空き状況API（?action=availability）／死活確認
+function doGet(e) {
+  var action = e && e.parameter && e.parameter.action;
+  if (action === 'availability') {
+    try {
+      return jsonResponse({ status: 'ok', days: getAvailability() });
+    } catch (err) {
+      return jsonResponse({ status: 'error', message: String(err) });
+    }
+  }
   return jsonResponse({ status: 'ok', service: 'reservation' });
+}
+
+// ==========================================================
+// 空き状況の計算（カレンダーの予定から「出せる日時」だけを返す）
+// ==========================================================
+function getAvailability() {
+  var cal = getCalendar();
+  var now = new Date();
+  var dayNames = ['日', '月', '火', '水', '木', '金', '土'];
+  var days = [];
+
+  for (var i = 0; i < AVAIL_DAYS; i++) {
+    var d = new Date(now.getFullYear(), now.getMonth(), now.getDate() + i);
+    var parts = {};
+    Object.keys(PART_TIMES).forEach(function (partName) {
+      parts[partName] = {
+        ok30: hasFreeSlot(cal, d, partName, 30, now),
+        ok60: hasFreeSlot(cal, d, partName, 60, now)
+      };
+    });
+    days.push({
+      date: Utilities.formatDate(d, 'Asia/Tokyo', 'yyyy-MM-dd'),
+      label: (d.getMonth() + 1) + '/' + d.getDate() + '(' + dayNames[d.getDay()] + ')',
+      parts: parts
+    });
+  }
+  return days;
+}
+
+/** その日のその部に、指定分数の鑑定を入れられる枠が1つでもあるか */
+function hasFreeSlot(cal, day, partName, minutes, now) {
+  var t = PART_TIMES[partName];
+  var partStart = new Date(day.getFullYear(), day.getMonth(), day.getDate(), t.startH, t.startM);
+  var partEnd = new Date(day.getFullYear(), day.getMonth(), day.getDate(), t.endH, t.endM);
+
+  // 既存予定（前後のバッファ込みで衝突判定する）
+  var events = cal.getEvents(
+    new Date(partStart.getTime() - BUFFER_MIN * 60000),
+    new Date(partEnd.getTime() + BUFFER_MIN * 60000)
+  );
+  var busy = events
+    .filter(function (ev) { return !ev.isAllDayEvent(); })
+    .map(function (ev) {
+      return {
+        s: ev.getStartTime().getTime() - BUFFER_MIN * 60000,
+        e: ev.getEndTime().getTime() + BUFFER_MIN * 60000
+      };
+    });
+
+  var earliest = now.getTime() + SAME_DAY_LIMIT_HOURS * 3600 * 1000;
+
+  for (var s = partStart.getTime(); s + minutes * 60000 <= partEnd.getTime(); s += SLOT_STEP_MIN * 60000) {
+    if (s < earliest) continue;
+    var slotEnd = s + minutes * 60000;
+    var conflict = busy.some(function (b) { return s < b.e && slotEnd > b.s; });
+    if (!conflict) return true;
+  }
+  return false;
+}
+
+function getCalendar() {
+  return CONFIG.CALENDAR_ID
+    ? CalendarApp.getCalendarById(CONFIG.CALENDAR_ID)
+    : CalendarApp.getDefaultCalendar();
 }
 
 function jsonResponse(obj) {
@@ -106,6 +187,8 @@ function safely(fn) {
 
 function validateReservation(data) {
   if (!data.name || String(data.name).length > 50) return 'お名前をご確認ください';
+  if (!data.sex) return '性別を選択してください';
+  if (!data.birthdate || !/^\d{4}-\d{2}-\d{2}$/.test(data.birthdate)) return '生年月日をご確認ください';
   var email = String(data.email || '');
   if (!email || email.length > 100 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return 'メールアドレスをご確認ください';
@@ -151,7 +234,19 @@ function getSheet() {
     sheet.appendRow(SHEET_HEADERS);
     sheet.setFrozenRows(1);
   }
+  ensureHeaders(sheet);
   return sheet;
+}
+
+/** 項目を増やした際にヘッダー行を最新化する（古い形式のままなら書き換える） */
+function ensureHeaders(sheet) {
+  var range = sheet.getRange(1, 1, 1, SHEET_HEADERS.length);
+  var current = range.getValues()[0];
+  var differs = SHEET_HEADERS.some(function (h, i) { return current[i] !== h; });
+  if (differs) {
+    range.setValues([SHEET_HEADERS]);
+    sheet.setFrozenRows(1);
+  }
 }
 
 /**
@@ -195,12 +290,16 @@ function recordToSheet(data) {
   sheet.appendRow([
     new Date(),
     data.name,
+    data.sex || '',
+    data.birthdate || '',
+    data.birthtime || '',
     data.email,
     data.course,
     formatChoice(data.date1, data.part1),
     data.date2 ? formatChoice(data.date2, data.part2) : '',
     data.genre || '',
     data.message || '',
+    data.payMethod || '',
     '', // 対応状況（確定したら「対応済み」と記入する）
     ''  // リマインド
   ]);
@@ -222,9 +321,7 @@ function parseYmd(dateStr) {
 // カレンダー仮予約
 // ==========================================================
 function createTentativeEvent(data) {
-  var cal = CONFIG.CALENDAR_ID
-    ? CalendarApp.getCalendarById(CONFIG.CALENDAR_ID)
-    : CalendarApp.getDefaultCalendar();
+  var cal = getCalendar();
   if (!cal) return;
 
   var partName = String(data.part1).replace(/（.*$/, ''); // 「昼の部（14:00〜16:30）」→「昼の部」
@@ -243,9 +340,13 @@ function createTentativeEvent(data) {
       description:
         'フォーム予約（未確定）。時間帯内で要調整。\n' +
         'メール: ' + data.email + '\n' +
+        '性別: ' + (data.sex || '未入力') + '\n' +
+        '生年月日: ' + (data.birthdate || '未入力') + '\n' +
+        '出生時間・出生地: ' + (data.birthtime || '未入力') + '\n' +
         '第二希望: ' + (data.date2 ? formatChoice(data.date2, data.part2) : 'なし') + '\n' +
-        'ジャンル: ' + (data.genre || '未選択') + '\n' +
-        '相談内容: ' + (data.message || 'なし')
+        'テーマ: ' + (data.genre || '未選択') + '\n' +
+        '相談内容: ' + (data.message || 'なし') + '\n' +
+        '支払い希望: ' + (data.payMethod || '未選択')
     }
   );
 }
@@ -257,10 +358,14 @@ function buildOwnerMessage(data) {
   return '【新規予約】フォームから予約が入りました\n' +
     '────────────\n' +
     'お名前: ' + data.name + '\n' +
+    '性別: ' + (data.sex || '未入力') + '\n' +
+    '生年月日: ' + (data.birthdate || '未入力') + '\n' +
+    '出生時間・出生地: ' + (data.birthtime || '未入力') + '\n' +
     'コース: ' + data.course + '\n' +
     '第一希望: ' + formatChoice(data.date1, data.part1) + '\n' +
     '第二希望: ' + (data.date2 ? formatChoice(data.date2, data.part2) : 'なし') + '\n' +
-    'ジャンル: ' + (data.genre || '未選択') + '\n' +
+    'テーマ: ' + (data.genre || '未選択') + '\n' +
+    '支払い希望: ' + (data.payMethod || '未選択') + '\n' +
     'メール: ' + data.email + '\n' +
     '────────────\n' +
     '確定メールの返信をお願いします。';
@@ -305,6 +410,7 @@ function sendAutoReply(data) {
     'コース: ' + data.course + '\n' +
     '第一希望: ' + formatChoice(data.date1, data.part1) + '\n' +
     '第二希望: ' + (data.date2 ? formatChoice(data.date2, data.part2) : 'なし') + '\n' +
+    'お支払い: ' + (data.payMethod || '未選択') + '\n' +
     '────────────────\n\n' +
     '空き状況を確認のうえ、通常24時間以内に、このメールアドレス宛に\n' +
     '予約確定のご連絡をお送りします。いましばらくお待ちください。\n\n' +
@@ -342,7 +448,7 @@ function checkUnhandledReservations() {
     var status = row[COL_STATUS - 1];
     var reminded = row[COL_REMINDED - 1];
     if (timestamp instanceof Date && timestamp < threshold && !status && !reminded) {
-      pending.push({ rowIndex: i + 2, name: row[1], choice: row[4] });
+      pending.push({ rowIndex: i + 2, name: row[COL_NAME - 1], choice: row[COL_CHOICE1 - 1] });
     }
   });
 

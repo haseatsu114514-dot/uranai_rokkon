@@ -1358,28 +1358,22 @@
 /* ========== フォーム予約ボタン（LINEボタンの隣に並べる） ========== */
 .form-reserve-btn {
     display: inline-block;
-    padding: 12px 30px;
-    margin-left: 10px;
-    background: transparent;
-    color: #3b3a39;
+    padding: 14px 44px;
+    background: #8f9779;
+    color: #fff;
     font-size: 1rem;
     font-weight: 500;
-    border: 1px solid #3b3a39;
+    border: 1px solid #8f9779;
     border-radius: 0;
     transition: all 0.3s;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.1em;
+    box-shadow: 0 4px 16px rgba(143, 151, 121, 0.3);
 }
 
 .form-reserve-btn:hover {
     background: #3b3a39;
+    border-color: #3b3a39;
     color: #fff;
     transform: translateY(-2px);
     opacity: 1;
-}
-
-@media (max-width: 600px) {
-    .form-reserve-btn {
-        margin-left: 0;
-        margin-top: 10px;
-    }
 }

@@ -238,6 +238,45 @@
     color: #999;
 }
 
+/* ----- 支払い方法（インラインのラジオ） ----- */
+.pay-options {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.pay-option {
+    cursor: pointer;
+}
+
+.pay-option input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.pay-option span {
+    display: inline-block;
+    border: 1px solid var(--color-border);
+    background: var(--color-cream);
+    color: var(--color-primary);
+    font-size: 0.9rem;
+    letter-spacing: 0.08em;
+    padding: 10px 26px;
+    transition: all 0.25s ease;
+}
+
+.pay-option input:checked + span {
+    border-color: var(--color-gold);
+    background: var(--color-gold);
+    color: #fff;
+}
+
+.pay-option input:focus-visible + span {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 2px;
+}
+
 /* ----- スパム対策フィールド（不可視） ----- */
 .hp-field {
     position: absolute !important;

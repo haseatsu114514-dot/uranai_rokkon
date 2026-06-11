@@ -7,7 +7,7 @@
 // ★★★ 設定: 予約受付GASのウェブアプリURL（デプロイ後ここに貼る） ★★★
 // 未設定（空文字）の間はフォームを閉じて、LINE予約への案内を表示します
 // ==========================================================
-const RESERVE_ENDPOINT = '';
+const RESERVE_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxKDhJg8_LhjfDkZutgiLapz_VzJL8TlBZFtlgRp-7YrMODBvwV6E_qVJsznORW9Eo_/exec';
 
 (function () {
   'use strict';
@@ -19,19 +19,160 @@ const RESERVE_ENDPOINT = '';
   var errorBox = document.getElementById('formError');
   var successBox = document.getElementById('formSuccess');
 
-  /* ----- 日付入力の範囲（今日〜90日先） ----- */
-  function initDateRange() {
+  /* ----- 生年月日入力の範囲 ----- */
+  function initBirthdateRange() {
+    var birth = document.getElementById('birthdate');
+    if (!birth) return;
     var today = new Date();
-    var max = new Date(today.getTime() + 90 * 24 * 60 * 60 * 1000);
-    function fmt(d) {
-      return d.getFullYear() + '-' +
-        String(d.getMonth() + 1).padStart(2, '0') + '-' +
-        String(d.getDate()).padStart(2, '0');
+    birth.min = '1920-01-01';
+    birth.max = today.getFullYear() + '-' +
+      String(today.getMonth() + 1).padStart(2, '0') + '-' +
+      String(today.getDate()).padStart(2, '0');
+  }
+
+  /* ==========================================================
+     空き状況（カレンダー連動）
+     GASから「予約可能な日時」を取得し、空きのある日時だけを選択肢に出す。
+     取得に失敗した場合は全日時を出すフォールバックで、フォームは止めない。
+     ========================================================== */
+  var PART_LABELS = {
+    '昼の部': '昼の部（14:00〜16:30）',
+    '夕の部': '夕の部（16:30〜19:00）',
+    '夜の部': '夜の部（19:00〜22:00）'
+  };
+  var availability = null; // null=読込中 / false=取得失敗 / 配列=取得成功
+
+  function fetchAvailability() {
+    fetch(RESERVE_ENDPOINT + '?action=availability&_t=' + Date.now(), { cache: 'no-store' })
+      .then(function (res) { return res.json(); })
+      .then(function (json) {
+        availability = (json && json.status === 'ok' && json.days) ? json.days : false;
+        renderDateOptions();
+      })
+      .catch(function () {
+        availability = false;
+        renderDateOptions();
+      });
+  }
+
+  // フォールバック: 今日から10日分・全時間帯を出す（最終確認は鑑定師が行うため安全）
+  function fallbackDays() {
+    var names = ['日', '月', '火', '水', '木', '金', '土'];
+    var today = new Date();
+    var days = [];
+    for (var i = 0; i < 10; i++) {
+      var d = new Date(today.getFullYear(), today.getMonth(), today.getDate() + i);
+      days.push({
+        date: d.getFullYear() + '-' +
+          String(d.getMonth() + 1).padStart(2, '0') + '-' +
+          String(d.getDate()).padStart(2, '0'),
+        label: (d.getMonth() + 1) + '/' + d.getDate() + '(' + names[d.getDay()] + ')',
+        parts: {
+          '昼の部': { ok30: true, ok60: true },
+          '夕の部': { ok30: true, ok60: true },
+          '夜の部': { ok30: true, ok60: true }
+        }
+      });
     }
-    ['date1', 'date2'].forEach(function (id) {
-      var el = document.getElementById(id);
-      if (el) { el.min = fmt(today); el.max = fmt(max); }
+    return days;
+  }
+
+  function getDays() {
+    if (availability === false) return fallbackDays();
+    return availability || [];
+  }
+
+  function minutesForCourse() {
+    var courseEl = form.querySelector('input[name="course"]:checked');
+    return (courseEl && courseEl.value.indexOf('30分') >= 0) ? 30 : 60;
+  }
+
+  function dayHasSlot(day, minutes) {
+    return Object.keys(PART_LABELS).some(function (p) {
+      return day.parts[p] && day.parts[p]['ok' + minutes];
     });
+  }
+
+  function setOptions(select, options, placeholder) {
+    var prev = select.value;
+    select.innerHTML = '';
+    var ph = document.createElement('option');
+    ph.value = '';
+    ph.textContent = placeholder;
+    select.appendChild(ph);
+    options.forEach(function (opt) {
+      var o = document.createElement('option');
+      o.value = opt.value;
+      o.textContent = opt.label;
+      select.appendChild(o);
+    });
+    // 選択中の値がまだ有効なら維持する
+    if (prev && options.some(function (o) { return o.value === prev; })) {
+      select.value = prev;
+    }
+  }
+
+  function renderDateOptions() {
+    var date1 = document.getElementById('date1');
+    var date2 = document.getElementById('date2');
+    var noSlot = document.getElementById('noSlotNotice');
+    if (!date1 || !date2) return;
+
+    if (availability === null) return; // まだ読込中
+
+    var minutes = minutesForCourse();
+    var openDays = getDays().filter(function (d) { return dayHasSlot(d, minutes); });
+    var opts = openDays.map(function (d) { return { value: d.date, label: d.label }; });
+
+    setOptions(date1, opts, opts.length ? '日付を選択' : '空きがありません');
+    setOptions(date2, opts, '指定しない');
+    renderPartOptions(1);
+    renderPartOptions(2);
+
+    if (noSlot) noSlot.hidden = opts.length > 0;
+    if (submitBtn) submitBtn.disabled = opts.length === 0;
+  }
+
+  function renderPartOptions(n) {
+    var dateEl = document.getElementById('date' + n);
+    var partEl = document.getElementById('part' + n);
+    if (!dateEl || !partEl) return;
+
+    var minutes = minutesForCourse();
+    var day = getDays().find(function (d) { return d.date === dateEl.value; });
+    var opts = [];
+    if (day) {
+      Object.keys(PART_LABELS).forEach(function (p) {
+        if (day.parts[p] && day.parts[p]['ok' + minutes]) {
+          opts.push({ value: PART_LABELS[p], label: PART_LABELS[p] });
+        }
+      });
+    }
+    setOptions(partEl, opts, '時間帯を選択');
+  }
+
+  function initDateTimePickers() {
+    ['date1', 'date2'].forEach(function (id, i) {
+      var el = document.getElementById(id);
+      if (el) el.addEventListener('change', function () { renderPartOptions(i + 1); });
+    });
+    fetchAvailability();
+  }
+
+  /* ----- コース変更時: 支払い欄の出し分け＋空き日時の再計算 ----- */
+  function initCourseChange() {
+    var payBlock = document.getElementById('payBlock');
+    function update() {
+      if (payBlock) {
+        var courseEl = form.querySelector('input[name="course"]:checked');
+        payBlock.hidden = !!(courseEl && courseEl.value.indexOf('対面') === 0);
+      }
+      renderDateOptions();
+    }
+    form.querySelectorAll('input[name="course"]').forEach(function (el) {
+      el.addEventListener('change', update);
+    });
+    update();
   }
 
   /* ----- エンドポイント未設定時はフォームを準備中表示にする ----- */
@@ -40,7 +181,7 @@ const RESERVE_ENDPOINT = '';
     form.innerHTML =
       '<p style="text-align:center; line-height:2; color:#666; font-size:0.9rem;">' +
       'フォーム予約は現在準備中です。<br>' +
-      'お手数ですが、上の<strong>LINEで予約</strong>からご予約ください。</p>';
+      'お手数ですが、<a href="mailto:uranai.rokkon@gmail.com">メール</a>にてご予約ください。</p>';
     return false;
   }
 
@@ -53,6 +194,8 @@ const RESERVE_ENDPOINT = '';
   function validate(data) {
     var errors = [];
     if (!data.name) errors.push('お名前を入力してください');
+    if (!data.sex) errors.push('性別を選択してください');
+    if (!data.birthdate) errors.push('生年月日を入力してください');
     if (!data.email) {
       errors.push('メールアドレスを入力してください');
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
@@ -66,16 +209,28 @@ const RESERVE_ENDPOINT = '';
 
   function collect() {
     var courseEl = form.querySelector('input[name="course"]:checked');
+    var course = courseEl ? courseEl.value : '';
+    var payMethod;
+    if (course.indexOf('対面') === 0) {
+      payMethod = '現地払い（対面）';
+    } else {
+      var payEl = form.querySelector('input[name="payMethod"]:checked');
+      payMethod = payEl ? payEl.value : '';
+    }
     return {
       name: (form.name.value || '').trim(),
+      sex: form.sex.value || '',
+      birthdate: form.birthdate.value || '',
+      birthtime: (form.birthtime.value || '').trim(),
       email: (form.email.value || '').trim(),
-      course: courseEl ? courseEl.value : '',
+      course: course,
       date1: form.date1.value || '',
       part1: form.part1.value || '',
       date2: form.date2.value || '',
       part2: form.part2.value || '',
       genre: form.genre.value || '',
       message: (form.message.value || '').trim(),
+      payMethod: payMethod,
       website: form.website.value || '' // honeypot
     };
   }
@@ -121,7 +276,6 @@ const RESERVE_ENDPOINT = '';
         console.error('予約フォーム送信エラー:', err);
         showError(
           '送信に失敗しました。お手数ですが、時間をおいて再度お試しいただくか、' +
-          '<a href="https://lin.ee/SvZ69l0" target="_blank">LINE</a> または ' +
           '<a href="mailto:uranai.rokkon@gmail.com">メール</a> でご予約ください。'
         );
       })
@@ -131,6 +285,9 @@ const RESERVE_ENDPOINT = '';
       });
   });
 
-  initDateRange();
-  checkEndpoint();
+  initBirthdateRange();
+  if (checkEndpoint()) {
+    initCourseChange();
+    initDateTimePickers();
+  }
 })();

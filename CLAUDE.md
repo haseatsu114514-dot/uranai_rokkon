@@ -117,8 +117,10 @@ node scripts/update_blog.js
 
 ## 予約フォーム
 
-- `reserve.html` に LINE 予約とフォーム予約の2導線がある
+- **予約導線はフォーム一本**（LINE予約は2026年6月に廃止。公式LINEは友だち0のため導線から完全に外した）
+- `reserve.html` が唯一の予約ページ。全ページのCTA（ヘッダー・ヒーロー・スマホ追従ボタンなど）はここに向ける
 - フォーム送信先は GAS（`google-apps-script/reservation.gs`）。スプレッドシート記録・カレンダー仮予約・LINE/メール通知・お客様への自動返信・未対応リマインドを行う
+- 希望日時の選択肢は GAS の空き状況API（`?action=availability`）でカレンダーから自動計算され、**空きのある日時だけが表示される**（10日先まで・30分刻み・前後30分バッファ・当日は開始5時間前まで。LINE予約ボットと同じルール）。取得失敗時は全日時表示にフォールバック
 - ウェブアプリ URL は `js/reserve.js` の `RESERVE_ENDPOINT` に設定する（空のままだとフォームは「準備中」表示になり LINE へ誘導される）
 - セットアップ手順・トラブル対処は `docs/reservation-form-setup.md` を参照
 - 全ページのヘッダー「ご予約」ボタンとスマホ追従ボタンは `reserve.html` に向いている
@@ -131,10 +133,12 @@ node scripts/update_blog.js
 
 ```html
 <div class="notice-item active">
-    <span class="notice-date">2026.03.07</span>
     <span class="notice-text">通常通り鑑定のご予約を受付中です。</span>
 </div>
 ```
+
+日付は出さない運用（更新が止まると古さが目立つため）。期限のある告知だけ
+`<span class="notice-date">2026.03.07</span>` を文頭に足せば日付付きで表示できる。
 
 複数のお知らせを追加する場合は `notice-item` を追加する（最初の1つだけ `active` クラスを付ける）。
 

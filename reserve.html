@@ -16,12 +16,12 @@
     </script>
     <title>ご予約 - 名古屋(栄)・オンラインの占い処 六根清浄</title>
     <meta name="description"
-        content="占い処 六根清浄のご予約ページ。LINEまたは予約フォームから24時間ご予約いただけます。オンライン30分5,000円から。名古屋・栄での対面鑑定にも対応。">
+        content="占い処 六根清浄のご予約ページ。予約フォームから24時間ご予約いただけます。空きのある日時から選ぶだけ、お申し込みは約3分。オンライン30分5,000円から。名古屋・栄での対面鑑定にも対応。">
 
     <!-- OGP -->
     <meta property="og:type" content="article">
     <meta property="og:title" content="ご予約 - 占い処 六根清浄">
-    <meta property="og:description" content="LINEまたは予約フォームから24時間ご予約いただけます。オンライン30分5,000円から。">
+    <meta property="og:description" content="予約フォームから24時間受付。空きのある日時から選ぶだけ、約3分で完了。オンライン30分5,000円から。">
     <meta property="og:url" content="https://uranai-rokkon.com/reserve.html">
     <meta property="og:image" content="https://uranai-rokkon.com/images/otya.png">
 
@@ -34,9 +34,9 @@
         rel="stylesheet">
 
     <!-- CSS -->
-    <link rel="stylesheet" href="css/style.css?v=20260611">
-    <link rel="stylesheet" href="css/reserve.css?v=20260611">
-    <link rel="stylesheet" href="css/animations.css?v=20260611">
+    <link rel="stylesheet" href="css/style.css?v=20260611b">
+    <link rel="stylesheet" href="css/reserve.css?v=20260611b">
+    <link rel="stylesheet" href="css/animations.css?v=20260611b">
 
     <!-- JSON-LD (Breadcrumb) -->
     <script type="application/ld+json">
@@ -92,39 +92,17 @@
     <main class="main-content sub-page">
         <div class="page-header">
             <h1 class="page-title">ご予約</h1>
-            <p class="page-subtitle">LINE・予約フォームのどちらからでも、24時間受け付けています</p>
+            <p class="page-subtitle">フォームから24時間受け付けています。お申し込みは約3分で完了します</p>
         </div>
 
         <div class="container reserve-container">
 
-            <!-- 予約方法の選択 -->
-            <div class="reserve-methods">
-                <div class="reserve-method-card animate-on-scroll">
-                    <span class="reserve-method-tag">チャットで相談しながら</span>
-                    <h2 class="reserve-method-title">LINEで予約</h2>
-                    <p class="reserve-method-desc">
-                        空き状況の確認やちょっとしたご質問も、チャットでそのままやり取りできます。
-                    </p>
-                    <a href="https://lin.ee/SvZ69l0" class="hero-btn" target="_blank">
-                        <img src="images/botan.png" alt="LINEでご予約はこちら" style="max-width: 260px;" loading="lazy">
-                    </a>
-                </div>
-                <div class="reserve-method-card animate-on-scroll animate-delay-1">
-                    <span class="reserve-method-tag">LINEを使わない方に</span>
-                    <h2 class="reserve-method-title">フォームで予約</h2>
-                    <p class="reserve-method-desc">
-                        友だち追加は不要。下のフォームに入力するだけで、ご予約のお申し込みが完了します。
-                    </p>
-                    <a href="#reserve-form" class="outline-btn">フォームへ進む</a>
-                </div>
-            </div>
-
             <!-- 予約フォーム -->
             <section class="reserve-form-section" id="reserve-form">
-                <h2 class="section-title">予約フォーム</h2>
                 <p class="reserve-form-lead">
-                    送信後すぐに、受付確認のメールが自動で届きます。<br>
-                    空き状況を確認のうえ、通常24時間以内に予約確定のご連絡をメールでお送りします。
+                    空きのある日時だけが表示されるので、選んで送信するだけ。<br>
+                    送信後すぐに受付確認のメールが自動で届き、<br>
+                    通常24時間以内に予約確定のご連絡をメールでお送りします。
                 </p>
 
                 <form id="reservationForm" class="reserve-form" novalidate>
@@ -160,37 +138,69 @@
                         </div>
                     </fieldset>
 
-                    <!-- 希望日時 -->
+                    <!-- 希望日時（空きのある日時だけが表示される） -->
                     <div class="form-block">
-                        <label class="form-label" for="date1">第一希望日 <span class="required-mark">必須</span></label>
+                        <label class="form-label" for="date1">第一希望日時 <span class="required-mark">必須</span></label>
                         <div class="datetime-row">
-                            <input type="date" id="date1" name="date1" required>
+                            <select id="date1" name="date1" required>
+                                <option value="">空き状況を確認中…</option>
+                            </select>
                             <select id="part1" name="part1" required>
-                                <option value="昼の部（14:00〜16:30）">昼の部（14:00〜16:30）</option>
-                                <option value="夕の部（16:30〜19:00）">夕の部（16:30〜19:00）</option>
-                                <option value="夜の部（19:00〜22:00）">夜の部（19:00〜22:00）</option>
+                                <option value="">時間帯を選択</option>
+                            </select>
+                        </div>
+                        <p class="form-hint">現在ご予約いただける日時のみ表示しています。</p>
+                    </div>
+
+                    <div class="form-block">
+                        <label class="form-label" for="date2">第二希望日時 <span class="optional-mark">任意</span></label>
+                        <div class="datetime-row">
+                            <select id="date2" name="date2">
+                                <option value="">指定しない</option>
+                            </select>
+                            <select id="part2" name="part2">
+                                <option value="">時間帯を選択</option>
                             </select>
                         </div>
                     </div>
 
-                    <div class="form-block">
-                        <label class="form-label" for="date2">第二希望日 <span class="optional-mark">任意</span></label>
-                        <div class="datetime-row">
-                            <input type="date" id="date2" name="date2">
-                            <select id="part2" name="part2">
-                                <option value="">時間帯を選択</option>
-                                <option value="昼の部（14:00〜16:30）">昼の部（14:00〜16:30）</option>
-                                <option value="夕の部（16:30〜19:00）">夕の部（16:30〜19:00）</option>
-                                <option value="夜の部（19:00〜22:00）">夜の部（19:00〜22:00）</option>
-                            </select>
-                        </div>
-                        <p class="form-hint">第一希望が埋まっている場合に優先してご案内します。</p>
+                    <div class="form-error" id="noSlotNotice" hidden>
+                        申し訳ありません、直近の空きが見つかりませんでした。<br>
+                        キャンセルが出る場合もありますので、お手数ですが
+                        <a href="mailto:uranai.rokkon@gmail.com">メール</a> でご相談ください。
                     </div>
 
                     <!-- お名前 -->
                     <div class="form-block">
                         <label class="form-label" for="name">お名前 <span class="required-mark">必須</span></label>
                         <input type="text" id="name" name="name" placeholder="ニックネームでも構いません" maxlength="50" required>
+                    </div>
+
+                    <!-- 性別 -->
+                    <div class="form-block">
+                        <label class="form-label" for="sex">性別 <span class="required-mark">必須</span></label>
+                        <select id="sex" name="sex" required>
+                            <option value="">選択してください</option>
+                            <option value="女性">女性</option>
+                            <option value="男性">男性</option>
+                            <option value="その他・回答しない">その他・回答しない</option>
+                        </select>
+                        <p class="form-hint">命式（四柱推命など）の作成に使用します。</p>
+                    </div>
+
+                    <!-- 生年月日 -->
+                    <div class="form-block">
+                        <label class="form-label" for="birthdate">生年月日 <span class="required-mark">必須</span></label>
+                        <input type="date" id="birthdate" name="birthdate" required>
+                        <p class="form-hint">鑑定書の作成に必要です。</p>
+                    </div>
+
+                    <!-- 出生時間・場所 -->
+                    <div class="form-block">
+                        <label class="form-label" for="birthtime">出生時間・出生地 <span class="optional-mark">任意</span></label>
+                        <input type="text" id="birthtime" name="birthtime" maxlength="100"
+                            placeholder="例）8時30分ごろ・名古屋市（わかる場合のみ）">
+                        <p class="form-hint">わかるとより精度の高い鑑定ができます。不明でも大丈夫です。</p>
                     </div>
 
                     <!-- メールアドレス -->
@@ -201,9 +211,9 @@
                         <p class="form-hint">予約確定のご連絡をお送りします。お間違いのないようご確認ください。</p>
                     </div>
 
-                    <!-- ご相談ジャンル -->
+                    <!-- ご相談テーマ -->
                     <div class="form-block">
-                        <label class="form-label" for="genre">ご相談ジャンル <span class="optional-mark">任意</span></label>
+                        <label class="form-label" for="genre">ご相談テーマ <span class="optional-mark">任意</span></label>
                         <select id="genre" name="genre">
                             <option value="">選択してください</option>
                             <option value="恋愛・復縁">恋愛・復縁</option>
@@ -221,11 +231,26 @@
                             placeholder="差し支えない範囲で構いません。当日お話しいただくこともできます。"></textarea>
                     </div>
 
+                    <!-- お支払い方法（オンラインのみ表示） -->
+                    <div class="form-block" id="payBlock">
+                        <label class="form-label">お支払い方法のご希望 <span class="required-mark">必須</span></label>
+                        <div class="pay-options">
+                            <label class="pay-option">
+                                <input type="radio" name="payMethod" value="PayPay" checked>
+                                <span>PayPay</span>
+                            </label>
+                            <label class="pay-option">
+                                <input type="radio" name="payMethod" value="銀行振込">
+                                <span>銀行振込</span>
+                            </label>
+                        </div>
+                        <p class="form-hint">お支払い先は予約確定のご連絡の際にお伝えします。事前のお支払いは不要です。</p>
+                    </div>
+
                     <!-- スパム対策（画面には表示されません） -->
                     <input type="text" name="website" id="website" class="hp-field" tabindex="-1" autocomplete="off">
 
                     <p class="form-privacy-note">
-                        ※ 生年月日など鑑定に必要な情報は、予約確定後に改めてお伺いします。<br>
                         ※ ご入力いただいた内容は、ご予約・鑑定のご連絡以外には使用しません。
                     </p>
 
@@ -256,7 +281,7 @@
                     <li>鑑定営業時間は 14:00〜22:00（最終受付 21:00）です。ご予約の受付は24時間可能です</li>
                     <li>お支払いは予約確定後にご案内します（オンライン：PayPay / 銀行振込、対面：当日支払い）</li>
                     <li>延長は15分ごとに +2,000円です</li>
-                    <li>日時のご都合が悪くなった場合は、確定メールへの返信またはLINEでご連絡ください</li>
+                    <li>日時のご都合が悪くなった場合は、確定メールへの返信でご連絡ください</li>
                 </ul>
             </div>
 
@@ -298,7 +323,6 @@
             <div class="footer-info">
                 <p class="footer-hours">鑑定営業時間：14:00〜22:00（最終受付 21:00）/ 予約は24H可</p>
                 <p class="footer-contact">お問い合わせ：uranai.rokkon@gmail.com</p>
-                <a href="https://lin.ee/SvZ69l0" class="footer-line-btn" target="_blank">LINE公式アカウント</a>
             </div>
             <div class="footer-copy">© 2026 六根清浄 All Rights Reserved.</div>
         </div>
@@ -307,7 +331,7 @@
     <button type="button" id="back-to-top" class="back-to-top" aria-label="トップへ戻る">↑</button>
 
     <script src="js/main.js"></script>
-    <script src="js/reserve.js?v=20260611"></script>
+    <script src="js/reserve.js?v=20260611d"></script>
 
 </body>
 
