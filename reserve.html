@@ -35,7 +35,7 @@
 
     <!-- CSS -->
     <link rel="stylesheet" href="css/style.css?v=20260611">
-    <link rel="stylesheet" href="css/reserve.css?v=20260611">
+    <link rel="stylesheet" href="css/reserve.css?v=20260611b">
     <link rel="stylesheet" href="css/animations.css?v=20260611">
 
     <!-- JSON-LD (Breadcrumb) -->
@@ -193,6 +193,33 @@
                         <input type="text" id="name" name="name" placeholder="ニックネームでも構いません" maxlength="50" required>
                     </div>
 
+                    <!-- 性別 -->
+                    <div class="form-block">
+                        <label class="form-label" for="sex">性別 <span class="required-mark">必須</span></label>
+                        <select id="sex" name="sex" required>
+                            <option value="">選択してください</option>
+                            <option value="女性">女性</option>
+                            <option value="男性">男性</option>
+                            <option value="その他・回答しない">その他・回答しない</option>
+                        </select>
+                        <p class="form-hint">命式（四柱推命など）の作成に使用します。</p>
+                    </div>
+
+                    <!-- 生年月日 -->
+                    <div class="form-block">
+                        <label class="form-label" for="birthdate">生年月日 <span class="required-mark">必須</span></label>
+                        <input type="date" id="birthdate" name="birthdate" required>
+                        <p class="form-hint">鑑定書の作成に必要です。</p>
+                    </div>
+
+                    <!-- 出生時間・場所 -->
+                    <div class="form-block">
+                        <label class="form-label" for="birthtime">出生時間・出生地 <span class="optional-mark">任意</span></label>
+                        <input type="text" id="birthtime" name="birthtime" maxlength="100"
+                            placeholder="例）8時30分ごろ・名古屋市（わかる場合のみ）">
+                        <p class="form-hint">わかるとより精度の高い鑑定ができます。不明でも大丈夫です。</p>
+                    </div>
+
                     <!-- メールアドレス -->
                     <div class="form-block">
                         <label class="form-label" for="email">メールアドレス <span class="required-mark">必須</span></label>
@@ -201,9 +228,9 @@
                         <p class="form-hint">予約確定のご連絡をお送りします。お間違いのないようご確認ください。</p>
                     </div>
 
-                    <!-- ご相談ジャンル -->
+                    <!-- ご相談テーマ -->
                     <div class="form-block">
-                        <label class="form-label" for="genre">ご相談ジャンル <span class="optional-mark">任意</span></label>
+                        <label class="form-label" for="genre">ご相談テーマ <span class="optional-mark">任意</span></label>
                         <select id="genre" name="genre">
                             <option value="">選択してください</option>
                             <option value="恋愛・復縁">恋愛・復縁</option>
@@ -221,11 +248,26 @@
                             placeholder="差し支えない範囲で構いません。当日お話しいただくこともできます。"></textarea>
                     </div>
 
+                    <!-- お支払い方法（オンラインのみ表示） -->
+                    <div class="form-block" id="payBlock">
+                        <label class="form-label">お支払い方法のご希望 <span class="required-mark">必須</span></label>
+                        <div class="pay-options">
+                            <label class="pay-option">
+                                <input type="radio" name="payMethod" value="PayPay" checked>
+                                <span>PayPay</span>
+                            </label>
+                            <label class="pay-option">
+                                <input type="radio" name="payMethod" value="銀行振込">
+                                <span>銀行振込</span>
+                            </label>
+                        </div>
+                        <p class="form-hint">お支払い先は予約確定のご連絡の際にお伝えします。事前のお支払いは不要です。</p>
+                    </div>
+
                     <!-- スパム対策（画面には表示されません） -->
                     <input type="text" name="website" id="website" class="hp-field" tabindex="-1" autocomplete="off">
 
                     <p class="form-privacy-note">
-                        ※ 生年月日など鑑定に必要な情報は、予約確定後に改めてお伺いします。<br>
                         ※ ご入力いただいた内容は、ご予約・鑑定のご連絡以外には使用しません。
                     </p>
 
@@ -307,7 +349,7 @@
     <button type="button" id="back-to-top" class="back-to-top" aria-label="トップへ戻る">↑</button>
 
     <script src="js/main.js"></script>
-    <script src="js/reserve.js?v=20260611"></script>
+    <script src="js/reserve.js?v=20260611b"></script>
 
 </body>
 

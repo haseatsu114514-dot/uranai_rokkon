@@ -42,15 +42,17 @@ var CONFIG = {
 };
 
 var SHEET_HEADERS = [
-  '受付日時', 'お名前', 'メール', 'コース',
-  '第一希望', '第二希望', 'ジャンル', 'ご相談内容',
+  '受付日時', 'お名前', '性別', '生年月日', '出生時間・出生地', 'メール', 'コース',
+  '第一希望', '第二希望', 'テーマ', 'ご相談内容', '支払い希望',
   '対応状況', 'リマインド'
 ];
 
 // 列番号（1始まり）
 var COL_TIMESTAMP = 1;
-var COL_STATUS = 9;
-var COL_REMINDED = 10;
+var COL_NAME = 2;
+var COL_CHOICE1 = 8;
+var COL_STATUS = 13;
+var COL_REMINDED = 14;
 
 var PART_TIMES = {
   '昼の部': { startH: 14, startM: 0 },
@@ -106,6 +108,8 @@ function safely(fn) {
 
 function validateReservation(data) {
   if (!data.name || String(data.name).length > 50) return 'お名前をご確認ください';
+  if (!data.sex) return '性別を選択してください';
+  if (!data.birthdate || !/^\d{4}-\d{2}-\d{2}$/.test(data.birthdate)) return '生年月日をご確認ください';
   var email = String(data.email || '');
   if (!email || email.length > 100 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return 'メールアドレスをご確認ください';
@@ -151,7 +155,19 @@ function getSheet() {
     sheet.appendRow(SHEET_HEADERS);
     sheet.setFrozenRows(1);
   }
+  ensureHeaders(sheet);
   return sheet;
+}
+
+/** 項目を増やした際にヘッダー行を最新化する（古い形式のままなら書き換える） */
+function ensureHeaders(sheet) {
+  var range = sheet.getRange(1, 1, 1, SHEET_HEADERS.length);
+  var current = range.getValues()[0];
+  var differs = SHEET_HEADERS.some(function (h, i) { return current[i] !== h; });
+  if (differs) {
+    range.setValues([SHEET_HEADERS]);
+    sheet.setFrozenRows(1);
+  }
 }
 
 /**
@@ -195,12 +211,16 @@ function recordToSheet(data) {
   sheet.appendRow([
     new Date(),
     data.name,
+    data.sex || '',
+    data.birthdate || '',
+    data.birthtime || '',
     data.email,
     data.course,
     formatChoice(data.date1, data.part1),
     data.date2 ? formatChoice(data.date2, data.part2) : '',
     data.genre || '',
     data.message || '',
+    data.payMethod || '',
     '', // 対応状況（確定したら「対応済み」と記入する）
     ''  // リマインド
   ]);
@@ -243,9 +263,13 @@ function createTentativeEvent(data) {
       description:
         'フォーム予約（未確定）。時間帯内で要調整。\n' +
         'メール: ' + data.email + '\n' +
+        '性別: ' + (data.sex || '未入力') + '\n' +
+        '生年月日: ' + (data.birthdate || '未入力') + '\n' +
+        '出生時間・出生地: ' + (data.birthtime || '未入力') + '\n' +
         '第二希望: ' + (data.date2 ? formatChoice(data.date2, data.part2) : 'なし') + '\n' +
-        'ジャンル: ' + (data.genre || '未選択') + '\n' +
-        '相談内容: ' + (data.message || 'なし')
+        'テーマ: ' + (data.genre || '未選択') + '\n' +
+        '相談内容: ' + (data.message || 'なし') + '\n' +
+        '支払い希望: ' + (data.payMethod || '未選択')
     }
   );
 }
@@ -257,10 +281,14 @@ function buildOwnerMessage(data) {
   return '【新規予約】フォームから予約が入りました\n' +
     '────────────\n' +
     'お名前: ' + data.name + '\n' +
+    '性別: ' + (data.sex || '未入力') + '\n' +
+    '生年月日: ' + (data.birthdate || '未入力') + '\n' +
+    '出生時間・出生地: ' + (data.birthtime || '未入力') + '\n' +
     'コース: ' + data.course + '\n' +
     '第一希望: ' + formatChoice(data.date1, data.part1) + '\n' +
     '第二希望: ' + (data.date2 ? formatChoice(data.date2, data.part2) : 'なし') + '\n' +
-    'ジャンル: ' + (data.genre || '未選択') + '\n' +
+    'テーマ: ' + (data.genre || '未選択') + '\n' +
+    '支払い希望: ' + (data.payMethod || '未選択') + '\n' +
     'メール: ' + data.email + '\n' +
     '────────────\n' +
     '確定メールの返信をお願いします。';
@@ -305,6 +333,7 @@ function sendAutoReply(data) {
     'コース: ' + data.course + '\n' +
     '第一希望: ' + formatChoice(data.date1, data.part1) + '\n' +
     '第二希望: ' + (data.date2 ? formatChoice(data.date2, data.part2) : 'なし') + '\n' +
+    'お支払い: ' + (data.payMethod || '未選択') + '\n' +
     '────────────────\n\n' +
     '空き状況を確認のうえ、通常24時間以内に、このメールアドレス宛に\n' +
     '予約確定のご連絡をお送りします。いましばらくお待ちください。\n\n' +
@@ -342,7 +371,7 @@ function checkUnhandledReservations() {
     var status = row[COL_STATUS - 1];
     var reminded = row[COL_REMINDED - 1];
     if (timestamp instanceof Date && timestamp < threshold && !status && !reminded) {
-      pending.push({ rowIndex: i + 2, name: row[1], choice: row[4] });
+      pending.push({ rowIndex: i + 2, name: row[COL_NAME - 1], choice: row[COL_CHOICE1 - 1] });
     }
   });
 

@@ -32,6 +32,23 @@ const RESERVE_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxKDhJg8_LhjfD
       var el = document.getElementById(id);
       if (el) { el.min = fmt(today); el.max = fmt(max); }
     });
+    var birth = document.getElementById('birthdate');
+    if (birth) { birth.min = '1920-01-01'; birth.max = fmt(today); }
+  }
+
+  /* ----- 対面コースでは支払い方法の選択欄を隠す（当日現地払いのため） ----- */
+  function initPayToggle() {
+    var payBlock = document.getElementById('payBlock');
+    if (!payBlock) return;
+    function update() {
+      var courseEl = form.querySelector('input[name="course"]:checked');
+      var isInPerson = courseEl && courseEl.value.indexOf('対面') === 0;
+      payBlock.hidden = isInPerson;
+    }
+    form.querySelectorAll('input[name="course"]').forEach(function (el) {
+      el.addEventListener('change', update);
+    });
+    update();
   }
 
   /* ----- エンドポイント未設定時はフォームを準備中表示にする ----- */
@@ -53,6 +70,8 @@ const RESERVE_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxKDhJg8_LhjfD
   function validate(data) {
     var errors = [];
     if (!data.name) errors.push('お名前を入力してください');
+    if (!data.sex) errors.push('性別を選択してください');
+    if (!data.birthdate) errors.push('生年月日を入力してください');
     if (!data.email) {
       errors.push('メールアドレスを入力してください');
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
@@ -66,16 +85,28 @@ const RESERVE_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxKDhJg8_LhjfD
 
   function collect() {
     var courseEl = form.querySelector('input[name="course"]:checked');
+    var course = courseEl ? courseEl.value : '';
+    var payMethod;
+    if (course.indexOf('対面') === 0) {
+      payMethod = '現地払い（対面）';
+    } else {
+      var payEl = form.querySelector('input[name="payMethod"]:checked');
+      payMethod = payEl ? payEl.value : '';
+    }
     return {
       name: (form.name.value || '').trim(),
+      sex: form.sex.value || '',
+      birthdate: form.birthdate.value || '',
+      birthtime: (form.birthtime.value || '').trim(),
       email: (form.email.value || '').trim(),
-      course: courseEl ? courseEl.value : '',
+      course: course,
       date1: form.date1.value || '',
       part1: form.part1.value || '',
       date2: form.date2.value || '',
       part2: form.part2.value || '',
       genre: form.genre.value || '',
       message: (form.message.value || '').trim(),
+      payMethod: payMethod,
       website: form.website.value || '' // honeypot
     };
   }
@@ -132,5 +163,6 @@ const RESERVE_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxKDhJg8_LhjfD
   });
 
   initDateRange();
+  initPayToggle();
   checkEndpoint();
 })();
