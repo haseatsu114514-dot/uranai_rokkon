@@ -86,11 +86,11 @@
 </div>
 
 <div id="intro">
-  <h1>栄の夜を歩く</h1>
+  <h1>栄 シーシャ商店街を歩く</h1>
   <div class="keys">
     <div class="key"><b>W / S</b>前進・後退</div>
     <div class="key"><b>A / D</b>90°振り向く</div>
-    <div class="key"><b>SHIFT</b>走る</div>
+    <div class="key"><b>SHIFT</b>ダッシュ</div>
     <div class="key"><b>SPACE</b>見上げる</div>
   </div>
   <button id="startBtn">クリックして歩き出す</button>
@@ -121,6 +121,7 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { SMAAPass } from 'three/addons/postprocessing/SMAAPass.js';
 import { Reflector } from 'three/addons/objects/Reflector.js';
 
 /* =========================================================
@@ -145,7 +146,14 @@ const SIGN_WORDS = [
   '味噌','手羽先','ひつまぶし','天むす','きしめん','喫茶','モーニング',
   '居酒屋','らーめん','寿司','餃子','カラオケ','バー','ホテル','BAR',
   '純喫茶','焼鳥','酒','栄','大須','名古屋','錦','夜','珈琲','麻雀',
-  'スナック','レコード','古着','銭湯','串かつ','どて煮','台湾'
+  'スナック','レコード','古着','銭湯','串かつ','どて煮','台湾',
+  // ↓ シーシャ実験用
+  'シーシャ','SHISHA','水たばこ','フレーバー','ラウンジ','LOUNGE','CHILL','HOOKAH','煙'
+];
+// 商店街の店先（目線高さ）に出すシーシャ系の語
+const SHISHA_WORDS = [
+  'シーシャ','SHISHA','水たばこ','フレーバー','ラウンジ','LOUNGE',
+  'CHILL','HOOKAH','煙','茶','BAR','遊','明','栄'
 ];
 
 /* ---------- 乱数（再現性のため簡易シード付き） ---------- */
@@ -229,7 +237,7 @@ function buildSky(){
   }
   const g=new THREE.BufferGeometry();
   g.setAttribute('position', new THREE.BufferAttribute(pos,3));
-  const stars=new THREE.Points(g, new THREE.PointsMaterial({color:0xbcd0ff,size:1.5,sizeAttenuation:false,transparent:true,opacity:.85,depthWrite:false}));
+  const stars=new THREE.Points(g, new THREE.PointsMaterial({color:0xbcd0ff,size:1.1,sizeAttenuation:false,transparent:true,opacity:.6,depthWrite:false}));
   scene.add(stars);
 
   // 月
@@ -249,57 +257,72 @@ buildSky();
    テクスチャ生成：窓（光る窓グリッド）
    ========================================================= */
 function makeWindowTexture(){
-  const cv=document.createElement('canvas'); cv.width=cv.height=128;
+  const S=256;
+  const cv=document.createElement('canvas'); cv.width=cv.height=S;
   const x=cv.getContext('2d');
-  x.fillStyle='#05060a'; x.fillRect(0,0,128,128);
-  const cols=8, rows=8, pad=3;
-  const cw=(128-pad*(cols+1))/cols, ch=(128-pad*(rows+1))/rows;
+  x.fillStyle='#06070c'; x.fillRect(0,0,S,S);
+  const cols=9, rows=9, pad=5;
+  const cw=(S-pad*(cols+1))/cols, ch=(S-pad*(rows+1))/rows;
   const warm=['#ffd98a','#ffcf6e','#fff0c0','#bfe6ff','#cfeaff','#ffb86b'];
   for(let i=0;i<rows;i++)for(let j=0;j<cols;j++){
-    const on = rnd()<0.52;
-    if(on){
+    const px=pad+j*(cw+pad), py=pad+i*(ch+pad);
+    if(rnd()<0.5){
+      // 点灯：上下グラデーション＋下端のにじみで“部屋の灯り”感
       const col=warm[(rnd()*warm.length)|0];
-      x.fillStyle=col;
-      const dim = rnd()<0.5 ? 1 : 0.7;
-      x.globalAlpha = dim;
-      x.fillRect(pad+j*(cw+pad), pad+i*(ch+pad), cw, ch);
-      x.globalAlpha=1;
+      const dim = rnd()<0.5 ? 1 : 0.66;
+      const grad=x.createLinearGradient(0,py,0,py+ch);
+      grad.addColorStop(0, shade(col,0.55*dim));
+      grad.addColorStop(0.55, shade(col,1.0*dim));
+      grad.addColorStop(1, shade(col,0.8*dim));
+      x.fillStyle=grad; x.fillRect(px,py,cw,ch);
     } else {
-      x.fillStyle='#0a0d16';
-      x.fillRect(pad+j*(cw+pad), pad+i*(ch+pad), cw, ch);
+      x.fillStyle = rnd()<0.5 ? '#0a0d16' : '#0c1120';
+      x.fillRect(px,py,cw,ch);
     }
   }
   const t=new THREE.CanvasTexture(cv);
   t.colorSpace=THREE.SRGBColorSpace;
   t.wrapS=t.wrapT=THREE.RepeatWrapping;
+  t.anisotropy=renderer.capabilities.getMaxAnisotropy();
   return t;
+}
+// 色を明暗スケール
+function shade(hex,k){
+  const n=parseInt(hex.slice(1),16);
+  const r=Math.min(255,((n>>16)&255)*k), g=Math.min(255,((n>>8)&255)*k), b=Math.min(255,(n&255)*k);
+  return `rgb(${r|0},${g|0},${b|0})`;
 }
 const WINDOW_TEX = makeWindowTexture();
 
 /* ---------- 縦型ネオン看板テクスチャ ---------- */
 function makeSignTexture(word, color, vertical){
   const cv=document.createElement('canvas');
-  cv.width=128; cv.height= vertical ? 256 : 96;
+  const W = vertical?208:360, H = vertical?448:140;
+  cv.width=W; cv.height=H;
   const x=cv.getContext('2d');
-  x.clearRect(0,0,cv.width,cv.height);
-  // 枠
-  x.strokeStyle=color; x.lineWidth=5; x.shadowColor=color; x.shadowBlur=22;
-  roundRect(x,6,6,cv.width-12,cv.height-12,12); x.stroke();
+  x.clearRect(0,0,W,H);
+  // 枠（外側に太いグロー＋内側に細い管 ＝ ネオン管っぽく）
+  x.strokeStyle=color; x.shadowColor=color;
+  x.shadowBlur=38; x.lineWidth=9; roundRect(x,12,12,W-24,H-24,20); x.stroke();
+  x.shadowBlur=10; x.lineWidth=3; x.strokeStyle='#ffffff'; roundRect(x,12,12,W-24,H-24,20); x.stroke();
   // 文字
-  x.fillStyle='#ffffff'; x.shadowColor=color; x.shadowBlur=26;
+  x.fillStyle='#ffffff'; x.shadowColor=color; x.shadowBlur=42;
   x.textAlign='center'; x.textBaseline='middle';
+  const chars=[...word];
   if(vertical){
-    const chars=[...word].slice(0,5);
-    const fs=Math.min(54, (cv.height-40)/chars.length);
+    const c=chars.slice(0,5);
+    const fs=Math.min(86,(H-70)/c.length);
     x.font=`700 ${fs}px "Shippori Mincho",serif`;
-    const step=(cv.height-30)/chars.length;
-    chars.forEach((ch,i)=> x.fillText(ch, cv.width/2, 22 + step*(i+0.5)));
+    const step=(H-46)/c.length;
+    c.forEach((ch,i)=> x.fillText(ch, W/2, 32 + step*(i+0.5)));
   } else {
-    x.font=`700 46px "Shippori Mincho",serif`;
-    x.fillText(word, cv.width/2, cv.height/2);
+    const fs=Math.min(86,(W-50)/Math.max(1,chars.length)*1.05);
+    x.font=`700 ${fs}px "Shippori Mincho",serif`;
+    x.fillText(word, W/2, H/2);
   }
   const t=new THREE.CanvasTexture(cv);
   t.colorSpace=THREE.SRGBColorSpace;
+  t.anisotropy=renderer.capabilities.getMaxAnisotropy();
   return t;
 }
 function roundRect(x,a,b,w,h,r){ x.beginPath(); x.moveTo(a+r,b);
@@ -417,10 +440,11 @@ function makeBuilding(cx,cz,maxFoot,distToCenter){
 const beacons=[];
 
 // ネオンのほわっとした光のスプライト
-const _glowTex=(()=>{ const cv=document.createElement('canvas');cv.width=cv.height=64;
-  const x=cv.getContext('2d'); const g=x.createRadialGradient(32,32,0,32,32,32);
-  g.addColorStop(0,'rgba(255,255,255,1)');g.addColorStop(.4,'rgba(255,255,255,.5)');g.addColorStop(1,'rgba(255,255,255,0)');
-  x.fillStyle=g;x.fillRect(0,0,64,64); return new THREE.CanvasTexture(cv); })();
+const _glowTex=(()=>{ const S=128; const cv=document.createElement('canvas');cv.width=cv.height=S;
+  const x=cv.getContext('2d'); const g=x.createRadialGradient(S/2,S/2,0,S/2,S/2,S/2);
+  g.addColorStop(0,'rgba(255,255,255,1)');g.addColorStop(.32,'rgba(255,255,255,.55)');
+  g.addColorStop(.65,'rgba(255,255,255,.14)');g.addColorStop(1,'rgba(255,255,255,0)');
+  x.fillStyle=g;x.fillRect(0,0,S,S); return new THREE.CanvasTexture(cv); })();
 function neonGlow(color,pos,size){
   const s=new THREE.Sprite(new THREE.SpriteMaterial({map:_glowTex,color:new THREE.Color(color),
     transparent:true,opacity:.55,blending:THREE.AdditiveBlending,depthWrite:false,toneMapped:false}));
@@ -567,6 +591,112 @@ function addTree(x,z){
 buildOasis();
 
 /* =========================================================
+   商店街（アーケード）：中央通り(x=0)を屋根付きの歩行者空間に
+   - シーシャの店先・提灯・のぼり・入口ゲートを連ねる
+   - 屋根や看板は頭上／壁際なので歩行の当たり判定は出さない
+   ========================================================= */
+function buildArcade(){
+  const g=new THREE.Group();
+  const X=10;                 // 通りの半幅（両側のビル内壁が x=±11）
+  const zA=-160, zB=160, cz=0, len=zB-zA;
+  const ridge=8.6, sideY=6;   // 屋根の頂点／側梁の高さ
+  const frame=new THREE.MeshStandardMaterial({color:0x171b24,roughness:.55,metalness:.6});
+  const roofMat=new THREE.MeshStandardMaterial({color:0x0c1830,emissive:0x163a55,
+    emissiveIntensity:.55,roughness:.3,metalness:.2,transparent:true,opacity:.5,side:THREE.DoubleSide});
+
+  // 側梁＋支柱
+  for(const sx of [-X,X]){
+    const beam=new THREE.Mesh(new THREE.BoxGeometry(0.45,0.55,len),frame);
+    beam.position.set(sx,sideY,cz); g.add(beam);
+    for(let z=zA; z<=zB; z+=8){
+      const post=new THREE.Mesh(new THREE.CylinderGeometry(0.22,0.22,sideY,8),frame);
+      post.position.set(sx,sideY/2,z); g.add(post);
+    }
+  }
+  // 傾斜した半透明の屋根パネル（両側）＋頂部のスカイライト
+  const slope=Math.hypot(X,ridge-sideY), ang=Math.atan2(ridge-sideY,X);
+  const left=new THREE.Mesh(new THREE.BoxGeometry(slope,0.12,len),roofMat);
+  left.position.set(-X/2,(sideY+ridge)/2,cz); left.rotation.z=ang; g.add(left);
+  const right=new THREE.Mesh(new THREE.BoxGeometry(slope,0.12,len),roofMat);
+  right.position.set(X/2,(sideY+ridge)/2,cz); right.rotation.z=Math.PI-ang; g.add(right);
+  const ridgeBar=new THREE.Mesh(new THREE.BoxGeometry(0.5,0.2,len),
+    new THREE.MeshBasicMaterial({color:0x9fe8ff,toneMapped:false}));
+  ridgeBar.position.set(0,ridge,cz); g.add(ridgeBar);
+  // 横方向のアーチリブ
+  for(let z=zA; z<=zB; z+=6){
+    const rl=new THREE.Mesh(new THREE.BoxGeometry(slope,0.18,0.18),frame);
+    rl.position.set(-X/2,(sideY+ridge)/2,z); rl.rotation.z=ang; g.add(rl);
+    const rr=new THREE.Mesh(new THREE.BoxGeometry(slope,0.18,0.18),frame);
+    rr.position.set(X/2,(sideY+ridge)/2,z); rr.rotation.z=Math.PI-ang; g.add(rr);
+  }
+
+  // 中央に連なる吊り提灯
+  for(let z=zA+4; z<zB; z+=7){
+    const y=4.6;
+    const lant=new THREE.Mesh(new THREE.CylinderGeometry(0.45,0.45,0.85,16),
+      new THREE.MeshBasicMaterial({color:0xff5a2a,toneMapped:false}));
+    lant.position.set(0,y,z); g.add(lant);
+    const cap=new THREE.Mesh(new THREE.CylinderGeometry(0.16,0.16,0.12,10),frame);
+    cap.position.set(0,y+0.48,z); g.add(cap);
+    const str=new THREE.Mesh(new THREE.CylinderGeometry(0.02,0.02,ridge-y-0.5,4),
+      new THREE.MeshStandardMaterial({color:0x222730}));
+    str.position.set(0,(y+0.5+ridge)/2,z); g.add(str);
+    g.add(neonGlow('#ff6a3d', new THREE.Vector3(0,y,z), 2.6));
+  }
+
+  // 店先（目線高さ）のシーシャ系ネオン＋テント庇：両側に交互
+  for(let z=zA+6; z<zB; z+=12){
+    for(const side of [-1,1]){
+      const wx = side*(X-0.4);
+      // テント庇
+      const awn=new THREE.Mesh(new THREE.BoxGeometry(0.2,0.12,4.4),
+        new THREE.MeshStandardMaterial({color:rPick([0x3a1020,0x10243a,0x123026]),roughness:.8,metalness:.1}));
+      awn.position.set(side*(X-1.3),3.0,z); awn.rotation.x=0; awn.rotation.z=side*0.32; g.add(awn);
+      // ネオン看板（縦・壁向き）
+      const col=rPick(NEON), word=rPick(SHISHA_WORDS);
+      const t=makeSignTexture(word,col,true);
+      const s=new THREE.Mesh(new THREE.PlaneGeometry(1.3,2.6),
+        new THREE.MeshBasicMaterial({map:t,transparent:true,toneMapped:false,side:THREE.DoubleSide}));
+      s.position.set(wx,4.4,z); s.rotation.y=side>0?-Math.PI/2:Math.PI/2; g.add(s);
+      g.add(neonGlow(col,new THREE.Vector3(wx,4.4,z),3.0));
+      // 足元の店先グロー
+      g.add(neonGlow(col,new THREE.Vector3(side*(X-1.6),1.4,z),3.2));
+    }
+  }
+
+  // のぼり旗（支柱から下げる）
+  for(let z=zA+10; z<zB; z+=18){
+    const side=(z/18|0)%2?1:-1;
+    const col=rPick(NEON), t=makeSignTexture(rPick(SHISHA_WORDS),col,true);
+    const f=new THREE.Mesh(new THREE.PlaneGeometry(1.0,2.2),
+      new THREE.MeshBasicMaterial({map:t,transparent:true,toneMapped:false,side:THREE.DoubleSide}));
+    f.position.set(side*(X-0.5),4.4,z); f.rotation.y=side>0?-Math.PI/2:Math.PI/2; g.add(f);
+  }
+
+  // 入口ゲート（南＝プレイヤー側／北）
+  function gate(zPos){
+    for(const sx of [-X,X]){
+      const pil=new THREE.Mesh(new THREE.BoxGeometry(1.5,9,1.5),
+        new THREE.MeshStandardMaterial({color:0x14181f,roughness:.5,metalness:.6}));
+      pil.position.set(sx,4.5,zPos); g.add(pil);
+      const trim=new THREE.Mesh(new THREE.BoxGeometry(1.6,9,0.12),
+        new THREE.MeshBasicMaterial({color:0x16e0ff,toneMapped:false}));
+      trim.position.set(sx,4.5,zPos+(zPos>0?0.78:-0.78)); g.add(trim);
+      g.add(neonGlow('#16e0ff', new THREE.Vector3(sx,7,zPos),3.4));
+    }
+    const t=makeSignTexture('栄シーシャ商店街','#ff2d95',false);
+    const banner=new THREE.Mesh(new THREE.PlaneGeometry(2*X+1.6,3.4),
+      new THREE.MeshBasicMaterial({map:t,transparent:true,toneMapped:false,side:THREE.DoubleSide}));
+    banner.position.set(0,8.7,zPos); g.add(banner);
+    g.add(neonGlow('#ff2d95', new THREE.Vector3(0,8.7,zPos),11));
+  }
+  gate(zB); gate(zA);
+
+  scene.add(g);
+}
+buildArcade();
+
+/* =========================================================
    街路灯・自販機・提灯（歩行者目線のディテール）
    ========================================================= */
 function addStreetLamp(x,z){
@@ -651,12 +781,18 @@ spawnCars();
    軽い雨（濡れた路面の理由）＋ ふわっと舞う塵
    ========================================================= */
 function buildRain(){
-  const N=1400; const pos=new Float32Array(N*3); const sp=new Float32Array(N);
-  for(let i=0;i<N;i++){ pos[i*3]=rRange(-120,120); pos[i*3+1]=rRange(0,90); pos[i*3+2]=rRange(-120,120); sp[i]=rRange(40,80);}
+  const N=1700, L=1.7; // L:雨筋の長さ（点ではなく線で滑らかに）
+  const pos=new Float32Array(N*6); const sp=new Float32Array(N);
+  for(let i=0;i<N;i++){
+    const x=rRange(-130,130), y=rRange(0,105), z=rRange(-130,130);
+    pos[i*6]=x;   pos[i*6+1]=y;   pos[i*6+2]=z;
+    pos[i*6+3]=x; pos[i*6+4]=y-L; pos[i*6+5]=z;
+    sp[i]=rRange(60,100);
+  }
   const g=new THREE.BufferGeometry(); g.setAttribute('position',new THREE.BufferAttribute(pos,3));
-  const m=new THREE.PointsMaterial({color:0x9fc0ff,size:0.5,transparent:true,opacity:.35,depthWrite:false});
-  const p=new THREE.Points(g,m); scene.add(p);
-  return {p, sp};
+  const m=new THREE.LineBasicMaterial({color:0xaec6ff,transparent:true,opacity:.26,depthWrite:false});
+  const p=new THREE.LineSegments(g,m); scene.add(p);
+  return {p, sp, L};
 }
 const rain=buildRain();
 
@@ -669,6 +805,9 @@ const bloom=new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight), 0.85,
 bloom.threshold=0.42; bloom.strength=0.95; bloom.radius=0.55;
 composer.addPass(bloom);
 composer.addPass(new OutputPass());
+// SMAA：EffectComposer はキャンバスのMSAAが効かないので、最後に掛けて輪郭を滑らかに
+const pr=renderer.getPixelRatio();
+composer.addPass(new SMAAPass(innerWidth*pr, innerHeight*pr));
 
 /* =========================================================
    コントロール（ダンガンロンパ／ペルソナ風）
@@ -806,13 +945,15 @@ function animate(){
 
   // --- 移動：向いている方向へ前進・後退のみ（4方向） ---
   if(walking){
-    const speed=(keys['ShiftLeft']||keys['ShiftRight']?10:5.6);
-    velocity.z -= velocity.z*8*dt;
+    // 通常歩行を速めに＋SHIFTでダッシュ
+    const dash=keys['ShiftLeft']||keys['ShiftRight'];
+    const speed=dash?17:9;
+    velocity.z -= velocity.z*9*dt;
     let fwd=0;
     if(keys['KeyW']||keys['ArrowUp'])fwd+=1;
     if(keys['KeyS']||keys['ArrowDown'])fwd-=1;
     if(isTouch) fwd += -joyVec.y; // スティック上で前進
-    if(Math.abs(fwd)>0.05) velocity.z += fwd*speed*dt*8;
+    if(Math.abs(fwd)>0.05) velocity.z += fwd*speed*dt*9;
 
     // 前方ベクトル（水平）
     const fdir=new THREE.Vector3(); camera.getWorldDirection(fdir); fdir.y=0; fdir.normalize();
@@ -839,12 +980,17 @@ function animate(){
     else { m.position.x+=v; if(m.position.x>HALF)m.position.x=-HALF; if(m.position.x<-HALF)m.position.x=HALF; }
   }
 
-  // --- 雨を落とす ---
-  const rp=rain.p.geometry.attributes.position;
-  for(let i=0;i<rp.count;i++){
-    let y=rp.getY(i)-rain.sp[i]*dt;
-    if(y<0){ y=90; rp.setX(i,camera.position.x+rRange(-110,110)); rp.setZ(i,camera.position.z+rRange(-110,110)); }
-    rp.setY(i,y);
+  // --- 雨を落とす（線分の上下端を一緒に下げる） ---
+  const rp=rain.p.geometry.attributes.position; const ra=rp.array;
+  for(let i=0;i<rain.sp.length;i++){
+    const d=rain.sp[i]*dt;
+    let y=ra[i*6+1]-d, y2=ra[i*6+4]-d;
+    if(y2<0){
+      const nx=camera.position.x+rRange(-120,120), nz=camera.position.z+rRange(-120,120);
+      y=105; y2=105-rain.L;
+      ra[i*6]=nx; ra[i*6+2]=nz; ra[i*6+3]=nx; ra[i*6+5]=nz;
+    }
+    ra[i*6+1]=y; ra[i*6+4]=y2;
   }
   rp.needsUpdate=true;
 
@@ -861,11 +1007,14 @@ function animate(){
   const ang=Math.atan2(fdir2.x,-fdir2.z)*180/Math.PI;
   const dirs=['N','NE','E','SE','S','SW','W','NW'];
   compassEl.textContent=`・ ${dirs[(Math.round(((ang+360)%360)/45))%8]} ・`;
-  // 中央付近で地名を切り替え
+  // 現在地で地名を切り替え
+  const inArcade = Math.abs(camera.position.x)<11 && Math.abs(camera.position.z)<162;
   const nearCenter=Math.hypot(camera.position.x-gridCenter(centerI),camera.position.z-gridCenter(centerI))<70;
-  placeEl.innerHTML = nearCenter
-    ? '<b>テレビ塔 前</b>名古屋市 中区・久屋大通'
-    : '<b>栄 SAKAE</b>名古屋市 中区';
+  placeEl.innerHTML = inArcade
+    ? '<b>栄 シーシャ商店街</b>SHISHA ARCADE'
+    : (nearCenter
+        ? '<b>テレビ塔 前</b>名古屋市 中区・久屋大通'
+        : '<b>栄 SAKAE</b>名古屋市 中区');
 
   composer.render();
 }
