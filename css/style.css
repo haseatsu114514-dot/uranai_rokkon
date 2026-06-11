@@ -1775,6 +1775,29 @@ body::after { top: 2rem; right: 2rem; border-left: none; border-bottom: none; }
     opacity: 1;
 }
 
+.outline-btn.light {
+    color: rgba(255, 255, 255, 0.9);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.outline-btn.light:hover {
+    background: #fff;
+    border-color: #fff;
+    color: var(--color-primary);
+}
+
+/* LINEボタン下の「フォームでも予約可」リンク */
+.reserve-alt-link {
+    margin-top: 18px;
+    font-size: 0.85rem;
+    color: #706f6e;
+    letter-spacing: 0.05em;
+}
+
+.final-cta-form {
+    margin-top: 22px;
+}
+
 /* =========================================================================
    FINAL CTA SECTION（最終予約導線）
    ========================================================================= */

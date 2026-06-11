@@ -1,0 +1,404 @@
+/* =========================================================================
+   RESERVE PAGE（ご予約ページ）
+   ========================================================================= */
+
+.reserve-container {
+    max-width: 760px;
+}
+
+/* ----- 予約方法の選択 ----- */
+.reserve-methods {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 70px;
+}
+
+.reserve-method-card {
+    background: #fff;
+    border: 1px solid var(--color-border);
+    border-top: 2px solid var(--color-gold);
+    padding: 36px 28px 32px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.reserve-method-tag {
+    font-size: 0.75rem;
+    color: var(--color-gold);
+    letter-spacing: 0.15em;
+    margin-bottom: 10px;
+}
+
+.reserve-method-title {
+    font-size: 1.25rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    color: var(--color-primary);
+    margin-bottom: 14px;
+}
+
+.reserve-method-desc {
+    font-size: 0.85rem;
+    line-height: 1.9;
+    color: #666;
+    margin-bottom: 22px;
+    flex: 1;
+}
+
+.reserve-method-card .hero-btn {
+    position: relative;
+    display: inline-block;
+}
+
+/* ----- フォームセクション ----- */
+.reserve-form-section {
+    scroll-margin-top: 110px;
+    margin-bottom: 70px;
+}
+
+.reserve-form-lead {
+    text-align: center;
+    font-size: 0.9rem;
+    line-height: 2;
+    color: #666;
+    margin: -20px 0 40px;
+}
+
+.reserve-form {
+    background: #fff;
+    border: 1px solid var(--color-border);
+    padding: 40px 36px;
+}
+
+.form-block {
+    margin-bottom: 28px;
+    border: none;
+}
+
+.form-label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    color: var(--color-primary);
+    margin-bottom: 10px;
+}
+
+.required-mark,
+.optional-mark {
+    display: inline-block;
+    font-size: 0.65rem;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    padding: 2px 8px;
+    margin-left: 8px;
+    vertical-align: 2px;
+}
+
+.required-mark {
+    color: #fff;
+    background: var(--color-gold);
+}
+
+.optional-mark {
+    color: #888;
+    border: 1px solid var(--color-border);
+}
+
+.reserve-form input[type="text"],
+.reserve-form input[type="email"],
+.reserve-form input[type="date"],
+.reserve-form select,
+.reserve-form textarea {
+    width: 100%;
+    font-family: 'Shippori Mincho', serif;
+    font-size: 16px; /* iOSの自動ズーム防止 */
+    color: var(--color-primary);
+    background: var(--color-cream);
+    border: 1px solid var(--color-border);
+    border-radius: 0;
+    padding: 12px 14px;
+    transition: border-color 0.3s ease, background 0.3s ease;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.reserve-form select {
+    background-image: linear-gradient(45deg, transparent 50%, #888 50%),
+        linear-gradient(135deg, #888 50%, transparent 50%);
+    background-position: calc(100% - 18px) 50%, calc(100% - 13px) 50%;
+    background-size: 5px 5px;
+    background-repeat: no-repeat;
+    padding-right: 36px;
+}
+
+.reserve-form input:focus,
+.reserve-form select:focus,
+.reserve-form textarea:focus {
+    outline: none;
+    border-color: var(--color-gold);
+    background: #fff;
+}
+
+.reserve-form textarea {
+    resize: vertical;
+    line-height: 1.8;
+}
+
+.datetime-row {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 10px;
+}
+
+.form-hint {
+    font-size: 0.75rem;
+    color: #999;
+    margin-top: 6px;
+    line-height: 1.7;
+}
+
+/* ----- コース選択（ラジオカード） ----- */
+.course-options {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+}
+
+.course-option {
+    display: block;
+    cursor: pointer;
+}
+
+.course-option input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.course-option-body {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    flex-wrap: wrap;
+    border: 1px solid var(--color-border);
+    background: var(--color-cream);
+    padding: 16px 18px;
+    transition: border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+}
+
+.course-option-body::before {
+    content: '';
+    width: 14px;
+    height: 14px;
+    border: 1px solid #aaa;
+    border-radius: 50%;
+    background: #fff;
+    flex-shrink: 0;
+    align-self: center;
+    transition: all 0.2s ease;
+}
+
+.course-option input:checked + .course-option-body {
+    border-color: var(--color-gold);
+    background: #fff;
+    box-shadow: 0 4px 16px rgba(143, 151, 121, 0.15);
+}
+
+.course-option input:checked + .course-option-body::before {
+    border-color: var(--color-gold);
+    background: var(--color-gold);
+    box-shadow: inset 0 0 0 3px #fff;
+}
+
+.course-option input:focus-visible + .course-option-body {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 2px;
+}
+
+.course-option-name {
+    font-size: 0.95rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: var(--color-primary);
+}
+
+.course-option-price {
+    font-size: 0.9rem;
+    color: var(--color-gold);
+    font-weight: 500;
+}
+
+.course-option-note {
+    font-size: 0.75rem;
+    color: #999;
+}
+
+/* ----- スパム対策フィールド（不可視） ----- */
+.hp-field {
+    position: absolute !important;
+    left: -9999px !important;
+    width: 1px !important;
+    height: 1px !important;
+    overflow: hidden;
+}
+
+/* ----- 注意書き・エラー・送信 ----- */
+.form-privacy-note {
+    font-size: 0.75rem;
+    color: #999;
+    line-height: 1.9;
+    margin-bottom: 24px;
+}
+
+.form-error {
+    background: rgba(180, 80, 70, 0.08);
+    border: 1px solid rgba(180, 80, 70, 0.4);
+    color: #a04a40;
+    font-size: 0.85rem;
+    line-height: 1.8;
+    padding: 14px 16px;
+    margin-bottom: 20px;
+}
+
+.form-error a {
+    color: #a04a40;
+    text-decoration: underline;
+}
+
+.reserve-submit {
+    display: block;
+    width: 100%;
+    font-family: 'Shippori Mincho', serif;
+    font-size: 1rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    color: #fff;
+    background: var(--color-gold);
+    border: 1px solid var(--color-gold);
+    padding: 18px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.reserve-submit:hover {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.reserve-submit:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+/* ----- 送信完了 ----- */
+.form-success {
+    background: #fff;
+    border: 1px solid var(--color-gold);
+    padding: 50px 36px;
+    text-align: center;
+}
+
+.form-success-mark {
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 20px;
+    border: 1px solid var(--color-gold);
+    border-radius: 50%;
+    color: var(--color-gold);
+    font-size: 1.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.form-success-title {
+    font-size: 1.3rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    color: var(--color-primary);
+    margin-bottom: 18px;
+}
+
+.form-success-text {
+    font-size: 0.88rem;
+    line-height: 2.1;
+    color: #666;
+    margin-bottom: 28px;
+}
+
+/* ----- 補足 ----- */
+.reserve-notes {
+    background: #f5f4f0;
+    border: 1px solid var(--color-border);
+    padding: 28px 30px;
+}
+
+.reserve-notes-title {
+    font-size: 1rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    color: var(--color-primary);
+    margin-bottom: 14px;
+}
+
+.reserve-notes-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.reserve-notes-list li {
+    font-size: 0.83rem;
+    line-height: 1.9;
+    color: #666;
+    padding-left: 1.2em;
+    position: relative;
+    margin-bottom: 6px;
+}
+
+.reserve-notes-list li::before {
+    content: '※';
+    position: absolute;
+    left: 0;
+    color: var(--color-gold);
+}
+
+/* ----- モバイル ----- */
+@media (max-width: 768px) {
+    .reserve-methods {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        margin-bottom: 45px;
+    }
+
+    .reserve-method-card {
+        padding: 28px 20px 26px;
+    }
+
+    .reserve-form-section {
+        scroll-margin-top: 75px;
+        margin-bottom: 45px;
+    }
+
+    .reserve-form {
+        padding: 28px 18px;
+    }
+
+    .datetime-row {
+        grid-template-columns: 1fr;
+    }
+
+    .course-option-body {
+        gap: 8px 12px;
+        padding: 14px;
+    }
+
+    .form-success {
+        padding: 36px 20px;
+    }
+}

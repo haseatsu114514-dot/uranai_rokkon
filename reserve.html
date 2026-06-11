@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-T47H5DSFTR"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-T47H5DSFTR');
+    </script>
+    <title>ご予約 - 名古屋(栄)・オンラインの占い処 六根清浄</title>
+    <meta name="description"
+        content="占い処 六根清浄のご予約ページ。LINEまたは予約フォームから24時間ご予約いただけます。オンライン30分5,000円から。名古屋・栄での対面鑑定にも対応。">
+
+    <!-- OGP -->
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="ご予約 - 占い処 六根清浄">
+    <meta property="og:description" content="LINEまたは予約フォームから24時間ご予約いただけます。オンライン30分5,000円から。">
+    <meta property="og:url" content="https://uranai-rokkon.com/reserve.html">
+    <meta property="og:image" content="https://uranai-rokkon.com/images/otya.png">
+
+    <!-- Favicon -->
+    <link rel="icon" href="images/favicon.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css?v=20260611">
+    <link rel="stylesheet" href="css/reserve.css?v=20260611">
+    <link rel="stylesheet" href="css/animations.css?v=20260611">
+
+    <!-- JSON-LD (Breadcrumb) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "name": "TOP",
+        "item": "https://uranai-rokkon.com/"
+      },{
+        "@type": "ListItem",
+        "position": 2,
+        "name": "ご予約",
+        "item": "https://uranai-rokkon.com/reserve.html"
+      }]
+    }
+    </script>
+</head>
+
+<body>
+
+    <!-- ヘッダー -->
+    <header class="header">
+        <div class="header-inner">
+            <a href="index.html" class="logo">
+                <span class="logo-main">六根清浄</span>
+                <span class="logo-sub">(Rokkon shojo)</span>
+            </a>
+            <div class="nav-wrapper">
+                <nav class="nav">
+                    <a href="index.html">TOP</a>
+                    <a href="beginner.html">はじめて</a>
+                    <a href="about.html">占い師</a>
+                    <a href="pricing.html">料金案内</a>
+                    <a href="testimonials.html">口コミ</a>
+                    <a href="faq.html">Q&A</a>
+                    <a href="blog.html">ブログ</a>
+
+                </nav>
+                <a href="reserve.html" class="contact-btn">ご予約</a>
+            </div>
+            <div class="menu-toggle" onclick="toggleMenu();" aria-label="メニュー">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <main class="main-content sub-page">
+        <div class="page-header">
+            <h1 class="page-title">ご予約</h1>
+            <p class="page-subtitle">LINE・予約フォームのどちらからでも、24時間受け付けています</p>
+        </div>
+
+        <div class="container reserve-container">
+
+            <!-- 予約方法の選択 -->
+            <div class="reserve-methods">
+                <div class="reserve-method-card animate-on-scroll">
+                    <span class="reserve-method-tag">チャットで相談しながら</span>
+                    <h2 class="reserve-method-title">LINEで予約</h2>
+                    <p class="reserve-method-desc">
+                        空き状況の確認やちょっとしたご質問も、チャットでそのままやり取りできます。
+                    </p>
+                    <a href="https://lin.ee/SvZ69l0" class="hero-btn" target="_blank">
+                        <img src="images/botan.png" alt="LINEでご予約はこちら" style="max-width: 260px;" loading="lazy">
+                    </a>
+                </div>
+                <div class="reserve-method-card animate-on-scroll animate-delay-1">
+                    <span class="reserve-method-tag">LINEを使わない方に</span>
+                    <h2 class="reserve-method-title">フォームで予約</h2>
+                    <p class="reserve-method-desc">
+                        友だち追加は不要。下のフォームに入力するだけで、ご予約のお申し込みが完了します。
+                    </p>
+                    <a href="#reserve-form" class="outline-btn">フォームへ進む</a>
+                </div>
+            </div>
+
+            <!-- 予約フォーム -->
+            <section class="reserve-form-section" id="reserve-form">
+                <h2 class="section-title">予約フォーム</h2>
+                <p class="reserve-form-lead">
+                    送信後すぐに、受付確認のメールが自動で届きます。<br>
+                    空き状況を確認のうえ、通常24時間以内に予約確定のご連絡をメールでお送りします。
+                </p>
+
+                <form id="reservationForm" class="reserve-form" novalidate>
+
+                    <!-- コース選択 -->
+                    <fieldset class="form-block">
+                        <legend class="form-label">コース <span class="required-mark">必須</span></legend>
+                        <div class="course-options">
+                            <label class="course-option">
+                                <input type="radio" name="course" value="オンライン30分（5,000円）" checked>
+                                <span class="course-option-body">
+                                    <span class="course-option-name">オンライン 30分</span>
+                                    <span class="course-option-price">5,000円（税込）</span>
+                                    <span class="course-option-note">Google Meet／一番人気</span>
+                                </span>
+                            </label>
+                            <label class="course-option">
+                                <input type="radio" name="course" value="オンライン60分（10,000円）">
+                                <span class="course-option-body">
+                                    <span class="course-option-name">オンライン 60分</span>
+                                    <span class="course-option-price">10,000円（税込）</span>
+                                    <span class="course-option-note">じっくり相談したい方に</span>
+                                </span>
+                            </label>
+                            <label class="course-option">
+                                <input type="radio" name="course" value="対面・栄 60分（10,000円）">
+                                <span class="course-option-body">
+                                    <span class="course-option-name">対面（栄）60分</span>
+                                    <span class="course-option-price">10,000円（税込）</span>
+                                    <span class="course-option-note">栄駅近くの指定カフェにて</span>
+                                </span>
+                            </label>
+                        </div>
+                    </fieldset>
+
+                    <!-- 希望日時 -->
+                    <div class="form-block">
+                        <label class="form-label" for="date1">第一希望日 <span class="required-mark">必須</span></label>
+                        <div class="datetime-row">
+                            <input type="date" id="date1" name="date1" required>
+                            <select id="part1" name="part1" required>
+                                <option value="昼の部（14:00〜16:30）">昼の部（14:00〜16:30）</option>
+                                <option value="夕の部（16:30〜19:00）">夕の部（16:30〜19:00）</option>
+                                <option value="夜の部（19:00〜22:00）">夜の部（19:00〜22:00）</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-block">
+                        <label class="form-label" for="date2">第二希望日 <span class="optional-mark">任意</span></label>
+                        <div class="datetime-row">
+                            <input type="date" id="date2" name="date2">
+                            <select id="part2" name="part2">
+                                <option value="">時間帯を選択</option>
+                                <option value="昼の部（14:00〜16:30）">昼の部（14:00〜16:30）</option>
+                                <option value="夕の部（16:30〜19:00）">夕の部（16:30〜19:00）</option>
+                                <option value="夜の部（19:00〜22:00）">夜の部（19:00〜22:00）</option>
+                            </select>
+                        </div>
+                        <p class="form-hint">第一希望が埋まっている場合に優先してご案内します。</p>
+                    </div>
+
+                    <!-- お名前 -->
+                    <div class="form-block">
+                        <label class="form-label" for="name">お名前 <span class="required-mark">必須</span></label>
+                        <input type="text" id="name" name="name" placeholder="ニックネームでも構いません" maxlength="50" required>
+                    </div>
+
+                    <!-- メールアドレス -->
+                    <div class="form-block">
+                        <label class="form-label" for="email">メールアドレス <span class="required-mark">必須</span></label>
+                        <input type="email" id="email" name="email" placeholder="例）example@gmail.com" maxlength="100"
+                            required>
+                        <p class="form-hint">予約確定のご連絡をお送りします。お間違いのないようご確認ください。</p>
+                    </div>
+
+                    <!-- ご相談ジャンル -->
+                    <div class="form-block">
+                        <label class="form-label" for="genre">ご相談ジャンル <span class="optional-mark">任意</span></label>
+                        <select id="genre" name="genre">
+                            <option value="">選択してください</option>
+                            <option value="恋愛・復縁">恋愛・復縁</option>
+                            <option value="出会い・婚活">出会い・婚活</option>
+                            <option value="仕事">仕事</option>
+                            <option value="人生・家族">人生・家族</option>
+                            <option value="その他">その他</option>
+                        </select>
+                    </div>
+
+                    <!-- ご相談内容 -->
+                    <div class="form-block">
+                        <label class="form-label" for="message">ご相談内容・ご質問 <span class="optional-mark">任意</span></label>
+                        <textarea id="message" name="message" rows="4" maxlength="1000"
+                            placeholder="差し支えない範囲で構いません。当日お話しいただくこともできます。"></textarea>
+                    </div>
+
+                    <!-- スパム対策（画面には表示されません） -->
+                    <input type="text" name="website" id="website" class="hp-field" tabindex="-1" autocomplete="off">
+
+                    <p class="form-privacy-note">
+                        ※ 生年月日など鑑定に必要な情報は、予約確定後に改めてお伺いします。<br>
+                        ※ ご入力いただいた内容は、ご予約・鑑定のご連絡以外には使用しません。
+                    </p>
+
+                    <div class="form-error" id="formError" hidden></div>
+
+                    <button type="submit" class="reserve-submit" id="submitBtn">この内容で予約を申し込む</button>
+                </form>
+
+                <!-- 送信完了表示 -->
+                <div class="form-success" id="formSuccess" hidden>
+                    <div class="form-success-mark">✓</div>
+                    <h3 class="form-success-title">ご予約を受け付けました</h3>
+                    <p class="form-success-text">
+                        受付確認のメールを自動でお送りしています。<br>
+                        空き状況を確認のうえ、通常24時間以内に予約確定のご連絡をいたします。<br><br>
+                        メールが届かない場合は、迷惑メールフォルダをご確認いただくか、<br>
+                        <a href="mailto:uranai.rokkon@gmail.com" class="text-link">uranai.rokkon@gmail.com</a>
+                        までお問い合わせください。
+                    </p>
+                    <a href="index.html" class="outline-btn">トップページへ戻る</a>
+                </div>
+            </section>
+
+            <!-- 補足 -->
+            <div class="reserve-notes">
+                <h3 class="reserve-notes-title">ご予約にあたって</h3>
+                <ul class="reserve-notes-list">
+                    <li>鑑定営業時間は 14:00〜22:00（最終受付 21:00）です。ご予約の受付は24時間可能です</li>
+                    <li>お支払いは予約確定後にご案内します（オンライン：PayPay / 銀行振込、対面：当日支払い）</li>
+                    <li>延長は15分ごとに +2,000円です</li>
+                    <li>日時のご都合が悪くなった場合は、確定メールへの返信またはLINEでご連絡ください</li>
+                </ul>
+            </div>
+
+        </div>
+
+        <!-- ページ導線 -->
+        <div class="page-links-container">
+            <a href="index.html" class="page-link-card">
+                <span class="page-link-title">TOP</span>
+                <span class="page-link-desc">トップページ</span>
+            </a>
+            <a href="beginner.html" class="page-link-card">
+                <span class="page-link-title">はじめて</span>
+                <span class="page-link-desc">ご案内</span>
+            </a>
+            <a href="pricing.html" class="page-link-card">
+                <span class="page-link-title">料金案内</span>
+                <span class="page-link-desc">コース・料金</span>
+            </a>
+            <a href="testimonials.html" class="page-link-card">
+                <span class="page-link-title">口コミ</span>
+                <span class="page-link-desc">実際のご感想</span>
+            </a>
+            <a href="faq.html" class="page-link-card">
+                <span class="page-link-title">Q&A</span>
+                <span class="page-link-desc">よくあるご質問</span>
+            </a>
+            <a href="blog.html" class="page-link-card">
+                <span class="page-link-title">ブログ</span>
+                <span class="page-link-desc">コラム</span>
+            </a>
+        </div>
+
+    </main>
+
+    <!-- フッター -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-info">
+                <p class="footer-hours">鑑定営業時間：14:00〜22:00（最終受付 21:00）/ 予約は24H可</p>
+                <p class="footer-contact">お問い合わせ：uranai.rokkon@gmail.com</p>
+                <a href="https://lin.ee/SvZ69l0" class="footer-line-btn" target="_blank">LINE公式アカウント</a>
+            </div>
+            <div class="footer-copy">© 2026 六根清浄 All Rights Reserved.</div>
+        </div>
+    </footer>
+
+    <button type="button" id="back-to-top" class="back-to-top" aria-label="トップへ戻る">↑</button>
+
+    <script src="js/main.js"></script>
+    <script src="js/reserve.js?v=20260611"></script>
+
+</body>
+
+</html>

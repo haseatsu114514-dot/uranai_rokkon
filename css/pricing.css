@@ -1355,3 +1355,31 @@
 .premium-cards-container .course-image-wrapper {
     padding-top: 65%;
 }
+/* ========== フォーム予約ボタン（LINEボタンの隣に並べる） ========== */
+.form-reserve-btn {
+    display: inline-block;
+    padding: 12px 30px;
+    margin-left: 10px;
+    background: transparent;
+    color: #3b3a39;
+    font-size: 1rem;
+    font-weight: 500;
+    border: 1px solid #3b3a39;
+    border-radius: 0;
+    transition: all 0.3s;
+    letter-spacing: 0.05em;
+}
+
+.form-reserve-btn:hover {
+    background: #3b3a39;
+    color: #fff;
+    transform: translateY(-2px);
+    opacity: 1;
+}
+
+@media (max-width: 600px) {
+    .form-reserve-btn {
+        margin-left: 0;
+        margin-top: 10px;
+    }
+}
