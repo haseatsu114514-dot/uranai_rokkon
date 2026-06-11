@@ -131,10 +131,12 @@ node scripts/update_blog.js
 
 ```html
 <div class="notice-item active">
-    <span class="notice-date">2026.03.07</span>
     <span class="notice-text">通常通り鑑定のご予約を受付中です。</span>
 </div>
 ```
+
+日付は出さない運用（更新が止まると古さが目立つため）。期限のある告知だけ
+`<span class="notice-date">2026.03.07</span>` を文頭に足せば日付付きで表示できる。
 
 複数のお知らせを追加する場合は `notice-item` を追加する（最初の1つだけ `active` クラスを付ける）。
 
