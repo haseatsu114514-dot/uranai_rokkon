@@ -7,7 +7,7 @@
 // ★★★ 設定: 予約受付GASのウェブアプリURL（デプロイ後ここに貼る） ★★★
 // 未設定（空文字）の間はフォームを閉じて、LINE予約への案内を表示します
 // ==========================================================
-const RESERVE_ENDPOINT = '';
+const RESERVE_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxKDhJg8_LhjfDkZutgiLapz_VzJL8TlBZFtlgRp-7YrMODBvwV6E_qVJsznORW9Eo_/exec';
 
 (function () {
   'use strict';
