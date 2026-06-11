@@ -160,31 +160,37 @@
                         </div>
                     </fieldset>
 
-                    <!-- 希望日時 -->
+                    <!-- 希望日時（空きのある日時だけが表示される） -->
                     <div class="form-block">
-                        <label class="form-label" for="date1">第一希望日 <span class="required-mark">必須</span></label>
+                        <label class="form-label" for="date1">第一希望日時 <span class="required-mark">必須</span></label>
                         <div class="datetime-row">
-                            <input type="date" id="date1" name="date1" required>
+                            <select id="date1" name="date1" required>
+                                <option value="">空き状況を確認中…</option>
+                            </select>
                             <select id="part1" name="part1" required>
-                                <option value="昼の部（14:00〜16:30）">昼の部（14:00〜16:30）</option>
-                                <option value="夕の部（16:30〜19:00）">夕の部（16:30〜19:00）</option>
-                                <option value="夜の部（19:00〜22:00）">夜の部（19:00〜22:00）</option>
+                                <option value="">時間帯を選択</option>
+                            </select>
+                        </div>
+                        <p class="form-hint">現在ご予約いただける日時のみ表示しています。</p>
+                    </div>
+
+                    <div class="form-block">
+                        <label class="form-label" for="date2">第二希望日時 <span class="optional-mark">任意</span></label>
+                        <div class="datetime-row">
+                            <select id="date2" name="date2">
+                                <option value="">指定しない</option>
+                            </select>
+                            <select id="part2" name="part2">
+                                <option value="">時間帯を選択</option>
                             </select>
                         </div>
                     </div>
 
-                    <div class="form-block">
-                        <label class="form-label" for="date2">第二希望日 <span class="optional-mark">任意</span></label>
-                        <div class="datetime-row">
-                            <input type="date" id="date2" name="date2">
-                            <select id="part2" name="part2">
-                                <option value="">時間帯を選択</option>
-                                <option value="昼の部（14:00〜16:30）">昼の部（14:00〜16:30）</option>
-                                <option value="夕の部（16:30〜19:00）">夕の部（16:30〜19:00）</option>
-                                <option value="夜の部（19:00〜22:00）">夜の部（19:00〜22:00）</option>
-                            </select>
-                        </div>
-                        <p class="form-hint">第一希望が埋まっている場合に優先してご案内します。</p>
+                    <div class="form-error" id="noSlotNotice" hidden>
+                        申し訳ありません、直近の空きが見つかりませんでした。<br>
+                        キャンセルが出る場合もありますので、お手数ですが
+                        <a href="https://lin.ee/SvZ69l0" target="_blank">LINE</a> または
+                        <a href="mailto:uranai.rokkon@gmail.com">メール</a> でご相談ください。
                     </div>
 
                     <!-- お名前 -->
@@ -349,7 +355,7 @@
     <button type="button" id="back-to-top" class="back-to-top" aria-label="トップへ戻る">↑</button>
 
     <script src="js/main.js"></script>
-    <script src="js/reserve.js?v=20260611b"></script>
+    <script src="js/reserve.js?v=20260611c"></script>
 
 </body>
 

@@ -19,31 +19,155 @@ const RESERVE_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxKDhJg8_LhjfD
   var errorBox = document.getElementById('formError');
   var successBox = document.getElementById('formSuccess');
 
-  /* ----- 日付入力の範囲（今日〜90日先） ----- */
-  function initDateRange() {
-    var today = new Date();
-    var max = new Date(today.getTime() + 90 * 24 * 60 * 60 * 1000);
-    function fmt(d) {
-      return d.getFullYear() + '-' +
-        String(d.getMonth() + 1).padStart(2, '0') + '-' +
-        String(d.getDate()).padStart(2, '0');
-    }
-    ['date1', 'date2'].forEach(function (id) {
-      var el = document.getElementById(id);
-      if (el) { el.min = fmt(today); el.max = fmt(max); }
-    });
+  /* ----- 生年月日入力の範囲 ----- */
+  function initBirthdateRange() {
     var birth = document.getElementById('birthdate');
-    if (birth) { birth.min = '1920-01-01'; birth.max = fmt(today); }
+    if (!birth) return;
+    var today = new Date();
+    birth.min = '1920-01-01';
+    birth.max = today.getFullYear() + '-' +
+      String(today.getMonth() + 1).padStart(2, '0') + '-' +
+      String(today.getDate()).padStart(2, '0');
   }
 
-  /* ----- 対面コースでは支払い方法の選択欄を隠す（当日現地払いのため） ----- */
-  function initPayToggle() {
+  /* ==========================================================
+     空き状況（カレンダー連動）
+     GASから「予約可能な日時」を取得し、空きのある日時だけを選択肢に出す。
+     取得に失敗した場合は全日時を出すフォールバックで、フォームは止めない。
+     ========================================================== */
+  var PART_LABELS = {
+    '昼の部': '昼の部（14:00〜16:30）',
+    '夕の部': '夕の部（16:30〜19:00）',
+    '夜の部': '夜の部（19:00〜22:00）'
+  };
+  var availability = null; // null=読込中 / false=取得失敗 / 配列=取得成功
+
+  function fetchAvailability() {
+    fetch(RESERVE_ENDPOINT + '?action=availability&_t=' + Date.now(), { cache: 'no-store' })
+      .then(function (res) { return res.json(); })
+      .then(function (json) {
+        availability = (json && json.status === 'ok' && json.days) ? json.days : false;
+        renderDateOptions();
+      })
+      .catch(function () {
+        availability = false;
+        renderDateOptions();
+      });
+  }
+
+  // フォールバック: 今日から10日分・全時間帯を出す（最終確認は鑑定師が行うため安全）
+  function fallbackDays() {
+    var names = ['日', '月', '火', '水', '木', '金', '土'];
+    var today = new Date();
+    var days = [];
+    for (var i = 0; i < 10; i++) {
+      var d = new Date(today.getFullYear(), today.getMonth(), today.getDate() + i);
+      days.push({
+        date: d.getFullYear() + '-' +
+          String(d.getMonth() + 1).padStart(2, '0') + '-' +
+          String(d.getDate()).padStart(2, '0'),
+        label: (d.getMonth() + 1) + '/' + d.getDate() + '(' + names[d.getDay()] + ')',
+        parts: {
+          '昼の部': { ok30: true, ok60: true },
+          '夕の部': { ok30: true, ok60: true },
+          '夜の部': { ok30: true, ok60: true }
+        }
+      });
+    }
+    return days;
+  }
+
+  function getDays() {
+    if (availability === false) return fallbackDays();
+    return availability || [];
+  }
+
+  function minutesForCourse() {
+    var courseEl = form.querySelector('input[name="course"]:checked');
+    return (courseEl && courseEl.value.indexOf('30分') >= 0) ? 30 : 60;
+  }
+
+  function dayHasSlot(day, minutes) {
+    return Object.keys(PART_LABELS).some(function (p) {
+      return day.parts[p] && day.parts[p]['ok' + minutes];
+    });
+  }
+
+  function setOptions(select, options, placeholder) {
+    var prev = select.value;
+    select.innerHTML = '';
+    var ph = document.createElement('option');
+    ph.value = '';
+    ph.textContent = placeholder;
+    select.appendChild(ph);
+    options.forEach(function (opt) {
+      var o = document.createElement('option');
+      o.value = opt.value;
+      o.textContent = opt.label;
+      select.appendChild(o);
+    });
+    // 選択中の値がまだ有効なら維持する
+    if (prev && options.some(function (o) { return o.value === prev; })) {
+      select.value = prev;
+    }
+  }
+
+  function renderDateOptions() {
+    var date1 = document.getElementById('date1');
+    var date2 = document.getElementById('date2');
+    var noSlot = document.getElementById('noSlotNotice');
+    if (!date1 || !date2) return;
+
+    if (availability === null) return; // まだ読込中
+
+    var minutes = minutesForCourse();
+    var openDays = getDays().filter(function (d) { return dayHasSlot(d, minutes); });
+    var opts = openDays.map(function (d) { return { value: d.date, label: d.label }; });
+
+    setOptions(date1, opts, opts.length ? '日付を選択' : '空きがありません');
+    setOptions(date2, opts, '指定しない');
+    renderPartOptions(1);
+    renderPartOptions(2);
+
+    if (noSlot) noSlot.hidden = opts.length > 0;
+    if (submitBtn) submitBtn.disabled = opts.length === 0;
+  }
+
+  function renderPartOptions(n) {
+    var dateEl = document.getElementById('date' + n);
+    var partEl = document.getElementById('part' + n);
+    if (!dateEl || !partEl) return;
+
+    var minutes = minutesForCourse();
+    var day = getDays().find(function (d) { return d.date === dateEl.value; });
+    var opts = [];
+    if (day) {
+      Object.keys(PART_LABELS).forEach(function (p) {
+        if (day.parts[p] && day.parts[p]['ok' + minutes]) {
+          opts.push({ value: PART_LABELS[p], label: PART_LABELS[p] });
+        }
+      });
+    }
+    setOptions(partEl, opts, '時間帯を選択');
+  }
+
+  function initDateTimePickers() {
+    ['date1', 'date2'].forEach(function (id, i) {
+      var el = document.getElementById(id);
+      if (el) el.addEventListener('change', function () { renderPartOptions(i + 1); });
+    });
+    fetchAvailability();
+  }
+
+  /* ----- コース変更時: 支払い欄の出し分け＋空き日時の再計算 ----- */
+  function initCourseChange() {
     var payBlock = document.getElementById('payBlock');
-    if (!payBlock) return;
     function update() {
-      var courseEl = form.querySelector('input[name="course"]:checked');
-      var isInPerson = courseEl && courseEl.value.indexOf('対面') === 0;
-      payBlock.hidden = isInPerson;
+      if (payBlock) {
+        var courseEl = form.querySelector('input[name="course"]:checked');
+        payBlock.hidden = !!(courseEl && courseEl.value.indexOf('対面') === 0);
+      }
+      renderDateOptions();
     }
     form.querySelectorAll('input[name="course"]').forEach(function (el) {
       el.addEventListener('change', update);
@@ -162,7 +286,9 @@ const RESERVE_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxKDhJg8_LhjfD
       });
   });
 
-  initDateRange();
-  initPayToggle();
-  checkEndpoint();
+  initBirthdateRange();
+  if (checkEndpoint()) {
+    initCourseChange();
+    initDateTimePickers();
+  }
 })();
