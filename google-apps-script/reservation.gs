@@ -8,28 +8,33 @@
  *   4. お客様に受付確認メールを自動返信
  * を行う。
  *
- * セットアップ手順は docs/reservation-form-setup.md を参照。
- * デプロイ: ウェブアプリ／実行ユーザー「自分」／アクセス「全員」
+ * ■ 使い方（詳しくは docs/reservation-form-setup.md）
+ *   1. このファイルを丸ごと GAS に貼り付ける
+ *   2. setup() を一度実行する（記録用シートの作成・リマインドの設定まで全部自動）
+ *   3. ウェブアプリとしてデプロイし、URL を js/reserve.js に貼る
+ *   設定の書き換えは基本的に不要。LINE通知だけ任意で CONFIG に追記する。
  */
 
 // ==========================================================
-// ★★★ 設定（ここだけ書き換えればOK） ★★★
+// ★★★ 設定 ★★★
+// 基本はこのままでOK。LINE通知を使うときだけ2か所を記入する
 // ==========================================================
 var CONFIG = {
   // 通知・自動返信に使うメールアドレス
   NOTIFY_EMAIL: 'uranai.rokkon@gmail.com',
   SHOP_NAME: '占い処 六根清浄',
 
-  // LINE Messaging API（通知用Botのチャネルアクセストークン・自分のユーザーID）
+  // 【任意】LINE通知（通知用Botのチャネルアクセストークン・自分のユーザーID）
   // 空のままならLINE通知はスキップされ、メール通知のみ行う
   LINE_CHANNEL_ACCESS_TOKEN: '',
   LINE_OWNER_USER_ID: '',
 
-  // 予約記録用スプレッドシートのID（URLの /d/ と /edit の間の文字列）
+  // 予約記録用スプレッドシート（空のままでOK: setup() 実行時に自動作成される）
+  // 既存のシートを使いたい場合だけIDを記入する
   SPREADSHEET_ID: '',
   SHEET_NAME: '予約受付',
 
-  // 仮予約を入れるカレンダーID（空ならデフォルトカレンダー）
+  // 仮予約を入れるカレンダーID（空ならメインのカレンダー）
   CALENDAR_ID: '',
 
   // この時間（h）対応されていない予約があればLINEに再通知する
@@ -115,8 +120,31 @@ function validateReservation(data) {
 // ==========================================================
 // スプレッドシート
 // ==========================================================
+
+/**
+ * 記録用スプレッドシートを取得する。
+ * CONFIG.SPREADSHEET_ID が空なら自動で新規作成し、IDを保存して使い回す。
+ */
+function getSpreadsheet() {
+  if (CONFIG.SPREADSHEET_ID) {
+    return SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
+  }
+  var props = PropertiesService.getScriptProperties();
+  var savedId = props.getProperty('SPREADSHEET_ID');
+  if (savedId) {
+    try {
+      return SpreadsheetApp.openById(savedId);
+    } catch (err) {
+      // 保存済みのシートが削除されていたら作り直す
+    }
+  }
+  var ss = SpreadsheetApp.create('予約受付台帳（' + CONFIG.SHOP_NAME + '）');
+  props.setProperty('SPREADSHEET_ID', ss.getId());
+  return ss;
+}
+
 function getSheet() {
-  var ss = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
+  var ss = getSpreadsheet();
   var sheet = ss.getSheetByName(CONFIG.SHEET_NAME);
   if (!sheet) {
     sheet = ss.insertSheet(CONFIG.SHEET_NAME);
@@ -126,10 +154,40 @@ function getSheet() {
   return sheet;
 }
 
-/** 初回に一度だけ手動実行: シートとヘッダー行を作成し、権限承認を済ませる */
-function initSheet() {
+/**
+ * ★ 最初に一度だけ手動実行する関数 ★
+ * 記録用シートの作成・リマインド通知の定期実行・テストメール送信まで全部やる。
+ * 2回実行しても二重登録はされない。
+ */
+function setup() {
+  // 1. 記録用スプレッドシートを準備
   var sheet = getSheet();
-  console.log('シート準備OK: ' + sheet.getParent().getUrl());
+  var url = sheet.getParent().getUrl();
+
+  // 2. 見逃し防止リマインドを1時間ごとに自動実行するよう登録（重複登録は防止）
+  var hasTrigger = ScriptApp.getProjectTriggers().some(function (t) {
+    return t.getHandlerFunction() === 'checkUnhandledReservations';
+  });
+  if (!hasTrigger) {
+    ScriptApp.newTrigger('checkUnhandledReservations')
+      .timeBased()
+      .everyHours(1)
+      .create();
+  }
+
+  // 3. テストメールを送って動作確認
+  MailApp.sendEmail({
+    to: CONFIG.NOTIFY_EMAIL,
+    subject: '【設定完了】予約フォームの準備ができました',
+    body: 'このメールが届いていれば、通知メールの設定はOKです。\n\n' +
+      '予約はこのスプレッドシートに記録されます:\n' + url + '\n\n' +
+      'あとは GAS を「ウェブアプリ」としてデプロイして、\n' +
+      '表示されたURLを js/reserve.js の RESERVE_ENDPOINT に貼れば完成です。',
+    name: CONFIG.SHOP_NAME + ' 予約システム'
+  });
+
+  console.log('✅ 設定完了！ 予約シート: ' + url);
+  console.log('次は「デプロイ」→「新しいデプロイ」→ ウェブアプリ（アクセス: 全員）です');
 }
 
 function recordToSheet(data) {
@@ -223,7 +281,7 @@ function notifyOwnerLine(text) {
 }
 
 function notifyOwnerEmail(data, row) {
-  var sheetUrl = 'https://docs.google.com/spreadsheets/d/' + CONFIG.SPREADSHEET_ID;
+  var sheetUrl = getSheet().getParent().getUrl();
   MailApp.sendEmail({
     to: CONFIG.NOTIFY_EMAIL,
     subject: '【予約】' + formatChoice(data.date1, data.part1) + ' ' + data.course + '（' + data.name + '様）',
