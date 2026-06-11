@@ -42,11 +42,12 @@ var CONFIG = {
   REMIND_AFTER_HOURS: 3
 };
 
-// ===== 空き状況の計算ルール（LINE予約ボットと同じ） =====
-var AVAIL_DAYS = 10;            // 今日から何日分を候補に出すか
+// ===== 空き状況の計算ルール =====
+// 前日予約制: 当日は表示せず、翌日以降のみ受け付ける（当日・緊急はメール問い合わせ）
+var LEAD_DAYS = 1;              // 何日先から予約可にするか（1 = 翌日から）
+var AVAIL_DAYS = 10;            // 予約可の初日から何日分を候補に出すか
 var SLOT_STEP_MIN = 30;         // 30分刻みで枠を探す
 var BUFFER_MIN = 30;            // 既存予定の前後30分は空ける
-var SAME_DAY_LIMIT_HOURS = 5;   // 開始5時間前を過ぎた枠は受付しない
 
 var SHEET_HEADERS = [
   '受付日時', 'お名前', '性別', '生年月日', '出生時間・出生地', 'メール', 'コース',
@@ -120,13 +121,13 @@ function getAvailability() {
   var dayNames = ['日', '月', '火', '水', '木', '金', '土'];
   var days = [];
 
-  for (var i = 0; i < AVAIL_DAYS; i++) {
+  for (var i = LEAD_DAYS; i < LEAD_DAYS + AVAIL_DAYS; i++) {
     var d = new Date(now.getFullYear(), now.getMonth(), now.getDate() + i);
     var parts = {};
     Object.keys(PART_TIMES).forEach(function (partName) {
       parts[partName] = {
-        ok30: hasFreeSlot(cal, d, partName, 30, now),
-        ok60: hasFreeSlot(cal, d, partName, 60, now)
+        ok30: hasFreeSlot(cal, d, partName, 30),
+        ok60: hasFreeSlot(cal, d, partName, 60)
       };
     });
     days.push({
@@ -139,7 +140,7 @@ function getAvailability() {
 }
 
 /** その日のその部に、指定分数の鑑定を入れられる枠が1つでもあるか */
-function hasFreeSlot(cal, day, partName, minutes, now) {
+function hasFreeSlot(cal, day, partName, minutes) {
   var t = PART_TIMES[partName];
   var partStart = new Date(day.getFullYear(), day.getMonth(), day.getDate(), t.startH, t.startM);
   var partEnd = new Date(day.getFullYear(), day.getMonth(), day.getDate(), t.endH, t.endM);
@@ -158,10 +159,7 @@ function hasFreeSlot(cal, day, partName, minutes, now) {
       };
     });
 
-  var earliest = now.getTime() + SAME_DAY_LIMIT_HOURS * 3600 * 1000;
-
   for (var s = partStart.getTime(); s + minutes * 60000 <= partEnd.getTime(); s += SLOT_STEP_MIN * 60000) {
-    if (s < earliest) continue;
     var slotEnd = s + minutes * 60000;
     var conflict = busy.some(function (b) { return s < b.e && slotEnd > b.s; });
     if (!conflict) return true;
