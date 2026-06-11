@@ -23,6 +23,7 @@ uranai_rokkon/
 ├── testimonials.html   # 口コミページ
 ├── faq.html            # Q&A ページ
 ├── blog.html           # ブログ一覧ページ（自動更新される）
+├── reserve.html        # ご予約ページ（LINE / フォームの2導線）
 ├── blog/               # 個別記事ページ（自動生成される）
 │   ├── n633fe53dad05.html
 │   ├── n17d97d65d2bc.html
@@ -35,13 +36,15 @@ uranai_rokkon/
 │   ├── beginner.css    # はじめてページ用
 │   ├── pricing.css     # 料金案内ページ用
 │   ├── testimonials.css# 口コミページ用
-│   └── faq.css         # Q&Aページ用
+│   ├── faq.css         # Q&Aページ用
+│   └── reserve.css     # ご予約ページ用
 ├── js/
 │   ├── main.js         # 全ページ共通JS（ヘッダー・スクロール・予約状況）
 │   ├── blog-feed.js    # ブログ一覧のフィルタリング・ページネーション
 │   ├── calendar.js     # カレンダー・予約枠表示（pricing.htmlで使用）
 │   ├── testimonials.js # 口コミスライダー
-│   └── faq.js          # FAQ アコーディオン
+│   ├── faq.js          # FAQ アコーディオン
+│   └── reserve.js      # 予約フォーム送信（★ RESERVE_ENDPOINT をここで設定）
 ├── scripts/
 │   ├── update_blog.js  # ★ ブログ自動更新スクリプト（GitHub Actionsで実行）
 │   ├── debug_rss.js    # RSS デバッグ用
@@ -51,6 +54,8 @@ uranai_rokkon/
 ├── docs/               # ドキュメント・事業資料
 ├── .github/workflows/
 │   └── update-blog.yml # ★ ブログ自動更新のワークフロー
+├── google-apps-script/
+│   └── reservation.gs  # ★ 予約フォーム受付GAS（通知・自動返信・リマインド）
 ├── rss_proxy.js        # GAS用 RSSプロキシ（参考コード）
 ├── rss_proxy_v2.js     # GAS用 API版プロキシ（参考コード）
 ├── package.json        # Node.js 依存関係
@@ -107,6 +112,16 @@ node scripts/update_blog.js
 - `GAS_WEBAPP_URL` で GAS Web アプリの URL を設定（`js/main.js` で定義）
 - トップページ (`index.html`) に予約状況（昼・夕・夜の部）を動的に表示
 - 21:30以降は自動的に翌日の予約状況を表示
+
+---
+
+## 予約フォーム
+
+- `reserve.html` に LINE 予約とフォーム予約の2導線がある
+- フォーム送信先は GAS（`google-apps-script/reservation.gs`）。スプレッドシート記録・カレンダー仮予約・LINE/メール通知・お客様への自動返信・未対応リマインドを行う
+- ウェブアプリ URL は `js/reserve.js` の `RESERVE_ENDPOINT` に設定する（空のままだとフォームは「準備中」表示になり LINE へ誘導される）
+- セットアップ手順・トラブル対処は `docs/reservation-form-setup.md` を参照
+- 全ページのヘッダー「ご予約」ボタンとスマホ追従ボタンは `reserve.html` に向いている
 
 ---
 
