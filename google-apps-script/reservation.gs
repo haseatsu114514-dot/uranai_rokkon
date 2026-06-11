@@ -8,19 +8,23 @@
  *   4. お客様に受付確認メールを自動返信
  * を行う。
  *
+ * さらに【承認フロー】: シートの「対応状況」列に「確定」と入力すると、
+ *   - オンライン予約 → 確定案内メール（Meet URL・支払い先入り）を自動送信
+ *   - 対面予約 → Gmailに下書きを自動作成（場所を記入して手動送信する）
+ *   第二希望で確定したい場合は「確定2」と入力する。
+ *
  * ■ 使い方（詳しくは docs/reservation-form-setup.md）
  *   1. このファイルを丸ごと GAS に貼り付ける
- *   2. setup() を一度実行する（記録用シートの作成・リマインドの設定まで全部自動）
+ *   2. setup() を一度実行する（シート作成・トリガー設定まで全部自動）
  *   3. ウェブアプリとしてデプロイし、URL を js/reserve.js に貼る
- *   設定の書き換えは基本的に不要。LINE通知だけ任意で CONFIG に追記する。
  */
 
 // ==========================================================
 // ★★★ 設定 ★★★
-// 基本はこのままでOK。LINE通知を使うときだけ2か所を記入する
+// LINE通知・Meet URL・支払い情報の4か所だけ記入する（リポジトリにはコミットしない）
 // ==========================================================
 var CONFIG = {
-  // 通知・自動返信に使うメールアドレス（複数の場合はカンマ区切り）
+  // 通知・自動返信に使うメールアドレス（複数の場合はカンマ区切り。先頭が主アドレス）
   NOTIFY_EMAIL: 'uranai.rokkon@gmail.com,haseatsu114514@gmail.com',
   SHOP_NAME: '占い処 六根清浄',
 
@@ -28,6 +32,13 @@ var CONFIG = {
   // 空のままならLINE通知はスキップされ、メール通知のみ行う
   LINE_CHANNEL_ACCESS_TOKEN: '',
   LINE_OWNER_USER_ID: '',
+
+  // オンライン鑑定の Google Meet URL（確定案内メールに記載される）
+  MEET_URL: '',
+
+  // 支払い案内（確定案内メールに記載される）
+  PAY_PAYPAY_ID: '',   // 例: 'rokkon9119'
+  PAY_BANK_TEXT: '',   // 例: '〇〇銀行（0000）\n〇〇支店（000）\n普通 0000000\n名義'
 
   // 予約記録用スプレッドシート（空のままでOK: setup() 実行時に自動作成される）
   // 既存のシートを使いたい場合だけIDを記入する
@@ -61,6 +72,10 @@ var COL_NAME = 2;
 var COL_CHOICE1 = 8;
 var COL_STATUS = 13;
 var COL_REMINDED = 14;
+
+// 承認フローで使う「対応状況」の値
+var STATUS_CONFIRM_1 = '確定';   // 第一希望で確定
+var STATUS_CONFIRM_2 = '確定2';  // 第二希望で確定
 
 var PART_TIMES = {
   '昼の部': { startH: 14, startM: 0, endH: 16, endM: 30 },
@@ -268,7 +283,18 @@ function setup() {
       .create();
   }
 
-  // 3. テストメールを送って動作確認
+  // 3. 承認フロー: 「対応状況」に「確定」と入力されたら動くトリガーを登録（重複登録は防止）
+  var hasEditTrigger = ScriptApp.getProjectTriggers().some(function (t) {
+    return t.getHandlerFunction() === 'onEditApproval';
+  });
+  if (!hasEditTrigger) {
+    ScriptApp.newTrigger('onEditApproval')
+      .forSpreadsheet(sheet.getParent())
+      .onEdit()
+      .create();
+  }
+
+  // 4. テストメールを送って動作確認
   MailApp.sendEmail({
     to: CONFIG.NOTIFY_EMAIL,
     subject: '【設定完了】予約フォームの準備ができました',
@@ -422,10 +448,222 @@ function sendAutoReply(data) {
 
   MailApp.sendEmail({
     to: data.email,
-    replyTo: CONFIG.NOTIFY_EMAIL,
+    replyTo: primaryEmail(),
     subject: '【' + CONFIG.SHOP_NAME + '】ご予約を受け付けました（確定前）',
     body: body,
     name: CONFIG.SHOP_NAME
+  });
+}
+
+/** 返信先に使う主メールアドレス（NOTIFY_EMAILの先頭） */
+function primaryEmail() {
+  return String(CONFIG.NOTIFY_EMAIL).split(',')[0].trim();
+}
+
+// ==========================================================
+// 承認フロー
+// 「対応状況」列に「確定」（第一希望）または「確定2」（第二希望）と入力すると、
+//   - オンライン予約: 確定案内メールを自動送信 → 成功時のみ「案内済み」に更新
+//   - 対面予約: Gmailに下書きを作成（場所を記入して手動送信）→「下書き作成済」に更新
+// 失敗したときは「送信エラー（要手動対応）」に変えて、LINE+メールで知らせる。
+// ==========================================================
+
+/** インストーラブル onEdit トリガー（setup() が自動登録する） */
+function onEditApproval(e) {
+  try {
+    if (!e || !e.range) return;
+    var sheet = e.range.getSheet();
+    if (sheet.getName() !== CONFIG.SHEET_NAME) return;
+    if (e.range.getColumn() !== COL_STATUS) return;
+    if (e.range.getRow() < 2) return;
+    var value = String(e.range.getValue() || '').trim();
+    if (value !== STATUS_CONFIRM_1 && value !== STATUS_CONFIRM_2) return;
+    processApproval(sheet, e.range.getRow());
+  } catch (err) {
+    console.error('onEditApproval error:', err);
+  }
+}
+
+/** 「確定」のまま残っている行をまとめて処理する（時間トリガーからの保険） */
+function processConfirmedRows() {
+  var sheet = getSheet();
+  var lastRow = sheet.getLastRow();
+  if (lastRow < 2) return;
+  var statuses = sheet.getRange(2, COL_STATUS, lastRow - 1, 1).getValues();
+  statuses.forEach(function (r, i) {
+    var v = String(r[0] || '').trim();
+    if (v === STATUS_CONFIRM_1 || v === STATUS_CONFIRM_2) {
+      processApproval(sheet, i + 2);
+    }
+  });
+}
+
+function processApproval(sheet, rowIndex) {
+  var row = sheet.getRange(rowIndex, 1, 1, SHEET_HEADERS.length).getValues()[0];
+  var status = String(row[COL_STATUS - 1] || '').trim();
+  var r = {
+    name: String(row[1] || ''),
+    email: String(row[5] || ''),
+    course: String(row[6] || ''),
+    choice1: String(row[7] || ''),
+    choice2: String(row[8] || ''),
+    payMethod: String(row[11] || '')
+  };
+  var useSecond = (status === STATUS_CONFIRM_2);
+  var when = useSecond ? r.choice2 : r.choice1;
+  var stamp = Utilities.formatDate(new Date(), 'Asia/Tokyo', 'M/d HH:mm');
+
+  function fail(reason) {
+    sheet.getRange(rowIndex, COL_STATUS).setValue('送信エラー（要手動対応）');
+    var msg = '【エラー】確定案内を送れませんでした\n' +
+      r.name + '様（シート' + rowIndex + '行目）\n' +
+      '理由: ' + reason + '\n\n' +
+      'お手数ですが手動でご案内をお願いします。';
+    safely(function () { notifyOwnerLine(msg); });
+    safely(function () {
+      MailApp.sendEmail({
+        to: CONFIG.NOTIFY_EMAIL,
+        subject: '【エラー】確定案内の自動送信に失敗しました',
+        body: msg + '\n\nシート:\n' + sheet.getParent().getUrl(),
+        name: CONFIG.SHOP_NAME + ' 予約システム'
+      });
+    });
+  }
+
+  if (!when) { fail(useSecond ? '第二希望が空欄です（「確定」で第一希望、「確定2」で第二希望が使われます）' : '第一希望が空欄です'); return; }
+  if (!r.email || r.email.indexOf('@') < 0) { fail('メールアドレスが不正です'); return; }
+
+  var isInPerson = r.course.indexOf('対面') >= 0;
+
+  // ----- 対面: Gmailに下書きを作成（自動送信しない） -----
+  if (isInPerson) {
+    try {
+      GmailApp.createDraft(
+        r.email,
+        '【' + CONFIG.SHOP_NAME + '】ご予約が確定しました（' + when + '）',
+        buildInPersonBody(r, when)
+      );
+      sheet.getRange(rowIndex, COL_STATUS).setValue('下書き作成済 ' + stamp);
+      safely(function () {
+        notifyOwnerLine(
+          '【対面予約の確定】下書きを作成しました\n' +
+          r.name + '様（' + when + '）\n\n' +
+          'Gmailの「下書き」を開いて、待ち合わせ場所の【★】の部分を記入してから送信してください。\n' +
+          '送信したらシートの「対応状況」を「案内済み」に変えてください。'
+        );
+      });
+    } catch (err) {
+      fail(String(err));
+    }
+    return;
+  }
+
+  // ----- オンライン: 確定案内メールを自動送信 -----
+  if (!CONFIG.MEET_URL) { fail('CONFIG.MEET_URL（Google MeetのURL）が未設定です'); return; }
+  var payText = buildPayText(r.payMethod);
+  if (!payText) { fail('支払い情報（CONFIG.PAY_PAYPAY_ID / PAY_BANK_TEXT）が未設定です'); return; }
+
+  try {
+    MailApp.sendEmail({
+      to: r.email,
+      replyTo: primaryEmail(),
+      subject: '【' + CONFIG.SHOP_NAME + '】ご予約が確定しました（' + when + '）',
+      body: buildOnlineBody(r, when, payText),
+      name: CONFIG.SHOP_NAME
+    });
+    sheet.getRange(rowIndex, COL_STATUS).setValue('案内済み ' + stamp);
+    safely(function () { renameTentativeEvent(r.name); });
+    safely(function () {
+      notifyOwnerLine(
+        '【確定案内 送信完了】\n' +
+        r.name + '様（' + when + '・' + r.course + '）\n' +
+        '支払い希望: ' + (r.payMethod || '未選択') + '\n\n' +
+        '念のため、当日までにMeet URLが開けるか確認しておいてください。'
+      );
+    });
+  } catch (err) {
+    fail(String(err));
+  }
+}
+
+/** コース文字列から料金部分を取り出す（例: 「オンライン30分（5,000円）」→「5,000円」） */
+function coursePrice(course) {
+  var m = String(course).match(/（([\d,]+円)）/);
+  return m ? m[1] + '（税込）' : '';
+}
+
+/** 支払い希望に応じた案内文。設定が足りなければ null を返す */
+function buildPayText(payMethod) {
+  var m = String(payMethod || '');
+  var paypay = CONFIG.PAY_PAYPAY_ID
+    ? 'PayPay ID「' + CONFIG.PAY_PAYPAY_ID + '」宛に料金をお送りください。'
+    : '';
+  var bank = CONFIG.PAY_BANK_TEXT
+    ? '下記の口座に料金をお振り込みください。\n\n' + CONFIG.PAY_BANK_TEXT
+    : '';
+
+  var text;
+  if (m.indexOf('PayPay') >= 0) text = paypay;
+  else if (m.indexOf('振込') >= 0) text = bank;
+  else text = [paypay, bank].filter(function (t) { return t; }).join('\n\nまたは\n\n');
+
+  if (!text) return null;
+  return text + '\n\nお手続きが済みましたら、このメールに「お支払いしました」と一言ご返信ください。';
+}
+
+function buildOnlineBody(r, when, payText) {
+  var price = coursePrice(r.course);
+  return r.name + ' 様\n\n' +
+    'お待たせいたしました。以下の内容でご予約が確定しました。\n\n' +
+    '────────────────\n' +
+    '日時: ' + when + '\n' +
+    'コース: ' + r.course + '\n' +
+    (price ? '料金: ' + price + '\n' : '') +
+    '────────────────\n\n' +
+    '【当日の参加方法】\n' +
+    'お時間になりましたら、こちらのURLからご参加ください。\n' +
+    CONFIG.MEET_URL + '\n' +
+    '※URLを開くだけで参加できます。アプリ登録・会員登録は不要です。\n\n' +
+    '【お支払いのご案内】\n' +
+    payText + '\n\n' +
+    '※日時のご都合が悪くなった場合は、このメールへの返信でご連絡ください。\n\n' +
+    '当日お話しできるのを楽しみにしております。\n\n' +
+    '────────────────\n' +
+    CONFIG.SHOP_NAME + '\n' +
+    'https://uranai-rokkon.com/\n' +
+    'お問い合わせ: ' + primaryEmail() + '\n';
+}
+
+function buildInPersonBody(r, when) {
+  var price = coursePrice(r.course);
+  return r.name + ' 様\n\n' +
+    'お待たせいたしました。以下の内容でご予約が確定しました。\n\n' +
+    '────────────────\n' +
+    '日時: ' + when + '\n' +
+    'コース: ' + r.course + '\n' +
+    (price ? '料金: ' + price + '（当日、現地でお支払いください）\n' : '') +
+    '────────────────\n\n' +
+    '【待ち合わせ場所】\n' +
+    '【★待ち合わせ場所をここに記入★】\n\n' +
+    '当日はどうぞお気をつけてお越しください。\n' +
+    '※日時のご都合が悪くなった場合は、このメールへの返信でご連絡ください。\n\n' +
+    '────────────────\n' +
+    CONFIG.SHOP_NAME + '\n' +
+    'https://uranai-rokkon.com/\n' +
+    'お問い合わせ: ' + primaryEmail() + '\n';
+}
+
+/** カレンダーの【仮】イベントを【確定】に改名する（見つからなくても何もしない） */
+function renameTentativeEvent(name) {
+  var cal = getCalendar();
+  if (!cal) return;
+  var now = new Date();
+  var until = new Date(now.getTime() + 60 * 24 * 3600 * 1000);
+  cal.getEvents(now, until).forEach(function (ev) {
+    var title = ev.getTitle();
+    if (title.indexOf('【仮】' + name + '様') === 0) {
+      ev.setTitle(title.replace('【仮】', '【確定】'));
+    }
   });
 }
 
@@ -433,6 +671,9 @@ function sendAutoReply(data) {
 // 未対応リマインド（時間主導トリガーで1時間ごとに実行する）
 // ==========================================================
 function checkUnhandledReservations() {
+  // onEditトリガーが効かなかった場合の保険として、「確定」のままの行を先に処理する
+  safely(processConfirmedRows);
+
   var sheet = getSheet();
   var lastRow = sheet.getLastRow();
   if (lastRow < 2) return;

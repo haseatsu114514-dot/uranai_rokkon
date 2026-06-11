@@ -1,5 +1,9 @@
 # 引き継ぎ仕様書: 予約の承認フロー自動化
 
+> **✅ 2026-06 実装済み**（`google-apps-script/reservation.gs` の「承認フロー」セクション）。
+> Meet URL の生存確認は妥協案（固定URL＋オーナーへの確認リマインド通知）を採用。
+> 運用方法は `docs/reservation-form-setup.md` の「日々の運用」を参照。
+
 このドキュメントは、予約システムに「承認 → 確定案内の自動化」を追加実装するための仕様書。
 実装前に必ず `CLAUDE.md` と `docs/reservation-form-setup.md` を読むこと。
 
