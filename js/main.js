@@ -299,7 +299,7 @@ async function updateAvailability() {
 
     const normalNote = document.querySelector('.availability-note');
     if (normalNote) {
-      normalNote.innerHTML = '※詳しい空き時刻は<strong>LINE</strong>でご確認ください<br>（予約可能な時間のみご案内します）<br><span style="font-size: 0.75rem; color: #999;">※21:30以降は翌日の予約状況を表示します</span>';
+      normalNote.innerHTML = '※空き状況は<strong>予約フォーム</strong>でご確認ください<br>（空きのある日時のみ表示されます）<br><span style="font-size: 0.75rem; color: #999;">※21:30以降は翌日の予約状況を表示します</span>';
       normalNote.style.display = 'block';
     }
   }
@@ -313,15 +313,15 @@ function updateBadge(partKey, status) {
   badge.className = 'part-badge';
   badge.style.opacity = '1';
 
-  // LINE URL
-  const LINE_URL = 'https://lin.ee/SvZ69l0';
+  // 予約ページURL
+  const RESERVE_URL = 'reserve.html';
 
   // 共通のクリック設定関数
   const setClickable = (isClickable) => {
     if (isClickable) {
       badge.style.cursor = 'pointer';
-      badge.setAttribute('title', 'LINEで予約する');
-      badge.onclick = function () { window.location.href = LINE_URL; };
+      badge.setAttribute('title', 'フォームで予約する');
+      badge.onclick = function () { window.location.href = RESERVE_URL; };
     } else {
       badge.style.cursor = 'default';
       badge.removeAttribute('title');
@@ -342,7 +342,7 @@ function updateBadge(partKey, status) {
       break;
     case 'error':
       badge.classList.add('limited');
-      badge.textContent = 'LINE確認';
+      badge.textContent = '要確認';
       setClickable(true);
       break;
     case 'full':
@@ -371,7 +371,7 @@ function checkAllFull(day, evening, night) {
     // 読み込み完了後は元の注意書きに戻す
     const normalNote = document.querySelector('.availability-note');
     if (normalNote) {
-      normalNote.innerHTML = '※詳しい空き時刻はLINEでご確認<br>（予約可能な時間のみご案内します）<br><span style="font-size: 0.75rem; color: #999;">※21:30以降は翌日の予約状況を表示します</span>';
+      normalNote.innerHTML = '※予約フォームには空きのある日時のみ表示されます<br><span style="font-size: 0.75rem; color: #999;">※21:30以降は翌日の予約状況を表示します</span>';
       normalNote.style.display = 'block';
     }
   }

@@ -181,7 +181,7 @@ const RESERVE_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxKDhJg8_LhjfD
     form.innerHTML =
       '<p style="text-align:center; line-height:2; color:#666; font-size:0.9rem;">' +
       'フォーム予約は現在準備中です。<br>' +
-      'お手数ですが、上の<strong>LINEで予約</strong>からご予約ください。</p>';
+      'お手数ですが、<a href="mailto:uranai.rokkon@gmail.com">メール</a>にてご予約ください。</p>';
     return false;
   }
 
@@ -276,7 +276,6 @@ const RESERVE_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxKDhJg8_LhjfD
         console.error('予約フォーム送信エラー:', err);
         showError(
           '送信に失敗しました。お手数ですが、時間をおいて再度お試しいただくか、' +
-          '<a href="https://lin.ee/SvZ69l0" target="_blank">LINE</a> または ' +
           '<a href="mailto:uranai.rokkon@gmail.com">メール</a> でご予約ください。'
         );
       })
