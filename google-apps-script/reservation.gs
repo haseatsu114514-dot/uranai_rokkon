@@ -73,9 +73,17 @@ var COL_CHOICE1 = 8;
 var COL_STATUS = 13;
 var COL_REMINDED = 14;
 
-// 承認フローで使う「対応状況」の値
-var STATUS_CONFIRM_1 = '確定';   // 第一希望で確定
-var STATUS_CONFIRM_2 = '確定2';  // 第二希望で確定
+// 承認フローで使う「対応状況」の値（プルダウンで選ぶ）
+var STATUS_CONFIRM_1 = '確定';        // 第一希望で確定 → 確定案内を自動送信/下書き作成
+var STATUS_CONFIRM_2 = '確定2';       // 第二希望で確定（あとは同じ）
+var STATUS_RESCHEDULE = '別日提案';   // 希望日が取れない → 空き日時リスト入りの調整メールを自動送信
+var STATUS_DECLINE = 'お断り';        // ご案内できない → お断りメールを自動送信
+
+// プルダウンに出す選択肢（下3つは手動運用向け: 選んでも自動処理はされない）
+var STATUS_DROPDOWN = [
+  STATUS_CONFIRM_1, STATUS_CONFIRM_2, STATUS_RESCHEDULE, STATUS_DECLINE,
+  '保留', '対応済み', '案内済み'
+];
 
 var PART_TIMES = {
   '昼の部': { startH: 14, startM: 0, endH: 16, endM: 30 },
@@ -271,6 +279,13 @@ function setup() {
   // 1. 記録用スプレッドシートを準備
   var sheet = getSheet();
   var url = sheet.getParent().getUrl();
+
+  // 1-2. 「対応状況」列にプルダウンを設定（スクリプトが書く値も許可する緩い検証）
+  var rule = SpreadsheetApp.newDataValidation()
+    .requireValueInList(STATUS_DROPDOWN, true)
+    .setAllowInvalid(true)
+    .build();
+  sheet.getRange(2, COL_STATUS, sheet.getMaxRows() - 1, 1).setDataValidation(rule);
 
   // 2. 見逃し防止リマインドを1時間ごとに自動実行するよう登録（重複登録は防止）
   var hasTrigger = ScriptApp.getProjectTriggers().some(function (t) {
@@ -468,6 +483,12 @@ function primaryEmail() {
 // 失敗したときは「送信エラー（要手動対応）」に変えて、LINE+メールで知らせる。
 // ==========================================================
 
+/** 自動処理の対象になる「対応状況」の値か */
+function isActionStatus(value) {
+  return value === STATUS_CONFIRM_1 || value === STATUS_CONFIRM_2 ||
+    value === STATUS_RESCHEDULE || value === STATUS_DECLINE;
+}
+
 /** インストーラブル onEdit トリガー（setup() が自動登録する） */
 function onEditApproval(e) {
   try {
@@ -477,22 +498,21 @@ function onEditApproval(e) {
     if (e.range.getColumn() !== COL_STATUS) return;
     if (e.range.getRow() < 2) return;
     var value = String(e.range.getValue() || '').trim();
-    if (value !== STATUS_CONFIRM_1 && value !== STATUS_CONFIRM_2) return;
+    if (!isActionStatus(value)) return;
     processApproval(sheet, e.range.getRow());
   } catch (err) {
     console.error('onEditApproval error:', err);
   }
 }
 
-/** 「確定」のまま残っている行をまとめて処理する（時間トリガーからの保険） */
+/** 未処理のまま残っている行をまとめて処理する（時間トリガーからの保険） */
 function processConfirmedRows() {
   var sheet = getSheet();
   var lastRow = sheet.getLastRow();
   if (lastRow < 2) return;
   var statuses = sheet.getRange(2, COL_STATUS, lastRow - 1, 1).getValues();
   statuses.forEach(function (r, i) {
-    var v = String(r[0] || '').trim();
-    if (v === STATUS_CONFIRM_1 || v === STATUS_CONFIRM_2) {
+    if (isActionStatus(String(r[0] || '').trim())) {
       processApproval(sheet, i + 2);
     }
   });
@@ -530,8 +550,56 @@ function processApproval(sheet, rowIndex) {
     });
   }
 
-  if (!when) { fail(useSecond ? '第二希望が空欄です（「確定」で第一希望、「確定2」で第二希望が使われます）' : '第一希望が空欄です'); return; }
   if (!r.email || r.email.indexOf('@') < 0) { fail('メールアドレスが不正です'); return; }
+
+  // ----- お断り: お断りメールを自動送信 -----
+  if (status === STATUS_DECLINE) {
+    try {
+      MailApp.sendEmail({
+        to: r.email,
+        replyTo: primaryEmail(),
+        subject: '【' + CONFIG.SHOP_NAME + '】ご予約について',
+        body: buildDeclineBody(r),
+        name: CONFIG.SHOP_NAME
+      });
+      sheet.getRange(rowIndex, COL_STATUS).setValue('お断り済 ' + stamp);
+      safely(function () { deleteTentativeEvent(r.name); });
+      safely(function () {
+        notifyOwnerLine('【お断りメール 送信完了】\n' + r.name + '様（' + r.choice1 + '）');
+      });
+    } catch (err) {
+      fail(String(err));
+    }
+    return;
+  }
+
+  // ----- 別日提案: 空き日時リスト入りの調整メールを自動送信 -----
+  if (status === STATUS_RESCHEDULE) {
+    var listText = buildOpenSlotsText(r.course);
+    if (!listText) { fail('直近に空きがないため、別日提案を自動で送れませんでした。手動でご案内ください'); return; }
+    try {
+      MailApp.sendEmail({
+        to: r.email,
+        replyTo: primaryEmail(),
+        subject: '【' + CONFIG.SHOP_NAME + '】ご希望日時の調整のお願い',
+        body: buildRescheduleBody(r, listText),
+        name: CONFIG.SHOP_NAME
+      });
+      sheet.getRange(rowIndex, COL_STATUS).setValue('別日提案済 ' + stamp);
+      safely(function () { deleteTentativeEvent(r.name); });
+      safely(function () {
+        notifyOwnerLine(
+          '【別日提案メール 送信完了】\n' + r.name + '様\n\n' +
+          'お客様から返信が来たら、シートの「第一希望」をその日時に書き換えてから「確定」を選んでください。いつもの確定案内が自動で送られます。'
+        );
+      });
+    } catch (err) {
+      fail(String(err));
+    }
+    return;
+  }
+
+  if (!when) { fail(useSecond ? '第二希望が空欄です（「確定」で第一希望、「確定2」で第二希望が使われます）' : '第一希望が空欄です'); return; }
 
   var isInPerson = r.course.indexOf('対面') >= 0;
 
@@ -651,6 +719,73 @@ function buildInPersonBody(r, when) {
     CONFIG.SHOP_NAME + '\n' +
     'https://uranai-rokkon.com/\n' +
     'お問い合わせ: ' + primaryEmail() + '\n';
+}
+
+/** 時間帯の表示名（例: 昼の部（14:00〜16:30）） */
+function partLabel(partName) {
+  var t = PART_TIMES[partName];
+  function hm(h, m) { return h + ':' + (m < 10 ? '0' : '') + m; }
+  return partName + '（' + hm(t.startH, t.startM) + '〜' + hm(t.endH, t.endM) + '）';
+}
+
+/** 現在ご案内できる日時の一覧テキスト。空きがなければ null */
+function buildOpenSlotsText(course) {
+  var minutes = String(course).indexOf('30分') >= 0 ? 30 : 60;
+  var lines = [];
+  getAvailability().forEach(function (day) {
+    var open = Object.keys(PART_TIMES).filter(function (p) {
+      return day.parts[p] && day.parts[p]['ok' + minutes];
+    });
+    if (open.length) {
+      lines.push('・' + day.label + '　' + open.map(partLabel).join(' ／ '));
+    }
+  });
+  return lines.length ? lines.join('\n') : null;
+}
+
+function buildRescheduleBody(r, listText) {
+  var wished = r.choice1 + (r.choice2 ? '、' + r.choice2 : '');
+  return r.name + ' 様\n\n' +
+    'この度は「' + CONFIG.SHOP_NAME + '」にご予約のお申し込みをいただき、\n' +
+    'ありがとうございます。\n\n' +
+    '大変申し訳ありませんが、ご希望いただいた日時（' + wished + '）は\n' +
+    'あいにくご案内が難しい状況です。\n\n' +
+    '現在、以下の日時でしたらご案内できます。\n\n' +
+    listText + '\n\n' +
+    'ご都合の合う日時がございましたら、【このメールへの返信】で\n' +
+    'お知らせください。フォームをもう一度入力していただく必要はありません。\n\n' +
+    'どの日時も難しい場合も、ご都合をご返信いただければ調整いたします。\n\n' +
+    '────────────────\n' +
+    CONFIG.SHOP_NAME + '\n' +
+    'https://uranai-rokkon.com/\n' +
+    'お問い合わせ: ' + primaryEmail() + '\n';
+}
+
+function buildDeclineBody(r) {
+  return r.name + ' 様\n\n' +
+    'この度は「' + CONFIG.SHOP_NAME + '」にご予約のお申し込みをいただき、\n' +
+    'ありがとうございます。\n\n' +
+    '大変申し訳ありませんが、あいにく日程の確保が難しく、\n' +
+    '今回はご案内ができかねる状況です。\n\n' +
+    'せっかくお申し込みいただいたのに申し訳ありません。\n' +
+    'またの機会にご利用いただけますと幸いです。\n\n' +
+    '────────────────\n' +
+    CONFIG.SHOP_NAME + '\n' +
+    'https://uranai-rokkon.com/\n' +
+    'お問い合わせ: ' + primaryEmail() + '\n';
+}
+
+/** カレンダーの【仮】イベントを削除する（別日提案・お断り用。見つからなければ何もしない） */
+function deleteTentativeEvent(name) {
+  var cal = getCalendar();
+  if (!cal) return;
+  var now = new Date();
+  var until = new Date(now.getTime() + 60 * 24 * 3600 * 1000);
+  cal.getEvents(now, until).forEach(function (ev) {
+    if (ev.getTitle().indexOf('【仮】' + name + '様') === 0) {
+      ev.deleteEvent();
+    }
+  });
 }
 
 /** カレンダーの【仮】イベントを【確定】に改名する（見つからなくても何もしない） */
