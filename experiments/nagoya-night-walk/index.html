@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>名古屋ナイトウォーク｜NAGOYA NIGHT WALK</title>
+<meta name="description" content="名古屋・栄の夜を一人称で歩く実験的3Dシティウォーク。Three.js + WebGL。" />
+<style>
+  :root{
+    --neon-pink:#ff2d95;
+    --neon-cyan:#16e0ff;
+    --neon-purple:#9b5cff;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{width:100%;height:100%;overflow:hidden;background:#04060e;color:#eef;
+    font-family:"Shippori Mincho","Hiragino Mincho ProN",serif;-webkit-user-select:none;user-select:none;}
+  #app{position:fixed;inset:0;}
+  canvas{display:block;}
+
+  /* ---- 読み込み画面 ---- */
+  #loader{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:22px;
+    background:radial-gradient(120% 100% at 50% 30%,#0a1430 0%,#04060e 70%);
+    transition:opacity .9s ease;}
+  #loader.hidden{opacity:0;pointer-events:none;}
+  .logo{font-size:clamp(28px,7vw,56px);letter-spacing:.18em;
+    text-shadow:0 0 18px var(--neon-cyan),0 0 40px rgba(22,224,255,.5);}
+  .logo .sub{display:block;font-size:.32em;letter-spacing:.5em;margin-top:.6em;
+    color:#9fb6ff;text-shadow:0 0 10px rgba(159,182,255,.6);}
+  .bar{width:min(320px,70vw);height:3px;background:rgba(255,255,255,.12);border-radius:2px;overflow:hidden;}
+  .bar > i{display:block;height:100%;width:0%;
+    background:linear-gradient(90deg,var(--neon-purple),var(--neon-pink),var(--neon-cyan));
+    box-shadow:0 0 12px var(--neon-pink);transition:width .3s ease;}
+  #loadTxt{font-size:12px;letter-spacing:.3em;color:#7f93c8;}
+
+  /* ---- 操作説明 ---- */
+  #intro{position:fixed;inset:0;z-index:40;display:none;flex-direction:column;
+    align-items:center;justify-content:center;gap:26px;text-align:center;
+    background:rgba(4,6,14,.62);backdrop-filter:blur(3px);}
+  #intro.show{display:flex;}
+  #intro h1{font-size:clamp(24px,5vw,40px);letter-spacing:.16em;
+    text-shadow:0 0 16px var(--neon-pink);}
+  #intro .keys{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;max-width:560px;}
+  .key{padding:10px 14px;border:1px solid rgba(255,255,255,.22);border-radius:10px;
+    background:rgba(255,255,255,.04);font-size:13px;letter-spacing:.08em;min-width:96px;}
+  .key b{display:block;font-size:17px;margin-bottom:4px;color:var(--neon-cyan);
+    text-shadow:0 0 10px rgba(22,224,255,.7);}
+  #startBtn{margin-top:6px;padding:14px 40px;font-family:inherit;font-size:16px;letter-spacing:.3em;
+    color:#04060e;cursor:pointer;border:none;border-radius:40px;
+    background:linear-gradient(90deg,var(--neon-cyan),#7ef0ff);
+    box-shadow:0 0 26px rgba(22,224,255,.65);transition:transform .15s;}
+  #startBtn:hover{transform:scale(1.05);}
+  .hint{font-size:11px;color:#6f83b8;letter-spacing:.2em;}
+
+  /* ---- HUD ---- */
+  #hud{position:fixed;inset:0;z-index:20;pointer-events:none;opacity:0;transition:opacity .6s;}
+  #hud.show{opacity:1;}
+  #place{position:absolute;top:20px;left:22px;font-size:13px;letter-spacing:.32em;
+    color:#cfe0ff;text-shadow:0 0 12px rgba(22,224,255,.5);}
+  #place b{display:block;font-size:22px;letter-spacing:.22em;margin-bottom:2px;
+    text-shadow:0 0 16px var(--neon-pink);}
+  #clock{position:absolute;top:22px;right:24px;font-size:24px;letter-spacing:.18em;
+    color:#dfe9ff;text-shadow:0 0 12px rgba(155,92,255,.7);}
+  #compass{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);
+    font-size:12px;letter-spacing:.5em;color:#9fb6ff;}
+  #cross{position:absolute;top:50%;left:50%;width:6px;height:6px;margin:-3px 0 0 -3px;
+    border-radius:50%;background:rgba(255,255,255,.55);box-shadow:0 0 8px rgba(255,255,255,.8);}
+  #foot{position:absolute;bottom:18px;right:20px;font-size:10px;letter-spacing:.18em;color:#5d6fa0;}
+
+  /* ---- モバイル操作 ---- */
+  #joy{position:fixed;left:24px;bottom:24px;width:128px;height:128px;z-index:25;
+    border-radius:50%;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.04);
+    display:none;touch-action:none;}
+  #joy > i{position:absolute;left:50%;top:50%;width:54px;height:54px;margin:-27px 0 0 -27px;
+    border-radius:50%;background:rgba(22,224,255,.35);box-shadow:0 0 18px rgba(22,224,255,.6);}
+  .touch #joy{display:block;}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<div id="loader">
+  <div class="logo">名古屋<span class="sub">N A G O Y A &nbsp; N I G H T &nbsp; W A L K</span></div>
+  <div class="bar"><i id="barFill"></i></div>
+  <div id="loadTxt">街を構築しています…</div>
+</div>
+
+<div id="intro">
+  <h1>栄の夜を歩く</h1>
+  <div class="keys">
+    <div class="key"><b>W / S</b>前進・後退</div>
+    <div class="key"><b>A / D</b>90°振り向く</div>
+    <div class="key"><b>SHIFT</b>走る</div>
+    <div class="key"><b>SPACE</b>見上げる</div>
+  </div>
+  <button id="startBtn">クリックして歩き出す</button>
+  <div class="hint">向ける方向は 東西南北の4方向 ／ ESC で一時停止 ／ スマホは左下スティックで移動・左右で振り向き</div>
+</div>
+
+<div id="hud">
+  <div id="place"><b>栄 SAKAE</b>名古屋市 中区</div>
+  <div id="clock">23:47</div>
+  <div id="cross"></div>
+  <div id="compass">・ N ・</div>
+  <div id="foot">EXPERIMENT — THREE.js / WebGL</div>
+</div>
+<div id="joy"><i></i></div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { Reflector } from 'three/addons/objects/Reflector.js';
+
+/* =========================================================
+   名古屋ナイトウォーク
+   - 一人称で歩ける夜の街（名古屋・栄をイメージ）
+   - 手続き的に生成したビル群／ネオン看板／テレビ塔
+   - 濡れたアスファルトの反射 + Bloom で“夜”を作る
+   ========================================================= */
+
+const COLORS = {
+  bg: 0x070a16,
+  fog: 0x0a1024,
+  road: 0x0b0d14,
+};
+// ネオンのパレット（彩度高め）
+const NEON = [
+  '#ff2d95', '#16e0ff', '#9b5cff', '#ff3b3b',
+  '#ffc154', '#39ff88', '#2d7bff', '#ff7ad9'
+];
+// 看板に載せる言葉（名古屋らしさ多め）
+const SIGN_WORDS = [
+  '味噌','手羽先','ひつまぶし','天むす','きしめん','喫茶','モーニング',
+  '居酒屋','らーめん','寿司','餃子','カラオケ','バー','ホテル','BAR',
+  '純喫茶','焼鳥','酒','栄','大須','名古屋','錦','夜','珈琲','麻雀',
+  'スナック','レコード','古着','銭湯','串かつ','どて煮','台湾'
+];
+
+/* ---------- 乱数（再現性のため簡易シード付き） ---------- */
+let _seed = 20260611;
+function rnd(){ _seed = (_seed*1664525 + 1013904223) & 0xffffffff; return ((_seed>>>0)/0xffffffff); }
+function rRange(a,b){ return a + (b-a)*rnd(); }
+function rPick(arr){ return arr[(rnd()*arr.length)|0]; }
+
+/* =========================================================
+   レンダラ / シーン / カメラ
+   ========================================================= */
+const app = document.getElementById('app');
+const renderer = new THREE.WebGLRenderer({ antialias:true, powerPreference:'high-performance' });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.05;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+app.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(COLORS.bg);
+scene.fog = new THREE.FogExp2(COLORS.fog, 0.0125);
+
+const camera = new THREE.PerspectiveCamera(72, innerWidth/innerHeight, 0.1, 1400);
+camera.rotation.order='YXZ';
+const EYE = 2.2;
+camera.position.set(0, EYE, 150); // 南端スタート、北（テレビ塔）を向く
+
+/* =========================================================
+   ライティング（夜：弱い環境光 + 都市光のかぶり + 月）
+   ========================================================= */
+scene.add(new THREE.AmbientLight(0x223055, 0.55));
+const hemi = new THREE.HemisphereLight(0x3a4a82, 0x0a0c14, 0.55);
+scene.add(hemi);
+// 月明かり
+const moon = new THREE.DirectionalLight(0x9fb6ff, 0.45);
+moon.position.set(-120, 180, -60);
+moon.castShadow = true;
+moon.shadow.mapSize.set(2048,2048);
+moon.shadow.camera.near = 10; moon.shadow.camera.far = 600;
+const sc = 240; const c = moon.shadow.camera;
+c.left=-sc; c.right=sc; c.top=sc; c.bottom=-sc; c.updateProjectionMatrix();
+moon.shadow.bias = -0.0006;
+scene.add(moon);
+
+/* =========================================================
+   空：天頂の濃紺 → 地平の都市光オレンジのグラデーション + 月 + 星
+   ========================================================= */
+function buildSky(){
+  const uniforms = {
+    top:    { value: new THREE.Color(0x05070f) },
+    mid:    { value: new THREE.Color(0x121a3a) },
+    bottom: { value: new THREE.Color(0x3a2740) }, // 地平の光害（暖色）
+    offset: { value: 12 },
+    exp:    { value: 0.7 }
+  };
+  const mat = new THREE.ShaderMaterial({
+    side: THREE.BackSide, depthWrite:false, uniforms,
+    vertexShader:`varying vec3 vP; void main(){ vP=position; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,
+    fragmentShader:`
+      varying vec3 vP; uniform vec3 top,mid,bottom; uniform float offset,exp;
+      void main(){
+        float h = normalize(vP+vec3(0.0,offset,0.0)).y;
+        vec3 col;
+        if(h>0.0){ col = mix(mid, top, pow(clamp(h,0.0,1.0),exp)); }
+        else { col = mix(mid, bottom, pow(clamp(-h*2.2,0.0,1.0),0.6)); }
+        gl_FragColor = vec4(col,1.0);
+      }`
+  });
+  scene.add(new THREE.Mesh(new THREE.SphereGeometry(900,32,16), mat));
+
+  // 星
+  const N=900, pos=new Float32Array(N*3);
+  for(let i=0;i<N;i++){
+    const v=new THREE.Vector3().randomDirection().multiplyScalar(820);
+    if(v.y<40) v.y = 40 + Math.abs(v.y)*0.4;
+    pos[i*3]=v.x; pos[i*3+1]=v.y; pos[i*3+2]=v.z;
+  }
+  const g=new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.BufferAttribute(pos,3));
+  const stars=new THREE.Points(g, new THREE.PointsMaterial({color:0xbcd0ff,size:1.5,sizeAttenuation:false,transparent:true,opacity:.85,depthWrite:false}));
+  scene.add(stars);
+
+  // 月
+  const moonMesh=new THREE.Mesh(new THREE.CircleGeometry(26,40),
+    new THREE.MeshBasicMaterial({color:0xfff4d8, toneMapped:false}));
+  moonMesh.position.set(-300,360,-260);
+  moonMesh.lookAt(0,0,0);
+  scene.add(moonMesh);
+  const halo=new THREE.Mesh(new THREE.CircleGeometry(60,40),
+    new THREE.MeshBasicMaterial({color:0x9fb6ff,transparent:true,opacity:.18,toneMapped:false}));
+  halo.position.copy(moonMesh.position).add(new THREE.Vector3(0,0,2));
+  halo.lookAt(0,0,0); scene.add(halo);
+}
+buildSky();
+
+/* =========================================================
+   テクスチャ生成：窓（光る窓グリッド）
+   ========================================================= */
+function makeWindowTexture(){
+  const cv=document.createElement('canvas'); cv.width=cv.height=128;
+  const x=cv.getContext('2d');
+  x.fillStyle='#05060a'; x.fillRect(0,0,128,128);
+  const cols=8, rows=8, pad=3;
+  const cw=(128-pad*(cols+1))/cols, ch=(128-pad*(rows+1))/rows;
+  const warm=['#ffd98a','#ffcf6e','#fff0c0','#bfe6ff','#cfeaff','#ffb86b'];
+  for(let i=0;i<rows;i++)for(let j=0;j<cols;j++){
+    const on = rnd()<0.52;
+    if(on){
+      const col=warm[(rnd()*warm.length)|0];
+      x.fillStyle=col;
+      const dim = rnd()<0.5 ? 1 : 0.7;
+      x.globalAlpha = dim;
+      x.fillRect(pad+j*(cw+pad), pad+i*(ch+pad), cw, ch);
+      x.globalAlpha=1;
+    } else {
+      x.fillStyle='#0a0d16';
+      x.fillRect(pad+j*(cw+pad), pad+i*(ch+pad), cw, ch);
+    }
+  }
+  const t=new THREE.CanvasTexture(cv);
+  t.colorSpace=THREE.SRGBColorSpace;
+  t.wrapS=t.wrapT=THREE.RepeatWrapping;
+  return t;
+}
+const WINDOW_TEX = makeWindowTexture();
+
+/* ---------- 縦型ネオン看板テクスチャ ---------- */
+function makeSignTexture(word, color, vertical){
+  const cv=document.createElement('canvas');
+  cv.width=128; cv.height= vertical ? 256 : 96;
+  const x=cv.getContext('2d');
+  x.clearRect(0,0,cv.width,cv.height);
+  // 枠
+  x.strokeStyle=color; x.lineWidth=5; x.shadowColor=color; x.shadowBlur=22;
+  roundRect(x,6,6,cv.width-12,cv.height-12,12); x.stroke();
+  // 文字
+  x.fillStyle='#ffffff'; x.shadowColor=color; x.shadowBlur=26;
+  x.textAlign='center'; x.textBaseline='middle';
+  if(vertical){
+    const chars=[...word].slice(0,5);
+    const fs=Math.min(54, (cv.height-40)/chars.length);
+    x.font=`700 ${fs}px "Shippori Mincho",serif`;
+    const step=(cv.height-30)/chars.length;
+    chars.forEach((ch,i)=> x.fillText(ch, cv.width/2, 22 + step*(i+0.5)));
+  } else {
+    x.font=`700 46px "Shippori Mincho",serif`;
+    x.fillText(word, cv.width/2, cv.height/2);
+  }
+  const t=new THREE.CanvasTexture(cv);
+  t.colorSpace=THREE.SRGBColorSpace;
+  return t;
+}
+function roundRect(x,a,b,w,h,r){ x.beginPath(); x.moveTo(a+r,b);
+  x.arcTo(a+w,b,a+w,b+h,r); x.arcTo(a+w,b+h,a,b+h,r);
+  x.arcTo(a,b+h,a,b,r); x.arcTo(a,b,a+w,b,r); x.closePath(); }
+
+/* =========================================================
+   濡れたアスファルト（Reflector による反射）+ 路面
+   ========================================================= */
+const GROUND = 720;
+const reflector = new Reflector(new THREE.PlaneGeometry(GROUND,GROUND),{
+  textureWidth: Math.min(1024, innerWidth*devicePixelRatio*0.6),
+  textureHeight: Math.min(1024, innerHeight*devicePixelRatio*0.6),
+  color: 0x0a0e18
+});
+reflector.rotation.x=-Math.PI/2;
+reflector.position.y=0.0;
+scene.add(reflector);
+
+// 反射の上に薄いアスファルト（半透明で“濡れ感”を残す）
+const asphalt = new THREE.Mesh(
+  new THREE.PlaneGeometry(GROUND,GROUND),
+  new THREE.MeshStandardMaterial({color:0x05070d, roughness:.78, metalness:.2,
+    transparent:true, opacity:.62})
+);
+asphalt.rotation.x=-Math.PI/2; asphalt.position.y=0.02; asphalt.receiveShadow=true;
+scene.add(asphalt);
+
+/* =========================================================
+   街路グリッド：ブロック（ビル）と道路を配置
+   ========================================================= */
+const PITCH=64;     // 区画ピッチ
+const ROAD=18;      // 道路幅
+const BLOCK=PITCH-ROAD; // ブロック幅
+const N=6;          // 片側のライン数
+const colliders=[]; // 当たり判定（XZのAABB）
+const cityGroup=new THREE.Group(); scene.add(cityGroup);
+
+function gridCenter(i){ return (i - (N-1)/2)*PITCH; } // i:0..N-1 → 中心座標
+
+// 道路マーキング（中央線）を一括で
+function addRoadMarks(){
+  const mat=new THREE.MeshBasicMaterial({color:0xb6c2d8,transparent:true,opacity:.32,toneMapped:false});
+  const dash=new THREE.PlaneGeometry(0.4,3.2);
+  const lines=new THREE.Group();
+  for(let i=0;i<=N;i++){
+    const p=gridCenter(i)-PITCH/2;
+    for(let z=-GROUND/2+6; z<GROUND/2-6; z+=8){
+      const a=new THREE.Mesh(dash,mat); a.rotation.x=-Math.PI/2; a.position.set(p,0.05,z); lines.add(a);
+      const b=new THREE.Mesh(dash,mat); b.rotation.set(-Math.PI/2,0,Math.PI/2); b.position.set(z,0.05,p); lines.add(b);
+    }
+  }
+  scene.add(lines);
+}
+addRoadMarks();
+
+/* ---------- 1棟のビルを生成 ---------- */
+const ROOF_MAT=new THREE.MeshStandardMaterial({color:0x0b0e16,roughness:.9,metalness:.3});
+function makeBuilding(cx,cz,maxFoot,distToCenter){
+  const w=rRange(maxFoot*0.55,maxFoot*0.92);
+  const d=rRange(maxFoot*0.55,maxFoot*0.92);
+  // 中心ほど高い（高層オフィス街イメージ）
+  const tallBias=THREE.MathUtils.clamp(1-distToCenter/(N*PITCH*0.6),0,1);
+  const h=rRange(12,28) + tallBias*rRange(20,68);
+
+  const texX=WINDOW_TEX.clone(); texX.needsUpdate=true;
+  texX.repeat.set(Math.max(2,Math.round(d/5)), Math.max(3,Math.round(h/5)));
+  const texZ=WINDOW_TEX.clone(); texZ.needsUpdate=true;
+  texZ.repeat.set(Math.max(2,Math.round(w/5)), Math.max(3,Math.round(h/5)));
+
+  const base=new THREE.Color(0x0a0d15).offsetHSL(0,0,rRange(-0.02,0.03));
+  const mkMat=(t)=> new THREE.MeshStandardMaterial({
+    color:base, map:t, emissive:0xffffff, emissiveMap:t, emissiveIntensity:1.5,
+    roughness:.62, metalness:.45 });
+  const mx=mkMat(texX), mz=mkMat(texZ);
+  const mats=[mx,mx,ROOF_MAT,ROOF_MAT,mz,mz];
+
+  const b=new THREE.Mesh(new THREE.BoxGeometry(w,h,d), mats);
+  b.position.set(cx,h/2,cz); b.castShadow=true; b.receiveShadow=true;
+  cityGroup.add(b);
+
+  // 1階の店先（暖色の光る帯）
+  const storeColor=rPick(['#ff6a3d','#ffb454','#ff3b6b','#36e0ff','#ffd24a']);
+  const store=new THREE.Mesh(new THREE.BoxGeometry(w*1.005,2.6,d*1.005),
+    new THREE.MeshBasicMaterial({color:storeColor,transparent:true,opacity:.9,toneMapped:false}));
+  store.position.set(cx,1.5,cz); cityGroup.add(store);
+  // 店先のほのかな光（実ライトは使わずグロースプライトで表現＝高速）
+  cityGroup.add(neonGlow(storeColor, new THREE.Vector3(cx,2.0,cz), Math.max(w,d)*0.9));
+
+  // ネオン看板を側面に取り付け
+  attachSigns(cx,cz,w,d,h);
+
+  // 屋上看板（たまに）
+  if(rnd()<0.45){
+    const col=rPick(NEON);
+    const word=rPick(SIGN_WORDS);
+    const t=makeSignTexture(word,col,false);
+    const sw=Math.min(w*0.9,10), sh=sw*0.45;
+    const s=new THREE.Mesh(new THREE.PlaneGeometry(sw,sh),
+      new THREE.MeshBasicMaterial({map:t,transparent:true,toneMapped:false,side:THREE.DoubleSide}));
+    s.position.set(cx, h+sh*0.7, cz);
+    s.rotation.y=rnd()<0.5?0:Math.PI/2;
+    cityGroup.add(s);
+    cityGroup.add(neonGlow(col, s.position, sw*0.8));
+  }
+
+  // 屋上の航空障害灯
+  const beaconM=new THREE.Mesh(new THREE.SphereGeometry(0.3,8,8),
+    new THREE.MeshBasicMaterial({color:0xff2b2b,toneMapped:false}));
+  beaconM.position.set(cx,h+0.4,cz); beaconM.userData.beacon=true; cityGroup.add(beaconM);
+  beacons.push(beaconM);
+
+  colliders.push({x:cx,z:cz,hw:w/2+0.6,hd:d/2+0.6});
+}
+const beacons=[];
+
+// ネオンのほわっとした光のスプライト
+const _glowTex=(()=>{ const cv=document.createElement('canvas');cv.width=cv.height=64;
+  const x=cv.getContext('2d'); const g=x.createRadialGradient(32,32,0,32,32,32);
+  g.addColorStop(0,'rgba(255,255,255,1)');g.addColorStop(.4,'rgba(255,255,255,.5)');g.addColorStop(1,'rgba(255,255,255,0)');
+  x.fillStyle=g;x.fillRect(0,0,64,64); return new THREE.CanvasTexture(cv); })();
+function neonGlow(color,pos,size){
+  const s=new THREE.Sprite(new THREE.SpriteMaterial({map:_glowTex,color:new THREE.Color(color),
+    transparent:true,opacity:.55,blending:THREE.AdditiveBlending,depthWrite:false,toneMapped:false}));
+  s.scale.set(size,size,1); s.position.copy(pos); return s;
+}
+
+function attachSigns(cx,cz,w,d,h){
+  const count=2+(rnd()*3|0);
+  for(let i=0;i<count;i++){
+    const col=rPick(NEON);
+    const word=rPick(SIGN_WORDS);
+    const vertical=rnd()<0.7;
+    const t=makeSignTexture(word,col,vertical);
+    const pw=vertical?1.4:2.6, ph=vertical?2.8:1.0;
+    const m=new THREE.Mesh(new THREE.PlaneGeometry(pw,ph),
+      new THREE.MeshBasicMaterial({map:t,transparent:true,toneMapped:false,side:THREE.DoubleSide}));
+    const face=(rnd()*4|0);
+    const y=rRange(3,Math.max(4,h-3));
+    const off=0.4;
+    if(face===0){ m.position.set(cx, y, cz+d/2+off); }
+    else if(face===1){ m.position.set(cx, y, cz-d/2-off); m.rotation.y=Math.PI; }
+    else if(face===2){ m.position.set(cx+w/2+off, y, cz); m.rotation.y=Math.PI/2; }
+    else { m.position.set(cx-w/2-off, y, cz); m.rotation.y=-Math.PI/2; }
+    cityGroup.add(m);
+    cityGroup.add(neonGlow(col, m.position, Math.max(pw,ph)*1.4));
+  }
+}
+
+/* ---------- 街全体を配置（中央ブロックは公園＝テレビ塔） ---------- */
+const centerI=Math.floor(N/2);
+for(let i=0;i<N;i++){
+  for(let j=0;j<N;j++){
+    const cx=gridCenter(i), cz=gridCenter(j);
+    if(i===centerI && (j===centerI || j===centerI-1)) continue; // 中央＝公園
+    // 1区画に1〜2棟
+    const sub = rnd()<0.4 ? 2 : 1;
+    if(sub===1){ makeBuilding(cx,cz,BLOCK,Math.hypot(cx,cz)); }
+    else {
+      makeBuilding(cx-BLOCK*0.24, cz, BLOCK*0.5, Math.hypot(cx,cz));
+      makeBuilding(cx+BLOCK*0.24, cz, BLOCK*0.5, Math.hypot(cx,cz));
+    }
+  }
+}
+
+/* =========================================================
+   ランドマーク：名古屋テレビ塔（赤い鉄塔）
+   ========================================================= */
+function buildTVTower(){
+  const g=new THREE.Group();
+  const towerCol=0xd84a2a;
+  const beam=new THREE.MeshStandardMaterial({color:towerCol,emissive:0x812412,
+    emissiveIntensity:.8,roughness:.5,metalness:.6});
+  const H=86;
+  // 4本脚（テーパー）＋トラス感をビームで
+  const legPts=[[-1,1],[1,1],[1,-1],[-1,-1]];
+  const baseR=9, topR=1.6;
+  function legXform(seg, side){
+    const t0=seg/8, t1=(seg+1)/8;
+    const r0=baseR*(1-t0)+topR*t0, r1=baseR*(1-t1)+topR*t1;
+    const y0=t0*H, y1=t1*H;
+    const p0=new THREE.Vector3(side[0]*r0, y0, side[1]*r0);
+    const p1=new THREE.Vector3(side[0]*r1, y1, side[1]*r1);
+    return {p0,p1};
+  }
+  const cyl=(p0,p1,rad)=>{
+    const dir=new THREE.Vector3().subVectors(p1,p0); const len=dir.length();
+    const m=new THREE.Mesh(new THREE.CylinderGeometry(rad,rad,len,6),beam);
+    m.position.copy(p0).add(dir.multiplyScalar(0.5));
+    m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),dir.clone().normalize());
+    m.castShadow=true; return m;
+  };
+  for(const side of legPts){
+    for(let s=0;s<8;s++){ const {p0,p1}=legXform(s,side); g.add(cyl(p0,p1,0.5)); }
+  }
+  // 横材＋斜材
+  for(let s=0;s<8;s+=1){
+    const ring=legPts.map(side=>legXform(s,side).p0);
+    for(let k=0;k<4;k++){
+      g.add(cyl(ring[k],ring[(k+1)%4],0.3));
+      // 斜材
+      const nx=legXform(s+1,legPts[(k+1)%4]).p0;
+      g.add(cyl(ring[k],nx,0.22));
+    }
+  }
+  // 展望台（中ほど）
+  const deck=new THREE.Mesh(new THREE.CylinderGeometry(5.5,5.5,5,12),
+    new THREE.MeshStandardMaterial({color:0x1a1f2c,emissive:0x223,emissiveIntensity:.4,roughness:.5,metalness:.5}));
+  deck.position.y=H*0.52; g.add(deck);
+  const deckLight=new THREE.Mesh(new THREE.CylinderGeometry(5.7,5.7,1.4,12),
+    new THREE.MeshBasicMaterial({color:0x36e0ff,toneMapped:false}));
+  deckLight.position.y=H*0.52+1.6; g.add(deckLight);
+  // 頂部アンテナ＋赤灯
+  g.add(cyl(new THREE.Vector3(0,H,0), new THREE.Vector3(0,H+18,0),0.4));
+  const tip=new THREE.Mesh(new THREE.SphereGeometry(0.7,10,10),
+    new THREE.MeshBasicMaterial({color:0xff2b2b,toneMapped:false}));
+  tip.position.y=H+18.5; tip.userData.beacon=true; beacons.push(tip); g.add(tip);
+  g.add(neonGlow('#ff3b3b', tip.position, 8));
+
+  // 塔をライトアップ
+  const up=new THREE.PointLight(0xff7a4a, 60, 90, 1.6); up.position.set(0,H*0.4,0); g.add(up);
+
+  g.position.set(gridCenter(centerI), 0, gridCenter(centerI)-PITCH/2);
+  scene.add(g);
+  colliders.push({x:g.position.x, z:g.position.z, hw:10, hd:10});
+}
+buildTVTower();
+
+/* =========================================================
+   オアシス21風：ガラスの楕円リング（水の宇宙船）
+   ========================================================= */
+function buildOasis(){
+  const g=new THREE.Group();
+  const ring=new THREE.Mesh(new THREE.TorusGeometry(11,1.2,12,48),
+    new THREE.MeshStandardMaterial({color:0x0a1830,emissive:0x16b0e0,emissiveIntensity:1.2,
+      roughness:.2,metalness:.7,transparent:true,opacity:.85}));
+  ring.rotation.x=Math.PI/2; ring.position.y=10; g.add(ring);
+  const glass=new THREE.Mesh(new THREE.CircleGeometry(11,40),
+    new THREE.MeshBasicMaterial({color:0x16c0ff,transparent:true,opacity:.16,side:THREE.DoubleSide,toneMapped:false}));
+  glass.rotation.x=-Math.PI/2; glass.position.y=10; g.add(glass);
+  for(let k=0;k<8;k++){
+    const a=k/8*Math.PI*2;
+    const post=new THREE.Mesh(new THREE.CylinderGeometry(0.3,0.3,10,6),
+      new THREE.MeshStandardMaterial({color:0x223,emissive:0x16a0d0,emissiveIntensity:.5,metalness:.6,roughness:.4}));
+    post.position.set(Math.cos(a)*10,5,Math.sin(a)*10); g.add(post);
+  }
+  g.add(new THREE.PointLight(0x16c0ff,40,60,2));
+  g.position.set(gridCenter(centerI), 0, gridCenter(centerI)+PITCH/2-4);
+  scene.add(g);
+  // 公園の木
+  for(let k=0;k<10;k++){
+    addTree(g.position.x+rRange(-22,22), g.position.z+rRange(-22,22));
+  }
+}
+function addTree(x,z){
+  const t=new THREE.Group();
+  const trunk=new THREE.Mesh(new THREE.CylinderGeometry(0.25,0.35,2.4,6),
+    new THREE.MeshStandardMaterial({color:0x2a1c12,roughness:1}));
+  trunk.position.y=1.2; t.add(trunk);
+  const leaf=new THREE.Mesh(new THREE.IcosahedronGeometry(1.8,0),
+    new THREE.MeshStandardMaterial({color:0x16331f,roughness:1,flatShading:true}));
+  leaf.position.y=3.2; leaf.scale.y=1.2; t.add(leaf);
+  t.position.set(x,0,z); scene.add(t);
+}
+buildOasis();
+
+/* =========================================================
+   街路灯・自販機・提灯（歩行者目線のディテール）
+   ========================================================= */
+function addStreetLamp(x,z){
+  const g=new THREE.Group();
+  const pole=new THREE.Mesh(new THREE.CylinderGeometry(0.12,0.16,6,8),
+    new THREE.MeshStandardMaterial({color:0x202632,roughness:.6,metalness:.5}));
+  pole.position.y=3; g.add(pole);
+  const head=new THREE.Mesh(new THREE.SphereGeometry(0.35,12,12),
+    new THREE.MeshBasicMaterial({color:0xfff0c8,toneMapped:false}));
+  head.position.y=6; g.add(head);
+  g.add(neonGlow('#ffe6b8', new THREE.Vector3(0,6,0), 3.0));
+  g.position.set(x,0,z); scene.add(g);
+}
+function addVending(x,z,rot){
+  const g=new THREE.Group();
+  const body=new THREE.Mesh(new THREE.BoxGeometry(1.2,2.0,0.8),
+    new THREE.MeshStandardMaterial({color:0x0a0d14,roughness:.5,metalness:.4}));
+  body.position.y=1; body.castShadow=true; g.add(body);
+  const col=rPick(['#ff3b3b','#36e0ff','#ffd24a','#ff2d95']);
+  const panel=new THREE.Mesh(new THREE.PlaneGeometry(1.0,1.6),
+    new THREE.MeshBasicMaterial({color:col,toneMapped:false}));
+  panel.position.set(0,1.05,0.41); g.add(panel);
+  g.add(neonGlow(col,new THREE.Vector3(0,1.1,0.6),3.2));
+  g.position.set(x,0,z); g.rotation.y=rot; scene.add(g);
+}
+function addLantern(x,z){
+  const m=new THREE.Mesh(new THREE.CylinderGeometry(0.4,0.4,0.7,12),
+    new THREE.MeshBasicMaterial({color:0xff5a2a,toneMapped:false}));
+  m.position.set(x,2.6,z); scene.add(m);
+  scene.add(neonGlow('#ff6a3d', new THREE.Vector3(x,2.6,z), 2.6));
+}
+// 道路沿いに配置
+for(let i=0;i<N;i++){
+  for(let j=0;j<N;j++){
+    const cx=gridCenter(i), cz=gridCenter(j);
+    if(rnd()<0.8) addStreetLamp(cx-PITCH/2+2, cz-PITCH/2+2);
+    if(rnd()<0.4) addVending(cx-PITCH/2+2.4, cz+rRange(-8,8), rRange(0,6.28));
+    if(rnd()<0.35) addLantern(cx+rRange(-10,10), cz-PITCH/2+2.2);
+  }
+}
+
+/* =========================================================
+   走る車（ヘッドライト/テールライトで夜を演出）
+   ========================================================= */
+const cars=[];
+function makeCar(){
+  const g=new THREE.Group();
+  const body=new THREE.Mesh(new THREE.BoxGeometry(2,1.1,4.2),
+    new THREE.MeshStandardMaterial({color:rPick([0x101218,0x1a1d28,0x20101a]),roughness:.35,metalness:.7}));
+  body.position.y=0.7; body.castShadow=true; g.add(body);
+  const cabin=new THREE.Mesh(new THREE.BoxGeometry(1.7,0.8,2.2),
+    new THREE.MeshStandardMaterial({color:0x05070c,roughness:.1,metalness:.9}));
+  cabin.position.set(0,1.35,-0.2); g.add(cabin);
+  const head=new THREE.Mesh(new THREE.PlaneGeometry(1.7,0.3),
+    new THREE.MeshBasicMaterial({color:0xfff4d0,toneMapped:false}));
+  head.position.set(0,0.6,2.12); g.add(head);
+  const tail=new THREE.Mesh(new THREE.PlaneGeometry(1.7,0.25),
+    new THREE.MeshBasicMaterial({color:0xff1a1a,toneMapped:false}));
+  tail.position.set(0,0.6,-2.12); tail.rotation.y=Math.PI; g.add(tail);
+  g.add(neonGlow('#ff2020', new THREE.Vector3(0,0.6,-2.3), 1.6));
+  scene.add(g);
+  return g;
+}
+function spawnCars(){
+  const lanes=[];
+  for(let i=0;i<=N;i++){ lanes.push({axis:'z', pos:gridCenter(i)-PITCH/2}); }
+  for(let i=0;i<=N;i++){ lanes.push({axis:'x', pos:gridCenter(i)-PITCH/2}); }
+  for(let k=0;k<14;k++){
+    const lane=rPick(lanes);
+    const car=makeCar();
+    const dir=rnd()<0.5?1:-1;
+    const offset=dir*3.2; // 車線
+    const t=rRange(-GROUND/2,GROUND/2);
+    if(lane.axis==='z'){ car.position.set(lane.pos+offset, 0, t); car.rotation.y= dir>0?0:Math.PI; }
+    else { car.position.set(t, 0, lane.pos+offset); car.rotation.y= dir>0?Math.PI/2:-Math.PI/2; }
+    cars.push({mesh:car, lane, dir, speed:rRange(10,20)});
+  }
+}
+spawnCars();
+
+/* =========================================================
+   軽い雨（濡れた路面の理由）＋ ふわっと舞う塵
+   ========================================================= */
+function buildRain(){
+  const N=1400; const pos=new Float32Array(N*3); const sp=new Float32Array(N);
+  for(let i=0;i<N;i++){ pos[i*3]=rRange(-120,120); pos[i*3+1]=rRange(0,90); pos[i*3+2]=rRange(-120,120); sp[i]=rRange(40,80);}
+  const g=new THREE.BufferGeometry(); g.setAttribute('position',new THREE.BufferAttribute(pos,3));
+  const m=new THREE.PointsMaterial({color:0x9fc0ff,size:0.5,transparent:true,opacity:.35,depthWrite:false});
+  const p=new THREE.Points(g,m); scene.add(p);
+  return {p, sp};
+}
+const rain=buildRain();
+
+/* =========================================================
+   ポストプロセス：Bloom（ネオンを滲ませる肝）
+   ========================================================= */
+const composer=new EffectComposer(renderer);
+composer.addPass(new RenderPass(scene,camera));
+const bloom=new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight), 0.85, 0.6, 0.5);
+bloom.threshold=0.42; bloom.strength=0.95; bloom.radius=0.55;
+composer.addPass(bloom);
+composer.addPass(new OutputPass());
+
+/* =========================================================
+   コントロール（ダンガンロンパ／ペルソナ風）
+   - 視点は東西南北の4方向だけ。A/Dで90°ずつスナップ回転
+   - W/Sで「向いている方向」へ前進・後退
+   ========================================================= */
+let walking=false;       // 歩行開始フラグ
+let targetYaw=0;         // 目標の向き（camera.rotation.y）。0=北（-Z）
+const STEP=Math.PI/2;    // 1回の振り向き＝90°
+let bob=0;
+let curPitch=0;
+
+const keys={};
+addEventListener('keydown',e=>{
+  if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code)) e.preventDefault();
+  if(e.repeat) { keys[e.code]=true; return; } // 押しっぱなしの連続回転を防ぐ
+  keys[e.code]=true;
+  if(!walking) return;
+  // 90°スナップ回転（押した瞬間に1回だけ）
+  if(e.code==='KeyA'||e.code==='ArrowLeft')  targetYaw += STEP;   // 左を向く
+  if(e.code==='KeyD'||e.code==='ArrowRight') targetYaw -= STEP;   // 右を向く
+  if(e.code==='Escape'){ walking=false; intro.classList.add('show'); }
+});
+addEventListener('keyup',e=>{ keys[e.code]=false; });
+
+const velocity=new THREE.Vector3();
+
+const isTouch = matchMedia('(pointer:coarse)').matches || ('ontouchstart' in window);
+if(isTouch) document.body.classList.add('touch');
+
+/* ---- モバイル：左下スティック（縦＝移動／横＝振り向き） ---- */
+const joyVec={x:0,y:0};
+let turnLatch=false; // スティックを横に倒したら1回だけ回す
+if(isTouch){
+  const joy=document.getElementById('joy'); const nub=joy.querySelector('i');
+  let jid=null,jcx=0,jcy=0;
+  joy.addEventListener('touchstart',e=>{const t=e.changedTouches[0];jid=t.identifier;
+    const r=joy.getBoundingClientRect();jcx=r.left+r.width/2;jcy=r.top+r.height/2;},{passive:true});
+  addEventListener('touchmove',e=>{ for(const t of e.changedTouches){ if(t.identifier===jid){
+    let dx=t.clientX-jcx, dy=t.clientY-jcy; const mx=46; const l=Math.hypot(dx,dy);
+    if(l>mx){dx=dx/l*mx;dy=dy/l*mx;} nub.style.transform=`translate(${dx}px,${dy}px)`;
+    joyVec.x=dx/mx; joyVec.y=dy/mx;
+    // 横に大きく倒したら90°回転（戻すまで再発火しない）
+    if(walking){
+      if(joyVec.x>0.6 && !turnLatch){ targetYaw-=STEP; turnLatch=true; }
+      else if(joyVec.x<-0.6 && !turnLatch){ targetYaw+=STEP; turnLatch=true; }
+      else if(Math.abs(joyVec.x)<0.3){ turnLatch=false; }
+    }
+  }}},{passive:true});
+  addEventListener('touchend',e=>{ for(const t of e.changedTouches){ if(t.identifier===jid){
+    jid=null; joyVec.x=joyVec.y=0; turnLatch=false; nub.style.transform='translate(0,0)'; }}});
+}
+
+/* =========================================================
+   起動フロー（ローダー → 説明 → 開始）
+   ========================================================= */
+const loader=document.getElementById('loader');
+const barFill=document.getElementById('barFill');
+const loadTxt=document.getElementById('loadTxt');
+const intro=document.getElementById('intro');
+const hud=document.getElementById('hud');
+const startBtn=document.getElementById('startBtn');
+
+let p=0;
+const loadTimer=setInterval(()=>{
+  p=Math.min(100,p+rRange(8,22));
+  barFill.style.width=p+'%';
+  if(p>=100){ clearInterval(loadTimer); loadTxt.textContent='準備完了';
+    setTimeout(()=>{ loader.classList.add('hidden'); intro.classList.add('show'); },350); }
+},180);
+
+function beginWalk(){
+  intro.classList.remove('show');
+  hud.classList.add('show');
+  walking=true;
+  startAmbient();
+}
+startBtn.addEventListener('click', beginWalk);
+// 一時停止中（ESC）に画面クリックで再開
+addEventListener('click',()=>{ if(hud.classList.contains('show') && !walking && p>=100) beginWalk(); });
+
+/* =========================================================
+   環境音（WebAudio：低い都市のハム＋雨）— ユーザー操作後に開始
+   ========================================================= */
+let audioStarted=false;
+function startAmbient(){
+  if(audioStarted) return; audioStarted=true;
+  try{
+    const ac=new (window.AudioContext||window.webkitAudioContext)();
+    // ハム
+    const o=ac.createOscillator(); o.type='sawtooth'; o.frequency.value=55;
+    const og=ac.createGain(); og.gain.value=0.012;
+    const lp=ac.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=180;
+    o.connect(lp).connect(og).connect(ac.destination); o.start();
+    // 雨ノイズ
+    const buf=ac.createBuffer(1, ac.sampleRate*2, ac.sampleRate);
+    const dch=buf.getChannelData(0); for(let i=0;i<dch.length;i++)dch[i]=(Math.random()*2-1)*0.5;
+    const noise=ac.createBufferSource(); noise.buffer=buf; noise.loop=true;
+    const bp=ac.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=1200; bp.Q.value=0.4;
+    const ng=ac.createGain(); ng.gain.value=0.03;
+    noise.connect(bp).connect(ng).connect(ac.destination); noise.start();
+  }catch(e){ /* audio任意 */ }
+}
+
+/* =========================================================
+   メインループ
+   ========================================================= */
+const clock=new THREE.Clock();
+const clockEl=document.getElementById('clock');
+const compassEl=document.getElementById('compass');
+const placeEl=document.getElementById('place');
+let simMin=23*60+47; // 23:47スタート
+
+const HALF=GROUND/2-4;
+function collide(nx,nz){
+  const r=1.0;
+  for(const c of colliders){
+    if(nx>c.x-c.hw-r && nx<c.x+c.hw+r && nz>c.z-c.hd-r && nz<c.z+c.hd+r) return true;
+  }
+  return false;
+}
+
+function animate(){
+  requestAnimationFrame(animate);
+  const dt=Math.min(0.05, clock.getDelta());
+  const t=clock.elapsedTime;
+
+  // --- 振り向き：camera.rotation.y を目標角へ滑らかにスナップ（常時） ---
+  let dy = targetYaw - camera.rotation.y;
+  camera.rotation.y += dy * Math.min(1, dt*12);
+  // 見上げ（SPACE）のピッチも滑らかに
+  const wantPitch = (keys['Space']?0.42:0);
+  curPitch += (wantPitch - curPitch) * Math.min(1, dt*10);
+  camera.rotation.x = curPitch;
+
+  // --- 移動：向いている方向へ前進・後退のみ（4方向） ---
+  if(walking){
+    const speed=(keys['ShiftLeft']||keys['ShiftRight']?10:5.6);
+    velocity.z -= velocity.z*8*dt;
+    let fwd=0;
+    if(keys['KeyW']||keys['ArrowUp'])fwd+=1;
+    if(keys['KeyS']||keys['ArrowDown'])fwd-=1;
+    if(isTouch) fwd += -joyVec.y; // スティック上で前進
+    if(Math.abs(fwd)>0.05) velocity.z += fwd*speed*dt*8;
+
+    // 前方ベクトル（水平）
+    const fdir=new THREE.Vector3(); camera.getWorldDirection(fdir); fdir.y=0; fdir.normalize();
+    const step=velocity.z*dt;
+    let nx=camera.position.x+fdir.x*step, nz=camera.position.z+fdir.z*step;
+    nx=Math.max(-HALF,Math.min(HALF,nx)); nz=Math.max(-HALF,Math.min(HALF,nz));
+    if(!collide(nx,camera.position.z)) camera.position.x=nx;
+    if(!collide(camera.position.x,nz)) camera.position.z=nz;
+
+    // 歩行の上下動（ヘッドボブ）
+    const sp=Math.abs(velocity.z);
+    bob += sp*dt*2.2;
+    camera.position.y = EYE + Math.sin(bob*2)*0.05*Math.min(1,sp/4);
+  }
+
+  // --- 反射面はプレイヤー追従（広く見せる） ---
+  reflector.position.x=camera.position.x; reflector.position.z=camera.position.z;
+  asphalt.position.x=camera.position.x; asphalt.position.z=camera.position.z;
+
+  // --- 車 ---
+  for(const car of cars){
+    const m=car.mesh; const v=car.speed*car.dir*dt;
+    if(car.lane.axis==='z'){ m.position.z+=v; if(m.position.z>HALF)m.position.z=-HALF; if(m.position.z<-HALF)m.position.z=HALF; }
+    else { m.position.x+=v; if(m.position.x>HALF)m.position.x=-HALF; if(m.position.x<-HALF)m.position.x=HALF; }
+  }
+
+  // --- 雨を落とす ---
+  const rp=rain.p.geometry.attributes.position;
+  for(let i=0;i<rp.count;i++){
+    let y=rp.getY(i)-rain.sp[i]*dt;
+    if(y<0){ y=90; rp.setX(i,camera.position.x+rRange(-110,110)); rp.setZ(i,camera.position.z+rRange(-110,110)); }
+    rp.setY(i,y);
+  }
+  rp.needsUpdate=true;
+
+  // --- 点滅する航空障害灯 ---
+  const blink=(Math.sin(t*2.2)>0)?1:0.05;
+  for(const b of beacons){ b.material.opacity=blink; b.material.transparent=true; }
+
+  // --- HUD：時計・方位 ---
+  simMin += dt*0.6; // ゆっくり時間が進む
+  const hh=String(Math.floor(simMin/60)%24).padStart(2,'0');
+  const mm=String(Math.floor(simMin%60)).padStart(2,'0');
+  clockEl.textContent=`${hh}:${mm}`;
+  const fdir2=new THREE.Vector3(); camera.getWorldDirection(fdir2);
+  const ang=Math.atan2(fdir2.x,-fdir2.z)*180/Math.PI;
+  const dirs=['N','NE','E','SE','S','SW','W','NW'];
+  compassEl.textContent=`・ ${dirs[(Math.round(((ang+360)%360)/45))%8]} ・`;
+  // 中央付近で地名を切り替え
+  const nearCenter=Math.hypot(camera.position.x-gridCenter(centerI),camera.position.z-gridCenter(centerI))<70;
+  placeEl.innerHTML = nearCenter
+    ? '<b>テレビ塔 前</b>名古屋市 中区・久屋大通'
+    : '<b>栄 SAKAE</b>名古屋市 中区';
+
+  composer.render();
+}
+animate();
+
+/* ---- リサイズ ---- */
+addEventListener('resize',()=>{
+  camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth,innerHeight);
+  composer.setSize(innerWidth,innerHeight);
+  bloom.setSize(innerWidth,innerHeight);
+});
+</script>
+</body>
+</html>
