@@ -55,12 +55,12 @@ const RESERVE_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxKDhJg8_LhjfD
       });
   }
 
-  // フォールバック: 今日から10日分・全時間帯を出す（最終確認は鑑定師が行うため安全）
+  // フォールバック: 翌日から10日分・全時間帯を出す（前日予約制／最終確認は鑑定師が行う）
   function fallbackDays() {
     var names = ['日', '月', '火', '水', '木', '金', '土'];
     var today = new Date();
     var days = [];
-    for (var i = 0; i < 10; i++) {
+    for (var i = 1; i <= 10; i++) {
       var d = new Date(today.getFullYear(), today.getMonth(), today.getDate() + i);
       days.push({
         date: d.getFullYear() + '-' +

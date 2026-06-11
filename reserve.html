@@ -35,7 +35,7 @@
 
     <!-- CSS -->
     <link rel="stylesheet" href="css/style.css?v=20260611b">
-    <link rel="stylesheet" href="css/reserve.css?v=20260611b">
+    <link rel="stylesheet" href="css/reserve.css?v=20260611c">
     <link rel="stylesheet" href="css/animations.css?v=20260611b">
 
     <!-- JSON-LD (Breadcrumb) -->
@@ -105,6 +105,13 @@
                     通常24時間以内に予約確定のご連絡をメールでお送りします。
                 </p>
 
+                <div class="reserve-leadtime-note">
+                    ご予約は<strong>前日まで</strong>に承っています。<br>
+                    当日のご予約・お急ぎの場合は、お手数ですが
+                    <a href="mailto:uranai.rokkon@gmail.com">uranai.rokkon@gmail.com</a>
+                    までご連絡ください。
+                </div>
+
                 <form id="reservationForm" class="reserve-form" novalidate>
 
                     <!-- コース選択 -->
@@ -149,7 +156,7 @@
                                 <option value="">時間帯を選択</option>
                             </select>
                         </div>
-                        <p class="form-hint">現在ご予約いただける日時のみ表示しています。</p>
+                        <p class="form-hint">前日までの空きのある日時のみ表示しています。</p>
                     </div>
 
                     <div class="form-block">
@@ -278,7 +285,8 @@
             <div class="reserve-notes">
                 <h3 class="reserve-notes-title">ご予約にあたって</h3>
                 <ul class="reserve-notes-list">
-                    <li>鑑定営業時間は 14:00〜22:00（最終受付 21:00）です。ご予約の受付は24時間可能です</li>
+                    <li>鑑定営業時間は 14:00〜22:00（最終受付 21:00）です</li>
+                    <li>ご予約は前日まで承っています。当日・お急ぎの場合はメール（uranai.rokkon@gmail.com）でご相談ください</li>
                     <li>お支払いは予約確定後にご案内します（オンライン：PayPay / 銀行振込、対面：当日支払い）</li>
                     <li>延長は15分ごとに +2,000円です</li>
                     <li>日時のご都合が悪くなった場合は、確定メールへの返信でご連絡ください</li>
@@ -321,7 +329,7 @@
     <footer class="footer">
         <div class="footer-inner">
             <div class="footer-info">
-                <p class="footer-hours">鑑定営業時間：14:00〜22:00（最終受付 21:00）/ 予約は24H可</p>
+                <p class="footer-hours">鑑定営業時間：14:00〜22:00（最終受付 21:00）/ 予約フォーム24時間受付</p>
                 <p class="footer-contact">お問い合わせ：uranai.rokkon@gmail.com</p>
             </div>
             <div class="footer-copy">© 2026 六根清浄 All Rights Reserved.</div>
@@ -331,7 +339,7 @@
     <button type="button" id="back-to-top" class="back-to-top" aria-label="トップへ戻る">↑</button>
 
     <script src="js/main.js"></script>
-    <script src="js/reserve.js?v=20260611d"></script>
+    <script src="js/reserve.js?v=20260611e"></script>
 
 </body>
 

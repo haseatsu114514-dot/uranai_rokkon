@@ -67,6 +67,26 @@
     margin: -20px 0 40px;
 }
 
+.reserve-leadtime-note {
+    background: rgba(143, 151, 121, 0.08);
+    border: 1px solid var(--color-gold);
+    color: #555;
+    font-size: 0.85rem;
+    line-height: 1.9;
+    text-align: center;
+    padding: 16px 20px;
+    margin-bottom: 30px;
+}
+
+.reserve-leadtime-note strong {
+    color: var(--color-gold);
+}
+
+.reserve-leadtime-note a {
+    color: var(--color-gold);
+    text-decoration: underline;
+}
+
 .reserve-form {
     background: #fff;
     border: 1px solid var(--color-border);
