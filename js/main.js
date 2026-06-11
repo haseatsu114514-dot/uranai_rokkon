@@ -292,7 +292,7 @@ async function updateAvailability() {
   } catch (error) {
     console.error('予約状況の取得エラー:', error);
 
-    // エラー時はLINE確認を促す
+    // エラー時は予約フォームでの確認を促す
     updateBadge('day', 'error');
     updateBadge('evening', 'error');
     updateBadge('night', 'error');
