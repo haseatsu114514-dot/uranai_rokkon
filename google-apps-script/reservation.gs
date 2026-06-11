@@ -20,8 +20,8 @@
 // 基本はこのままでOK。LINE通知を使うときだけ2か所を記入する
 // ==========================================================
 var CONFIG = {
-  // 通知・自動返信に使うメールアドレス
-  NOTIFY_EMAIL: 'uranai.rokkon@gmail.com',
+  // 通知・自動返信に使うメールアドレス（複数の場合はカンマ区切り）
+  NOTIFY_EMAIL: 'uranai.rokkon@gmail.com,haseatsu114514@gmail.com',
   SHOP_NAME: '占い処 六根清浄',
 
   // 【任意】LINE通知（通知用Botのチャネルアクセストークン・自分のユーザーID）
