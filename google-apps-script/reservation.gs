@@ -412,13 +412,22 @@ function buildOwnerMessage(data) {
 
 function notifyOwnerLine(text) {
   if (!CONFIG.LINE_CHANNEL_ACCESS_TOKEN || !CONFIG.LINE_OWNER_USER_ID) return;
+
+  // すべてのLINE通知の末尾に予約シートへのリンクを付ける（タップで開けるように）
+  var link = '';
+  try {
+    link = '\n\n📋 予約シートを開く\n' + getSheet().getParent().getUrl();
+  } catch (err) {
+    // シートが取れなくても通知自体は送る
+  }
+
   UrlFetchApp.fetch('https://api.line.me/v2/bot/message/push', {
     method: 'post',
     contentType: 'application/json',
     headers: { Authorization: 'Bearer ' + CONFIG.LINE_CHANNEL_ACCESS_TOKEN },
     payload: JSON.stringify({
       to: CONFIG.LINE_OWNER_USER_ID,
-      messages: [{ type: 'text', text: text }]
+      messages: [{ type: 'text', text: text + link }]
     }),
     muteHttpExceptions: true
   });
@@ -616,8 +625,10 @@ function processApproval(sheet, rowIndex) {
         notifyOwnerLine(
           '【対面予約の確定】下書きを作成しました\n' +
           r.name + '様（' + when + '）\n\n' +
-          'Gmailの「下書き」を開いて、待ち合わせ場所の【★】の部分を記入してから送信してください。\n' +
-          '送信したらシートの「対応状況」を「案内済み」に変えてください。'
+          '下書きを開いて、待ち合わせ場所の【★】の部分を記入してから送信してください。\n' +
+          '送信したらシートの「対応状況」を「案内済み」に変えてください。\n\n' +
+          '✉️ Gmailの下書きを開く\n' +
+          'https://mail.google.com/mail/u/0/#drafts'
         );
       });
     } catch (err) {
