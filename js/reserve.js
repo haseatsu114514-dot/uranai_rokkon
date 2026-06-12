@@ -235,6 +235,32 @@ const RESERVE_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxKDhJg8_LhjfD
     };
   }
 
+  /* ----- 送信完了画面の「カレンダーに追加」リンク（第一希望の時間帯をメモとして登録） ----- */
+  function buildGcalUrl(data) {
+    var m = String(data.part1).match(/(\d{1,2}):(\d{2})〜(\d{1,2}):(\d{2})/);
+    if (!m || !data.date1) return '';
+    var ymd = data.date1.replace(/-/g, '');
+    function hm(h, mi) { return ('0' + h).slice(-2) + mi + '00'; }
+    return 'https://calendar.google.com/calendar/render?action=TEMPLATE' +
+      '&text=' + encodeURIComponent('【希望日時】占い処 六根清浄 ご予約') +
+      '&dates=' + ymd + 'T' + hm(m[1], m[2]) + '/' + ymd + 'T' + hm(m[3], m[4]) +
+      '&ctz=Asia/Tokyo' +
+      '&details=' + encodeURIComponent(
+        '予約フォームで申し込んだ第一希望の時間帯です（確定前）。\n' +
+        '正式な日時は確定のご連絡メールをご確認ください。\n' +
+        'コース: ' + data.course);
+  }
+
+  function showGcalLink(data) {
+    var link = document.getElementById('gcalLink');
+    var note = document.getElementById('gcalNote');
+    var url = buildGcalUrl(data);
+    if (!link || !url) return;
+    link.href = url;
+    link.hidden = false;
+    if (note) note.hidden = false;
+  }
+
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     errorBox.hidden = true;
@@ -263,6 +289,7 @@ const RESERVE_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxKDhJg8_LhjfD
           form.hidden = true;
           var lead = document.querySelector('.reserve-form-lead');
           if (lead) lead.hidden = true;
+          showGcalLink(data);
           successBox.hidden = false;
           successBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
           if (typeof gtag === 'function') {

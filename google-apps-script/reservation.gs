@@ -13,6 +13,11 @@
  *   - 対面予約 → Gmailに下書きを自動作成（場所を記入して手動送信する）
  *   第二希望で確定したい場合は「確定2」と入力する。
  *
+ * 【自動運用】（setup() がトリガーを登録する）
+ *   - 前日リマインド: 毎日夕方、翌日の確定済み予約のお客様にリマインドメールを自動送信
+ *   - 月次レポート: 毎月1日の朝、先月の予約件数まとめをLINEに送信
+ *   - リピーター表示: 同じメールアドレスで過去に予約があれば、新規予約のLINE通知に「🔁」を付ける
+ *
  * ■ 使い方（詳しくは docs/reservation-form-setup.md）
  *   1. このファイルを丸ごと GAS に貼り付ける
  *   2. setup() を一度実行する（シート作成・トリガー設定まで全部自動）
@@ -63,15 +68,19 @@ var BUFFER_MIN = 30;            // 既存予定の前後30分は空ける
 var SHEET_HEADERS = [
   '受付日時', 'お名前', '性別', '生年月日', '出生時間・出生地', 'メール', 'コース',
   '第一希望', '第二希望', 'テーマ', 'ご相談内容', '支払い希望',
-  '対応状況', 'リマインド'
+  '対応状況', 'リマインド', '確定日時', '前日リマインド'
 ];
 
 // 列番号（1始まり）
 var COL_TIMESTAMP = 1;
 var COL_NAME = 2;
+var COL_EMAIL = 6;
+var COL_COURSE = 7;
 var COL_CHOICE1 = 8;
 var COL_STATUS = 13;
 var COL_REMINDED = 14;
+var COL_CONFIRMED = 15;   // 確定した日時（承認フローが自動記入する。手入力不要）
+var COL_DAYBEFORE = 16;   // 前日リマインドの送信記録（自動記入）
 
 // 承認フローで使う「対応状況」の値（プルダウンで選ぶ）
 var STATUS_CONFIRM_1 = '確定';        // 第一希望で確定 → 確定案内を自動送信/下書き作成
@@ -108,12 +117,16 @@ function doPost(e) {
       return jsonResponse({ status: 'error', message: error });
     }
 
+    // リピーター判定（新しい行を追加する前に過去の予約を探す）
+    var repeat = null;
+    try { repeat = findRepeaterInfo(data.email); } catch (err) { console.error(err); }
+
     var row = recordToSheet(data);
 
     // 通知・カレンダーは失敗しても受付自体は成功扱いにする
     safely(function () { createTentativeEvent(data); });
-    safely(function () { notifyOwnerLine(buildOwnerMessage(data)); });
-    safely(function () { notifyOwnerEmail(data, row); });
+    safely(function () { notifyOwnerLine(buildOwnerMessage(data, repeat)); });
+    safely(function () { notifyOwnerEmail(data, row, repeat); });
     safely(function () { sendAutoReply(data); });
 
     return jsonResponse({ status: 'ok' });
@@ -287,25 +300,44 @@ function setup() {
     .build();
   sheet.getRange(2, COL_STATUS, sheet.getMaxRows() - 1, 1).setDataValidation(rule);
 
-  // 2. 見逃し防止リマインドを1時間ごとに自動実行するよう登録（重複登録は防止）
-  var hasTrigger = ScriptApp.getProjectTriggers().some(function (t) {
-    return t.getHandlerFunction() === 'checkUnhandledReservations';
-  });
-  if (!hasTrigger) {
+  // トリガー登録（すでにあれば登録しない）
+  function hasTriggerFor(fnName) {
+    return ScriptApp.getProjectTriggers().some(function (t) {
+      return t.getHandlerFunction() === fnName;
+    });
+  }
+
+  // 2. 見逃し防止リマインド（1時間ごと）
+  if (!hasTriggerFor('checkUnhandledReservations')) {
     ScriptApp.newTrigger('checkUnhandledReservations')
       .timeBased()
       .everyHours(1)
       .create();
   }
 
-  // 3. 承認フロー: 「対応状況」に「確定」と入力されたら動くトリガーを登録（重複登録は防止）
-  var hasEditTrigger = ScriptApp.getProjectTriggers().some(function (t) {
-    return t.getHandlerFunction() === 'onEditApproval';
-  });
-  if (!hasEditTrigger) {
+  // 3. 承認フロー: 「対応状況」に「確定」と入力されたら動くトリガー
+  if (!hasTriggerFor('onEditApproval')) {
     ScriptApp.newTrigger('onEditApproval')
       .forSpreadsheet(sheet.getParent())
       .onEdit()
+      .create();
+  }
+
+  // 4. 前日リマインド: 毎日17時ごろ、翌日の確定済み予約のお客様にメール
+  if (!hasTriggerFor('sendDayBeforeReminders')) {
+    ScriptApp.newTrigger('sendDayBeforeReminders')
+      .timeBased()
+      .everyDays(1)
+      .atHour(17)
+      .create();
+  }
+
+  // 5. 月次レポート: 毎月1日の朝9時ごろ、先月のまとめをLINEに送信
+  if (!hasTriggerFor('sendMonthlySummary')) {
+    ScriptApp.newTrigger('sendMonthlySummary')
+      .timeBased()
+      .onMonthDay(1)
+      .atHour(9)
       .create();
   }
 
@@ -340,9 +372,34 @@ function recordToSheet(data) {
     data.message || '',
     data.payMethod || '',
     '', // 対応状況（確定したら「対応済み」と記入する）
-    ''  // リマインド
+    '', // リマインド
+    '', // 確定日時（承認フローが自動記入）
+    ''  // 前日リマインド（自動記入）
   ]);
   return sheet.getLastRow();
+}
+
+/**
+ * 同じメールアドレスの過去予約を探す（リピーター判定）。
+ * 見つかれば { count: 過去の予約回数, last: 前回の受付日 } を返す。なければ null。
+ */
+function findRepeaterInfo(email) {
+  var target = String(email || '').trim().toLowerCase();
+  if (!target) return null;
+  var sheet = getSheet();
+  var lastRow = sheet.getLastRow();
+  if (lastRow < 2) return null;
+
+  var values = sheet.getRange(2, 1, lastRow - 1, COL_EMAIL).getValues();
+  var count = 0;
+  var last = null;
+  values.forEach(function (row) {
+    if (String(row[COL_EMAIL - 1] || '').trim().toLowerCase() !== target) return;
+    count++;
+    var ts = row[COL_TIMESTAMP - 1];
+    if (ts instanceof Date && (!last || ts > last)) last = ts;
+  });
+  return count > 0 ? { count: count, last: last } : null;
 }
 
 function formatChoice(dateStr, part) {
@@ -393,8 +450,17 @@ function createTentativeEvent(data) {
 // ==========================================================
 // 通知（鑑定師向け）
 // ==========================================================
-function buildOwnerMessage(data) {
+function buildOwnerMessage(data, repeat) {
+  var repeatLine = '';
+  if (repeat) {
+    repeatLine = '🔁 リピーター（' + (repeat.count + 1) + '回目';
+    if (repeat.last instanceof Date) {
+      repeatLine += '・前回 ' + Utilities.formatDate(repeat.last, 'Asia/Tokyo', 'yyyy年M月');
+    }
+    repeatLine += '）\n';
+  }
   return '【新規予約】フォームから予約が入りました\n' +
+    repeatLine +
     '────────────\n' +
     'お名前: ' + data.name + '\n' +
     '性別: ' + (data.sex || '未入力') + '\n' +
@@ -433,12 +499,13 @@ function notifyOwnerLine(text) {
   });
 }
 
-function notifyOwnerEmail(data, row) {
+function notifyOwnerEmail(data, row, repeat) {
   var sheetUrl = getSheet().getParent().getUrl();
   MailApp.sendEmail({
     to: CONFIG.NOTIFY_EMAIL,
-    subject: '【予約】' + formatChoice(data.date1, data.part1) + ' ' + data.course + '（' + data.name + '様）',
-    body: buildOwnerMessage(data) +
+    subject: '【予約】' + formatChoice(data.date1, data.part1) + ' ' + data.course + '（' + data.name + '様）' +
+      (repeat ? '🔁' : ''),
+    body: buildOwnerMessage(data, repeat) +
       '\n\n予約シート（' + row + '行目）:\n' + sheetUrl +
       '\n\n対応が終わったら「対応状況」列に「対応済み」と記入してください。' +
       '\n（未記入のままだと ' + CONFIG.REMIND_AFTER_HOURS + ' 時間後にLINEへ再通知されます）',
@@ -621,6 +688,7 @@ function processApproval(sheet, rowIndex) {
         buildInPersonBody(r, when)
       );
       sheet.getRange(rowIndex, COL_STATUS).setValue('下書き作成済 ' + stamp);
+      sheet.getRange(rowIndex, COL_CONFIRMED).setValue(when);
       safely(function () {
         notifyOwnerLine(
           '【対面予約の確定】下書きを作成しました\n' +
@@ -651,6 +719,7 @@ function processApproval(sheet, rowIndex) {
       name: CONFIG.SHOP_NAME
     });
     sheet.getRange(rowIndex, COL_STATUS).setValue('案内済み ' + stamp);
+    sheet.getRange(rowIndex, COL_CONFIRMED).setValue(when);
     safely(function () { renameTentativeEvent(r.name); });
     safely(function () {
       notifyOwnerLine(
@@ -851,6 +920,147 @@ function checkUnhandledReservations() {
     sheet.getRange(p.rowIndex, COL_REMINDED).setValue('通知済 ' +
       Utilities.formatDate(new Date(), 'Asia/Tokyo', 'M/d HH:mm'));
   });
+}
+
+// ==========================================================
+// 前日リマインド（毎日17時ごろの時間トリガーで実行する）
+// 翌日の確定済み予約（対応状況が「案内済み」）のお客様にリマインドメールを送る。
+// 対面で「下書き作成済」のまま（=確定メール未送信）の予約があれば、オーナーにLINEで警告する。
+// ==========================================================
+function sendDayBeforeReminders() {
+  var sheet = getSheet();
+  var lastRow = sheet.getLastRow();
+  if (lastRow < 2) return;
+
+  var tomorrowMd = Utilities.formatDate(
+    new Date(Date.now() + 24 * 3600 * 1000), 'Asia/Tokyo', 'M/d');
+  var stamp = Utilities.formatDate(new Date(), 'Asia/Tokyo', 'M/d HH:mm');
+  var values = sheet.getRange(2, 1, lastRow - 1, SHEET_HEADERS.length).getValues();
+  var sent = [];
+  var unsent = [];
+
+  values.forEach(function (row, i) {
+    var rowIndex = i + 2;
+    if (String(row[COL_DAYBEFORE - 1] || '')) return; // 通知済み
+    var status = String(row[COL_STATUS - 1] || '');
+    var confirmed = status.indexOf('案内済み') === 0;
+    var draftOnly = status.indexOf('下書き作成済') === 0;
+    if (!confirmed && !draftOnly) return;
+
+    // 確定日時（無ければ第一希望）の「M/d」が明日かどうか
+    var when = String(row[COL_CONFIRMED - 1] || '') || String(row[COL_CHOICE1 - 1] || '');
+    var m = when.match(/(\d{1,2})\/(\d{1,2})/);
+    if (!m || (m[1] + '/' + m[2]) !== tomorrowMd) return;
+
+    var r = {
+      name: String(row[COL_NAME - 1] || ''),
+      email: String(row[COL_EMAIL - 1] || ''),
+      course: String(row[COL_COURSE - 1] || '')
+    };
+
+    // 確定メールがまだのもの（対面の下書き送信忘れ）はお客様に送らず、オーナーに知らせる
+    if (draftOnly) {
+      unsent.push(r.name + '様（' + when + '）');
+      sheet.getRange(rowIndex, COL_DAYBEFORE).setValue('未案内のため送らず ' + stamp);
+      return;
+    }
+
+    if (!r.email || r.email.indexOf('@') < 0) return;
+    try {
+      MailApp.sendEmail({
+        to: r.email,
+        replyTo: primaryEmail(),
+        subject: '【' + CONFIG.SHOP_NAME + '】明日のご予約のご案内（' + when + '）',
+        body: buildDayBeforeBody(r, when),
+        name: CONFIG.SHOP_NAME
+      });
+      sheet.getRange(rowIndex, COL_DAYBEFORE).setValue('送信済 ' + stamp);
+      sent.push(r.name + '様（' + when + '）');
+    } catch (err) {
+      console.error('前日リマインド送信失敗:', err);
+    }
+  });
+
+  if (sent.length) {
+    notifyOwnerLine('【前日リマインド】明日のご予約 ' + sent.length + ' 件にリマインドメールを送りました\n' +
+      sent.map(function (s) { return '・' + s; }).join('\n'));
+  }
+  if (unsent.length) {
+    notifyOwnerLine('【⚠️ 確認してください】明日の対面予約で、確定メールがまだ送られていないものがあります\n' +
+      unsent.map(function (s) { return '・' + s; }).join('\n') +
+      '\n\nGmailの下書きを確認して送信し、シートの「対応状況」を「案内済み」に変えてください。');
+  }
+}
+
+function buildDayBeforeBody(r, when) {
+  var isInPerson = r.course.indexOf('対面') >= 0;
+  var body = r.name + ' 様\n\n' +
+    'いよいよ明日、ご予約の日となりましたのでご案内いたします。\n\n' +
+    '────────────────\n' +
+    '日時: ' + when + '\n' +
+    'コース: ' + r.course + '\n' +
+    '────────────────\n\n';
+  if (isInPerson) {
+    body += '待ち合わせ場所は、予約確定のご連絡メールをご確認ください。\n' +
+      '当日はどうぞお気をつけてお越しください。\n\n';
+  } else if (CONFIG.MEET_URL) {
+    body += '【当日の参加方法】\n' +
+      'お時間になりましたら、こちらのURLからご参加ください。\n' +
+      CONFIG.MEET_URL + '\n' +
+      '※URLを開くだけで参加できます。アプリ登録・会員登録は不要です。\n\n';
+  }
+  body += '※ご都合が悪くなった場合は、このメールへの返信でお早めにご連絡ください。\n\n' +
+    'お話しできるのを楽しみにしております。\n\n' +
+    '────────────────\n' +
+    CONFIG.SHOP_NAME + '\n' +
+    'https://uranai-rokkon.com/\n' +
+    'お問い合わせ: ' + primaryEmail() + '\n';
+  return body;
+}
+
+// ==========================================================
+// 月次レポート（毎月1日 朝の時間トリガーで実行する）
+// 先月の予約件数のまとめをLINEに送る。
+// ==========================================================
+function sendMonthlySummary() {
+  var now = new Date();
+  var y = Number(Utilities.formatDate(now, 'Asia/Tokyo', 'yyyy'));
+  var m = Number(Utilities.formatDate(now, 'Asia/Tokyo', 'M'));
+  var prevY = m === 1 ? y - 1 : y;
+  var prevM = m === 1 ? 12 : m - 1;
+  var prevKey = prevY + '-' + prevM;
+
+  var sheet = getSheet();
+  var lastRow = sheet.getLastRow();
+  var total = 0, online = 0, inPerson = 0;
+  var confirmed = 0, declined = 0, others = 0;
+
+  if (lastRow >= 2) {
+    var values = sheet.getRange(2, 1, lastRow - 1, SHEET_HEADERS.length).getValues();
+    values.forEach(function (row) {
+      var ts = row[COL_TIMESTAMP - 1];
+      if (!(ts instanceof Date)) return;
+      if (Utilities.formatDate(ts, 'Asia/Tokyo', 'yyyy-M') !== prevKey) return;
+      total++;
+      var course = String(row[COL_COURSE - 1] || '');
+      if (course.indexOf('対面') >= 0) inPerson++; else online++;
+      var status = String(row[COL_STATUS - 1] || '');
+      if (status.indexOf('案内済み') === 0 || status.indexOf('下書き作成済') === 0) confirmed++;
+      else if (status.indexOf('お断り済') === 0) declined++;
+      else others++;
+    });
+  }
+
+  var text = '【月次レポート】' + prevY + '年' + prevM + '月の予約まとめ\n' +
+    '────────────\n' +
+    '受付: ' + total + ' 件（オンライン ' + online + '・対面 ' + inPerson + '）\n' +
+    '確定: ' + confirmed + ' 件\n' +
+    'お断り: ' + declined + ' 件\n' +
+    'その他（調整中など）: ' + others + ' 件';
+  if (total === 0) {
+    text = '【月次レポート】' + prevY + '年' + prevM + '月の予約受付は 0 件でした。';
+  }
+  notifyOwnerLine(text);
 }
 
 // ==========================================================

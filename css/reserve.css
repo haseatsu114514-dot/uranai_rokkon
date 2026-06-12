@@ -390,6 +390,20 @@
     margin-bottom: 28px;
 }
 
+.form-success-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+}
+
+.form-success-note {
+    font-size: 0.78rem;
+    color: #999;
+    margin-top: 14px;
+    line-height: 1.8;
+}
+
 /* ----- 補足 ----- */
 .reserve-notes {
     background: #f5f4f0;
