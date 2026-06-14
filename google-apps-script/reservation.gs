@@ -177,7 +177,16 @@ function getAvailability() {
 
 /** その日のその部に、指定分数の鑑定を入れられる枠が1つでもあるか */
 function hasFreeSlot(cal, day, partName, minutes) {
+  return findFreeSlotStart(cal, day, partName, minutes) !== null;
+}
+
+/**
+ * その日のその部で、既存予約とバッティングしない「最初の空き開始時刻」を返す。
+ * 空きがなければ null。Meet室の重複を防ぐため、仮予約の配置にも使う。
+ */
+function findFreeSlotStart(cal, day, partName, minutes) {
   var t = PART_TIMES[partName];
+  if (!t) return null;
   var partStart = new Date(day.getFullYear(), day.getMonth(), day.getDate(), t.startH, t.startM);
   var partEnd = new Date(day.getFullYear(), day.getMonth(), day.getDate(), t.endH, t.endM);
 
@@ -198,9 +207,9 @@ function hasFreeSlot(cal, day, partName, minutes) {
   for (var s = partStart.getTime(); s + minutes * 60000 <= partEnd.getTime(); s += SLOT_STEP_MIN * 60000) {
     var slotEnd = s + minutes * 60000;
     var conflict = busy.some(function (b) { return s < b.e && slotEnd > b.s; });
-    if (!conflict) return true;
+    if (!conflict) return new Date(s);
   }
-  return false;
+  return null;
 }
 
 function getCalendar() {
@@ -426,7 +435,15 @@ function createTentativeEvent(data) {
 
   var d = parseYmd(data.date1);
   var minutes = data.course.indexOf('30分') >= 0 ? 30 : 60;
-  var start = new Date(d.getFullYear(), d.getMonth(), d.getDate(), slot.startH, slot.startM);
+
+  // 同じ部に既に予約があっても重ならないよう、空いている最初の時刻に置く。
+  // 固定Meet URLでも、予約どうしが同じ時間に重ならないのでバッティングを避けられる。
+  var start = findFreeSlotStart(cal, d, partName, minutes);
+  var autoPlaced = !!start;
+  if (!start) {
+    // 直前に埋まる等で空きが見つからない場合は部の開始時刻に置く（オーナーが後で調整）
+    start = new Date(d.getFullYear(), d.getMonth(), d.getDate(), slot.startH, slot.startM);
+  }
   var end = new Date(start.getTime() + minutes * 60000);
 
   cal.createEvent(
@@ -434,7 +451,9 @@ function createTentativeEvent(data) {
     start, end,
     {
       description:
-        'フォーム予約（未確定）。時間帯内で要調整。\n' +
+        (autoPlaced
+          ? 'フォーム予約（未確定）。空き時刻に自動配置しました（調整可）。\n'
+          : 'フォーム予約（未確定）。時間帯内で要調整（空き枠が見つからず部の先頭に配置）。\n') +
         'メール: ' + data.email + '\n' +
         '性別: ' + (data.sex || '未入力') + '\n' +
         '生年月日: ' + (data.birthdate || '未入力') + '\n' +
