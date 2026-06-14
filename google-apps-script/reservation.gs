@@ -498,7 +498,11 @@ function buildOwnerMessage(data, repeat) {
     '支払い希望: ' + (data.payMethod || '未選択') + '\n' +
     'メール: ' + data.email + '\n' +
     '────────────\n' +
-    '確定メールの返信をお願いします。';
+    '＜やること＞\n' +
+    '① 下の予約シートを開く\n' +
+    '② 日時を確認して「対応状況」を選ぶ\n' +
+    '　 確定／確定2＝確定案内を送る（オンラインは自動送信）\n' +
+    '　 別日提案＝空き日時を案内　お断り＝お断りメール';
 }
 
 function notifyOwnerLine(text) {
@@ -718,8 +722,10 @@ function processApproval(sheet, rowIndex) {
         notifyOwnerLine(
           '【対面予約の確定】下書きを作成しました\n' +
           r.name + '様（' + when + '）\n\n' +
-          '下書きを開いて、待ち合わせ場所の【★】の部分を記入してから送信してください。\n' +
-          '送信したらシートの「対応状況」を「案内済み」に変えてください。\n\n' +
+          '＜やること＞\n' +
+          '① 下のGmail下書きを開く\n' +
+          '② 待ち合わせ場所の【★】を埋めて送信する\n' +
+          '③ シートの「対応状況」を「案内済み」に変える\n\n' +
           '✉️ Gmailの下書きを開く\n' +
           'https://mail.google.com/mail/u/0/#drafts'
         );
@@ -748,10 +754,15 @@ function processApproval(sheet, rowIndex) {
     safely(function () { renameTentativeEvent(r.name); });
     safely(function () {
       notifyOwnerLine(
-        '【確定案内 送信完了】\n' +
-        r.name + '様（' + when + '・' + r.course + '）\n' +
+        '【確定案内 送信完了】オンライン\n' +
+        r.name + '様（' + when + '）\n' +
         '支払い希望: ' + (r.payMethod || '未選択') + '\n\n' +
-        '念のため、当日までにMeet URLが開けるか確認しておいてください。'
+        '▼ 当日の鑑定ルーム（Meet）\n' +
+        CONFIG.MEET_URL + '\n\n' +
+        '＜やること＞\n' +
+        '① 当日、開始時刻にこの↑URLを開く\n' +
+        '② お客様の「参加リクエスト」を許可する\n' +
+        '（前日にもこのMeetリンク入りのリマインドが届きます）'
       );
     });
   } catch (err) {
@@ -934,7 +945,9 @@ function checkUnhandledReservations() {
     pending.map(function (p) {
       return '・' + p.name + '様（' + p.choice + '）';
     }).join('\n') +
-    '\n\n確定メールの返信をお願いします。';
+    '\n\n＜やること＞\n' +
+    '① 下の予約シートを開く\n' +
+    '② 「対応状況」を選ぶ（確定／別日提案／お断り など）';
 
   notifyOwnerLine(text);
 
@@ -960,6 +973,7 @@ function sendDayBeforeReminders() {
   var values = sheet.getRange(2, 1, lastRow - 1, SHEET_HEADERS.length).getValues();
   var sent = [];
   var unsent = [];
+  var hasOnline = false;
 
   values.forEach(function (row, i) {
     var rowIndex = i + 2;
@@ -997,15 +1011,22 @@ function sendDayBeforeReminders() {
         name: CONFIG.SHOP_NAME
       });
       sheet.getRange(rowIndex, COL_DAYBEFORE).setValue('送信済 ' + stamp);
-      sent.push(r.name + '様（' + when + '）');
+      var isOnline = r.course.indexOf('対面') < 0;
+      sent.push(r.name + '様（' + when + (isOnline ? '・オンライン' : '・対面') + '）');
+      if (isOnline) hasOnline = true;
     } catch (err) {
       console.error('前日リマインド送信失敗:', err);
     }
   });
 
   if (sent.length) {
-    notifyOwnerLine('【前日リマインド】明日のご予約 ' + sent.length + ' 件にリマインドメールを送りました\n' +
-      sent.map(function (s) { return '・' + s; }).join('\n'));
+    var msg = '【前日リマインド】明日のご予約 ' + sent.length + ' 件にリマインドメールを送りました\n' +
+      sent.map(function (s) { return '・' + s; }).join('\n');
+    if (hasOnline && CONFIG.MEET_URL) {
+      msg += '\n\n▼ オンラインの鑑定ルーム（Meet）\n' + CONFIG.MEET_URL +
+        '\n\n＜やること＞\n① 明日、開始時刻にこの↑URLを開く\n② お客様の「参加リクエスト」を許可する';
+    }
+    notifyOwnerLine(msg);
   }
   if (unsent.length) {
     notifyOwnerLine('【⚠️ 確認してください】明日の対面予約で、確定メールがまだ送られていないものがあります\n' +
