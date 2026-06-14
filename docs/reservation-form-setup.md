@@ -150,8 +150,32 @@ LINE_OWNER_USER_ID: '（ADMIN_USER_ID の値、Uで始まる）',
 | 記録シートはどこ？ | 「【設定完了】」メールにURLが書いてあります（Googleドライブにもあります） |
 | 「確定」と書いても何も起きない | コード更新後に setup() を再実行したか（トリガー登録）／GASの CONFIG に MEET_URL・支払い情報を記入したか／デプロイ更新をしたか |
 
+## 秘密の値（トークン・支払い情報）の保存 — 最初に1回だけ
+
+LINEトークン・Meet URL・支払い情報は **Script Properties** に保存する方式にした。
+一度保存すれば【コードを貼り替えても消えない】ので、更新のたびに入れ直す必要がない。
+
+1. GASのコードの下のほうにある `saveSecrets()` 関数を見つける
+2. その中の `''` に値を書く（LINEトークン・ユーザーID・Meet URL・PayPay ID・口座）
+3. 関数プルダウンで `saveSecrets` を選んで ▷ 実行 → ログに「✅ 保存しました」と出ればOK
+4. （任意・安全のため）書いた値をまた `''` に戻して保存し直す。Properties に入っているので動作には影響しない
+
+> 旧コードに値が入っている状態から移行するなら、貼り替える前に旧コードへ次を貼って実行すると手入力ゼロで移せる:
+> ```js
+> function _migrateSecretsOnce(){
+>   PropertiesService.getScriptProperties().setProperties({
+>     LINE_CHANNEL_ACCESS_TOKEN: CONFIG.LINE_CHANNEL_ACCESS_TOKEN,
+>     LINE_OWNER_USER_ID: CONFIG.LINE_OWNER_USER_ID,
+>     MEET_URL: CONFIG.MEET_URL,
+>     PAY_PAYPAY_ID: CONFIG.PAY_PAYPAY_ID,
+>     PAY_BANK_TEXT: CONFIG.PAY_BANK_TEXT
+>   });
+>   Logger.log('移行しました');
+> }
+> ```
+
 ## コード更新時にやること（毎回同じ3ステップ）
 
-1. 最新の `reservation.gs` を全部コピーして GAS に貼り直し、CONFIG の `LINE_CHANNEL_ACCESS_TOKEN`・`LINE_OWNER_USER_ID`・`MEET_URL`・`PAY_PAYPAY_ID`・`PAY_BANK_TEXT` を記入し直す（実値はリポジトリに書かない）
+1. 最新の `reservation.gs` を全部コピーして GAS に貼り直す（**秘密の値は Properties にあるので入れ直し不要**）
 2. **setup() をもう一度実行**する（新しいトリガーが自動登録される。新しい権限の承認が出たら許可）
 3. 「デプロイ」→「デプロイを管理」→ 鉛筆 → 新バージョンでデプロイ更新

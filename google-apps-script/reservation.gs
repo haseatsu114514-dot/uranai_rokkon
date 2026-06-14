@@ -26,24 +26,30 @@
 
 // ==========================================================
 // ★★★ 設定 ★★★
-// LINE通知・Meet URL・支払い情報の4か所だけ記入する（リポジトリにはコミットしない）
+// 秘密の値（LINEトークン・Meet URL・支払い情報）は Script Properties に保存し、
+// コードからは自動で読み込む。こうしておくと【コードを貼り替えても消えない】ので、
+// 更新のたびに入れ直す必要がない。
+//   → 最初の1回だけ saveSecrets() で保存する（手順はファイル末尾の saveSecrets を参照）
 // ==========================================================
+var SECRETS = (function () {
+  try { return PropertiesService.getScriptProperties().getProperties(); }
+  catch (e) { return {}; }
+})();
+
 var CONFIG = {
   // 通知・自動返信に使うメールアドレス（複数の場合はカンマ区切り。先頭が主アドレス）
   NOTIFY_EMAIL: 'uranai.rokkon@gmail.com,haseatsu114514@gmail.com',
   SHOP_NAME: '占い処 六根清浄',
 
-  // 【任意】LINE通知（通知用Botのチャネルアクセストークン・自分のユーザーID）
-  // 空のままならLINE通知はスキップされ、メール通知のみ行う
-  LINE_CHANNEL_ACCESS_TOKEN: '',
-  LINE_OWNER_USER_ID: '',
-
+  // 【以下4種はScript Propertiesから自動読み込み】saveSecrets() で一度だけ保存する
+  // LINE通知（通知用Botのチャネルアクセストークン・自分のユーザーID）。未設定ならLINE通知はスキップ
+  LINE_CHANNEL_ACCESS_TOKEN: SECRETS.LINE_CHANNEL_ACCESS_TOKEN || '',
+  LINE_OWNER_USER_ID: SECRETS.LINE_OWNER_USER_ID || '',
   // オンライン鑑定の Google Meet URL（確定案内メールに記載される）
-  MEET_URL: '',
-
+  MEET_URL: SECRETS.MEET_URL || '',
   // 支払い案内（確定案内メールに記載される）
-  PAY_PAYPAY_ID: '',   // 例: 'rokkon9119'
-  PAY_BANK_TEXT: '',   // 例: '〇〇銀行（0000）\n〇〇支店（000）\n普通 0000000\n名義'
+  PAY_PAYPAY_ID: SECRETS.PAY_PAYPAY_ID || '',
+  PAY_BANK_TEXT: SECRETS.PAY_BANK_TEXT || '',
 
   // 予約記録用スプレッドシート（空のままでOK: setup() 実行時に自動作成される）
   // 既存のシートを使いたい場合だけIDを記入する
@@ -1094,6 +1100,49 @@ function sendMonthlySummary() {
     text = '【月次レポート】' + prevY + '年' + prevM + '月の予約受付は 0 件でした。';
   }
   notifyOwnerLine(text);
+}
+
+// ==========================================================
+// 秘密の値の保存（最初に1回だけ実行する）
+// ==========================================================
+/**
+ * LINEトークン・Meet URL・支払い情報を Script Properties に保存する。
+ * ここに値を書いて一度だけ実行すれば、以降はコードを貼り替えても消えない。
+ * 【セキュリティ】保存できたら、下の値はまた空 '' に戻して保存しておくと安心
+ *   （コードに本物の値を残さないため。Propertiesには保存済みなので動作には影響しない）。
+ */
+function saveSecrets() {
+  var values = {
+    LINE_CHANNEL_ACCESS_TOKEN: '',  // LINE通知Botのチャネルアクセストークン
+    LINE_OWNER_USER_ID: '',         // 自分のユーザーID（Uで始まる）
+    MEET_URL: '',                   // Google MeetのURL
+    PAY_PAYPAY_ID: '',              // PayPay ID
+    PAY_BANK_TEXT: ''               // 振込先口座（複数行は \n で改行）
+  };
+
+  var props = PropertiesService.getScriptProperties();
+  var saved = [];
+  Object.keys(values).forEach(function (k) {
+    if (values[k] !== '') { props.setProperty(k, values[k]); saved.push(k); }
+  });
+
+  if (!saved.length) {
+    console.log('⚠️ 値が空でした。saveSecrets() の中に値を書いてから実行してください。\n' +
+      '現在の保存状況: ' + JSON.stringify(maskSecrets(props.getProperties())));
+    return;
+  }
+  console.log('✅ 保存しました: ' + saved.join(', ') +
+    '\n現在の保存状況: ' + JSON.stringify(maskSecrets(props.getProperties())));
+}
+
+/** 確認表示用に値を伏せ字にする（ログに本物を出さない） */
+function maskSecrets(obj) {
+  var masked = {};
+  Object.keys(obj).forEach(function (k) {
+    var v = String(obj[k] || '');
+    masked[k] = v ? (v.slice(0, 2) + '****（設定済み）') : '（未設定）';
+  });
+  return masked;
 }
 
 // ==========================================================
