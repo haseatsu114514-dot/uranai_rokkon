@@ -301,6 +301,29 @@ assert.equal(
   context.isRequestedPartWithinLead(todayYmd, '昼の部（14:00〜16:30）', request.course, today),
   false
 );
+today.setHours(18, 0, 0, 0);
+assert.equal(
+  context.isRequestedPartWithinLead(todayYmd, '夜の部（19:00〜22:00）', request.course, today),
+  true
+);
+today.setMinutes(1);
+assert.equal(
+  context.isRequestedPartWithinLead(todayYmd, '夜の部（19:00〜22:00）', request.course, today),
+  false
+);
+assert.equal(
+  context.findFreeSlotStart(
+    calendar,
+    today,
+    '夜の部',
+    30,
+    null,
+    [],
+    new Date(today.getFullYear(), today.getMonth(), today.getDate(), 21, 1)
+  ),
+  null,
+  '最終受付21:00より後の開始枠を出さない'
+);
 
 const urgentLine = context.buildOwnerMessage({ ...request, date1: formatDate(new Date(), 'yyyy-MM-dd') });
 assert.match(urgentLine, /当日希望・至急確認/);

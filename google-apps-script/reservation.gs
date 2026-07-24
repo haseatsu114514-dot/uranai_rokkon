@@ -65,7 +65,7 @@ var CONFIG = {
 };
 
 // 本番反映状況を ?action=health で確認するための識別子（秘密情報は返さない）
-var SYSTEM_VERSION = '2026-07-25-same-day-fast-availability';
+var SYSTEM_VERSION = '2026-07-25-same-day-fast-availability-v2';
 
 // ===== 空き状況の計算ルール =====
 // 通常予約は翌日以降。当日は「開始3時間前までの要確認リクエスト」として受け付け、
@@ -76,6 +76,8 @@ var SAME_DAY_MIN_LEAD_HOURS = 3;
 var AVAILABILITY_CACHE_SECONDS = 90;
 var SLOT_STEP_MIN = 30;         // 30分刻みで枠を探す
 var BUFFER_MIN = 30;            // 既存予定の前後30分は空ける
+var FINAL_START_HOUR = 21;       // 公開表記「最終受付 21:00」と揃える
+var FINAL_START_MINUTE = 0;
 
 var SHEET_HEADERS = [
   '受付日時', 'お名前', '性別', '生年月日', '出生時間・出生地', 'メール', 'コース',
@@ -325,6 +327,7 @@ function findFreeSlotStart(cal, day, partName, minutes, ignoredEventId, prefetch
   if (!t) return null;
   var partStart = new Date(day.getFullYear(), day.getMonth(), day.getDate(), t.startH, t.startM);
   var partEnd = new Date(day.getFullYear(), day.getMonth(), day.getDate(), t.endH, t.endM);
+  var latestStart = latestBookableStart(day, t, minutes);
 
   // 既存予定（前後のバッファ込みで衝突判定する）
   var events = prefetchedEvents || cal.getEvents(
@@ -342,7 +345,7 @@ function findFreeSlotStart(cal, day, partName, minutes, ignoredEventId, prefetch
       };
     });
 
-  for (var s = partStart.getTime(); s + minutes * 60000 <= partEnd.getTime(); s += SLOT_STEP_MIN * 60000) {
+  for (var s = partStart.getTime(); s <= latestStart.getTime(); s += SLOT_STEP_MIN * 60000) {
     if (notBefore && s < notBefore.getTime()) continue;
     var slotEnd = s + minutes * 60000;
     var conflict = busy.some(function (b) { return s < b.e && slotEnd > b.s; });
@@ -475,6 +478,21 @@ function sameDayNotBefore(now) {
   return new Date(base.getTime() + SAME_DAY_MIN_LEAD_HOURS * 60 * 60 * 1000);
 }
 
+function latestBookableStart(day, partTime, minutes) {
+  var partEnd = new Date(
+    day.getFullYear(), day.getMonth(), day.getDate(),
+    partTime.endH, partTime.endM
+  );
+  var finalStart = new Date(
+    day.getFullYear(), day.getMonth(), day.getDate(),
+    FINAL_START_HOUR, FINAL_START_MINUTE
+  );
+  return new Date(Math.min(
+    partEnd.getTime() - minutes * 60000,
+    finalStart.getTime()
+  ));
+}
+
 function isRequestedPartWithinLead(dateValue, partValue, course, now) {
   var current = now || new Date();
   if (!isSameDayValue(dateValue, current)) return true;
@@ -482,10 +500,8 @@ function isRequestedPartWithinLead(dateValue, partValue, course, now) {
   var t = PART_TIMES[partName];
   if (!t) return false;
   var day = parseYmd(String(dateValue));
-  var latestStart = new Date(
-    day.getFullYear(), day.getMonth(), day.getDate(), t.endH, t.endM
-  ).getTime() - courseMinutes(course) * 60000;
-  return latestStart >= sameDayNotBefore(current).getTime();
+  var latestStart = latestBookableStart(day, t, courseMinutes(course));
+  return latestStart.getTime() >= sameDayNotBefore(current).getTime();
 }
 
 function isAllowedPartLabel(value) {

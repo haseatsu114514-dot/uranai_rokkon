@@ -96,9 +96,10 @@
 ### 当日予約・速度改善の本番確認
 
 - 予約GASをバージョン9へ更新
-- `?action=health`: `2026-07-25-same-day-fast-availability`
+- `?action=health`: `2026-07-25-same-day-fast-availability-v2`
 - 設定状態: LINE `true`、Meet `true`、PayPay `false`、銀行振込 `false`
 - 空き状況API: 今日から10日先までの11日分を返し、当日に「当日・要確認」を表示
 - 実測応答: 3回の連続取得で1.63〜2.00秒
+- 全コースの開始時刻を公開表記どおり21:00までに制限
 
 PayPay IDと銀行口座情報はリポジトリや既存設定から確認できなかったため未設定。オンライン予約を「確定」したときの案内送信には、利用する支払方法のScript Property設定が必要。
