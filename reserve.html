@@ -106,10 +106,9 @@
                 </p>
 
                 <div class="reserve-leadtime-note">
-                    ご予約は<strong>前日まで</strong>に承っています。<br>
-                    当日のご予約・お急ぎの場合は、お手数ですが
-                    <a href="mailto:uranai.rokkon@gmail.com">uranai.rokkon@gmail.com</a>
-                    までご連絡ください。
+                    通常のご予約は<strong>前日まで</strong>に承っています。<br>
+                    当日も、空きがあり<strong>開始3時間前まで</strong>なら「当日希望」として送信できます。<br>
+                    当日希望はまだ確定ではありません。確定メールをお待ちください。
                 </div>
 
                 <form id="reservationForm" class="reserve-form" novalidate>
@@ -144,38 +143,6 @@
                             </label>
                         </div>
                     </fieldset>
-
-                    <!-- 希望日時（空きのある日時だけが表示される） -->
-                    <div class="form-block">
-                        <label class="form-label" for="date1">第一希望日時 <span class="required-mark">必須</span></label>
-                        <div class="datetime-row">
-                            <select id="date1" name="date1" required>
-                                <option value="">空き状況を確認中…</option>
-                            </select>
-                            <select id="part1" name="part1" required>
-                                <option value="">時間帯を選択</option>
-                            </select>
-                        </div>
-                        <p class="form-hint">前日までの空きのある日時のみ表示しています。</p>
-                    </div>
-
-                    <div class="form-block">
-                        <label class="form-label" for="date2">第二希望日時 <span class="optional-mark">任意</span></label>
-                        <div class="datetime-row">
-                            <select id="date2" name="date2">
-                                <option value="">指定しない</option>
-                            </select>
-                            <select id="part2" name="part2">
-                                <option value="">時間帯を選択</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-error" id="noSlotNotice" hidden>
-                        申し訳ありません、直近の空きが見つかりませんでした。<br>
-                        キャンセルが出る場合もありますので、お手数ですが
-                        <a href="mailto:uranai.rokkon@gmail.com">メール</a> でご相談ください。
-                    </div>
 
                     <!-- お名前 -->
                     <div class="form-block">
@@ -238,6 +205,42 @@
                             placeholder="差し支えない範囲で構いません。当日お話しいただくこともできます。"></textarea>
                     </div>
 
+                    <!-- 希望日時（入力中に空き状況を先読みし、空きのある日時だけを表示） -->
+                    <div class="form-block schedule-block">
+                        <label class="form-label" for="date1">第一希望日時 <span class="required-mark">必須</span></label>
+                        <div class="datetime-row">
+                            <select id="date1" name="date1" required>
+                                <option value="">空き状況を確認中…</option>
+                            </select>
+                            <select id="part1" name="part1" required>
+                                <option value="">時間帯を選択</option>
+                            </select>
+                        </div>
+                        <p class="form-hint">通常予約は前日まで。当日は開始3時間前までの空き枠だけ表示します。</p>
+                        <div class="same-day-notice" id="sameDayNotice" hidden>
+                            <strong>当日希望です。</strong><br>
+                            送信するとBBotへ至急通知します。まだ確定ではないため、確定メールをお待ちください。
+                        </div>
+                    </div>
+
+                    <div class="form-block">
+                        <label class="form-label" for="date2">第二希望日時 <span class="optional-mark">任意</span></label>
+                        <div class="datetime-row">
+                            <select id="date2" name="date2">
+                                <option value="">指定しない</option>
+                            </select>
+                            <select id="part2" name="part2">
+                                <option value="">時間帯を選択</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-error" id="noSlotNotice" hidden>
+                        申し訳ありません、直近の空きが見つかりませんでした。<br>
+                        キャンセルが出る場合もありますので、お手数ですが
+                        <a href="mailto:uranai.rokkon@gmail.com">メール</a> でご相談ください。
+                    </div>
+
                     <!-- お支払い方法（オンラインのみ表示） -->
                     <div class="form-block" id="payBlock">
                         <label class="form-label">お支払い方法のご希望 <span class="required-mark">必須</span></label>
@@ -292,7 +295,7 @@
                 <h3 class="reserve-notes-title">ご予約にあたって</h3>
                 <ul class="reserve-notes-list">
                     <li>鑑定営業時間は 14:00〜22:00（最終受付 21:00）です</li>
-                    <li>ご予約は前日まで承っています。当日・お急ぎの場合はメール（uranai.rokkon@gmail.com）でご相談ください</li>
+                    <li>通常予約は前日まで。当日は空きがあり開始3時間前までなら、フォームから「当日希望」として送信できます（確定メールが届くまでは未確定です）</li>
                     <li>お支払いは予約確定後にご案内します（オンライン：PayPay / 銀行振込、対面：当日支払い）</li>
                     <li>延長は15分ごとに +2,000円です</li>
                     <li>日時のご都合が悪くなった場合は、確定メールへの返信でご連絡ください</li>

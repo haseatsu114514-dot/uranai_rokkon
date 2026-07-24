@@ -43,7 +43,7 @@ const RESERVE_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxKDhJg8_LhjfD
   var availability = null; // null=読込中 / false=取得失敗 / 配列=取得成功
 
   function fetchAvailability() {
-    fetch(RESERVE_ENDPOINT + '?action=availability&_t=' + Date.now(), { cache: 'no-store' })
+    fetch(RESERVE_ENDPOINT + '?action=availability', { cache: 'no-store' })
       .then(function (res) { return res.json(); })
       .then(function (json) {
         availability = (json && json.status === 'ok' && json.days) ? json.days : false;
@@ -55,7 +55,7 @@ const RESERVE_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxKDhJg8_LhjfD
       });
   }
 
-  // フォールバック: 翌日から10日分・全時間帯を出す（前日予約制／最終確認は鑑定師が行う）
+  // フォールバック: API障害時は安全のため当日を出さず、翌日から10日分だけ表示する。
   function fallbackDays() {
     var names = ['日', '月', '火', '水', '木', '金', '土'];
     var today = new Date();
@@ -128,6 +128,7 @@ const RESERVE_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxKDhJg8_LhjfD
     setOptions(date2, opts, '指定しない');
     renderPartOptions(1);
     renderPartOptions(2);
+    updateSameDayNotice();
 
     if (noSlot) noSlot.hidden = opts.length > 0;
     if (submitBtn) submitBtn.disabled = opts.length === 0;
@@ -149,12 +150,24 @@ const RESERVE_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxKDhJg8_LhjfD
       });
     }
     setOptions(partEl, opts, '時間帯を選択');
+    if (n === 1) updateSameDayNotice();
+  }
+
+  function updateSameDayNotice() {
+    var notice = document.getElementById('sameDayNotice');
+    var dateEl = document.getElementById('date1');
+    if (!notice || !dateEl) return;
+    var day = getDays().find(function (d) { return d.date === dateEl.value; });
+    notice.hidden = !(day && day.sameDay);
   }
 
   function initDateTimePickers() {
     ['date1', 'date2'].forEach(function (id, i) {
       var el = document.getElementById(id);
-      if (el) el.addEventListener('change', function () { renderPartOptions(i + 1); });
+      if (el) el.addEventListener('change', function () {
+        renderPartOptions(i + 1);
+        if (i === 0) updateSameDayNotice();
+      });
     });
     fetchAvailability();
   }
@@ -301,14 +314,22 @@ const RESERVE_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxKDhJg8_LhjfD
           var lead = document.querySelector('.reserve-form-lead');
           if (lead) lead.hidden = true;
           showGcalLink(data);
-          if (json.confirmationEmailSent === false) {
-            var successText = document.getElementById('formSuccessText');
-            if (successText) {
-              successText.innerHTML =
-                'ご予約内容は記録されましたが、受付確認メールを送信できませんでした。<br>' +
-                '迷惑メールフォルダをご確認のうえ、届かない場合は<br>' +
-                '<a href="mailto:uranai.rokkon@gmail.com" class="text-link">uranai.rokkon@gmail.com</a> までお問い合わせください。';
+          var successText = document.getElementById('formSuccessText');
+          if (successText && json.sameDayRequest) {
+            successText.innerHTML =
+              '<strong>当日希望として受け付け、担当者へ至急通知しました。</strong><br>' +
+              'この時点ではまだ確定していません。対応できる場合は確定メールをお送りします。<br>' +
+              '確定メールが届くまでは、ご来店・お支払い・Meetへの参加はお待ちください。';
+          }
+          if (json.confirmationEmailSent === false && successText) {
+            if (json.sameDayRequest) {
+              successText.innerHTML += '<br><br>';
             }
+            successText.innerHTML =
+              (json.sameDayRequest ? successText.innerHTML : '') +
+              'ご予約内容は記録されましたが、受付確認メールを送信できませんでした。<br>' +
+              '迷惑メールフォルダをご確認のうえ、届かない場合は<br>' +
+              '<a href="mailto:uranai.rokkon@gmail.com" class="text-link">uranai.rokkon@gmail.com</a> までお問い合わせください。';
           }
           successBox.hidden = false;
           successBox.scrollIntoView({ behavior: 'smooth', block: 'center' });

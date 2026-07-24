@@ -65,12 +65,15 @@ var CONFIG = {
 };
 
 // 本番反映状況を ?action=health で確認するための識別子（秘密情報は返さない）
-var SYSTEM_VERSION = '2026-07-25-notification-audit';
+var SYSTEM_VERSION = '2026-07-25-same-day-fast-availability';
 
 // ===== 空き状況の計算ルール =====
-// 前日予約制: 当日は表示せず、翌日以降のみ受け付ける（当日・緊急はメール問い合わせ）
-var LEAD_DAYS = 1;              // 何日先から予約可にするか（1 = 翌日から）
-var AVAIL_DAYS = 10;            // 予約可の初日から何日分を候補に出すか
+// 通常予約は翌日以降。当日は「開始3時間前までの要確認リクエスト」として受け付け、
+// LINE・管理者メールで至急通知し、鑑定師が確定／お断りを判断する。
+var LEAD_DAYS = 0;              // 0 = 当日リクエストも候補に含める
+var AVAIL_DAYS = 11;            // 今日＋10日先まで
+var SAME_DAY_MIN_LEAD_HOURS = 3;
+var AVAILABILITY_CACHE_SECONDS = 90;
 var SLOT_STEP_MIN = 30;         // 30分刻みで枠を探す
 var BUFFER_MIN = 30;            // 既存予定の前後30分は空ける
 
@@ -160,6 +163,7 @@ function doPost(e) {
       calendarResult = attemptTask('カレンダー仮予約', function () {
         return createTentativeEvent(data, sheet, row);
       });
+      if (calendarResult.ok) clearAvailabilityCache();
     } finally {
       lock.releaseLock();
     }
@@ -191,7 +195,8 @@ function doPost(e) {
 
     return jsonResponse({
       status: 'ok',
-      confirmationEmailSent: customerEmailResult.ok
+      confirmationEmailSent: customerEmailResult.ok,
+      sameDayRequest: isSameDayValue(data.date1)
     });
   } catch (err) {
     console.error('doPost error:', err);
@@ -232,49 +237,100 @@ function doGet(e) {
 // 空き状況の計算（カレンダーの予定から「出せる日時」だけを返す）
 // ==========================================================
 function getAvailability() {
+  var cached = readAvailabilityCache();
+  if (cached) return cached;
+
   var cal = getCalendar();
   var now = new Date();
   var dayNames = ['日', '月', '火', '水', '木', '金', '土'];
   var days = [];
+  var firstDay = new Date(now.getFullYear(), now.getMonth(), now.getDate() + LEAD_DAYS);
+  var lastDay = new Date(firstDay.getFullYear(), firstDay.getMonth(), firstDay.getDate() + AVAIL_DAYS - 1);
+
+  // 日×部ごとにCalendar APIを呼ぶと30回以上の通信になるため、対象期間を1回で取得して使い回す。
+  var allEvents = cal.getEvents(
+    new Date(firstDay.getFullYear(), firstDay.getMonth(), firstDay.getDate()),
+    new Date(lastDay.getFullYear(), lastDay.getMonth(), lastDay.getDate() + 1)
+  );
 
   for (var i = LEAD_DAYS; i < LEAD_DAYS + AVAIL_DAYS; i++) {
     var d = new Date(now.getFullYear(), now.getMonth(), now.getDate() + i);
+    var sameDay = isSameLocalDate(d, now);
+    var notBefore = sameDay
+      ? new Date(now.getTime() + SAME_DAY_MIN_LEAD_HOURS * 60 * 60 * 1000)
+      : null;
     var parts = {};
     Object.keys(PART_TIMES).forEach(function (partName) {
       parts[partName] = {
-        ok30: hasFreeSlot(cal, d, partName, 30),
-        ok60: hasFreeSlot(cal, d, partName, 60)
+        ok30: hasFreeSlot(cal, d, partName, 30, allEvents, notBefore),
+        ok60: hasFreeSlot(cal, d, partName, 60, allEvents, notBefore)
       };
     });
     days.push({
       date: Utilities.formatDate(d, 'Asia/Tokyo', 'yyyy-MM-dd'),
-      label: (d.getMonth() + 1) + '/' + d.getDate() + '(' + dayNames[d.getDay()] + ')',
+      label: (d.getMonth() + 1) + '/' + d.getDate() + '(' + dayNames[d.getDay()] + ')' +
+        (sameDay ? ' 当日・要確認' : ''),
+      sameDay: sameDay,
       parts: parts
     });
   }
+  writeAvailabilityCache(days);
   return days;
 }
 
+function availabilityCache() {
+  if (typeof CacheService === 'undefined') return null;
+  try { return CacheService.getScriptCache(); } catch (err) { return null; }
+}
+
+function readAvailabilityCache() {
+  var cache = availabilityCache();
+  if (!cache) return null;
+  try {
+    var text = cache.get('availability_v3');
+    return text ? JSON.parse(text) : null;
+  } catch (err) {
+    console.error('空き状況キャッシュの読込失敗:', err);
+    return null;
+  }
+}
+
+function writeAvailabilityCache(days) {
+  var cache = availabilityCache();
+  if (!cache) return;
+  try {
+    cache.put('availability_v3', JSON.stringify(days), AVAILABILITY_CACHE_SECONDS);
+  } catch (err) {
+    console.error('空き状況キャッシュの保存失敗:', err);
+  }
+}
+
+function clearAvailabilityCache() {
+  var cache = availabilityCache();
+  if (!cache) return;
+  try { cache.remove('availability_v3'); } catch (err) { console.error(err); }
+}
+
 /** その日のその部に、指定分数の鑑定を入れられる枠が1つでもあるか */
-function hasFreeSlot(cal, day, partName, minutes) {
-  return findFreeSlotStart(cal, day, partName, minutes) !== null;
+function hasFreeSlot(cal, day, partName, minutes, prefetchedEvents, notBefore) {
+  return findFreeSlotStart(cal, day, partName, minutes, null, prefetchedEvents, notBefore) !== null;
 }
 
 /**
  * その日のその部で、既存予約とバッティングしない「最初の空き開始時刻」を返す。
  * 空きがなければ null。Meet室の重複を防ぐため、仮予約の配置にも使う。
  */
-function findFreeSlotStart(cal, day, partName, minutes, ignoredEventId) {
+function findFreeSlotStart(cal, day, partName, minutes, ignoredEventId, prefetchedEvents, notBefore) {
   var t = PART_TIMES[partName];
   if (!t) return null;
   var partStart = new Date(day.getFullYear(), day.getMonth(), day.getDate(), t.startH, t.startM);
   var partEnd = new Date(day.getFullYear(), day.getMonth(), day.getDate(), t.endH, t.endM);
 
   // 既存予定（前後のバッファ込みで衝突判定する）
-  var events = cal.getEvents(
-    new Date(partStart.getTime() - BUFFER_MIN * 60000),
-    new Date(partEnd.getTime() + BUFFER_MIN * 60000)
-  );
+  var events = prefetchedEvents || cal.getEvents(
+      new Date(partStart.getTime() - BUFFER_MIN * 60000),
+      new Date(partEnd.getTime() + BUFFER_MIN * 60000)
+    );
   var busy = events
     .filter(function (ev) {
       return !ev.isAllDayEvent() && (!ignoredEventId || ev.getId() !== ignoredEventId);
@@ -287,6 +343,7 @@ function findFreeSlotStart(cal, day, partName, minutes, ignoredEventId) {
     });
 
   for (var s = partStart.getTime(); s + minutes * 60000 <= partEnd.getTime(); s += SLOT_STEP_MIN * 60000) {
+    if (notBefore && s < notBefore.getTime()) continue;
     var slotEnd = s + minutes * 60000;
     var conflict = busy.some(function (b) { return s < b.e && slotEnd > b.s; });
     if (!conflict) return new Date(s);
@@ -359,9 +416,15 @@ function validateReservation(data) {
   if (ALLOWED_COURSES.indexOf(String(data.course || '')) < 0) return 'コースを選択してください';
   if (!isValidYmd(data.date1) || !isReservationDateAllowed(data.date1)) return '第一希望日をご確認ください';
   if (!isAllowedPartLabel(data.part1)) return '第一希望の時間帯を選択してください';
+  if (!isRequestedPartWithinLead(data.date1, data.part1, data.course)) {
+    return '当日のご予約は開始3時間前まで受け付けています。別の時間帯または日付をお選びください';
+  }
   if (data.date2 || data.part2) {
     if (!isValidYmd(data.date2) || !isReservationDateAllowed(data.date2)) return '第二希望日をご確認ください';
     if (!isAllowedPartLabel(data.part2)) return '第二希望の時間帯を選択してください';
+    if (!isRequestedPartWithinLead(data.date2, data.part2, data.course)) {
+      return '第二希望の当日予約は開始3時間前までです。別の時間帯または日付をお選びください';
+    }
   }
   if (ALLOWED_GENRES.indexOf(String(data.genre || '')) < 0) return 'ご相談テーマをご確認ください';
   if (data.birthtime && String(data.birthtime).length > 100) return '出生時間・出生地が長すぎます';
@@ -390,6 +453,39 @@ function isReservationDateAllowed(value) {
   var first = new Date(today.getFullYear(), today.getMonth(), today.getDate() + LEAD_DAYS);
   var last = new Date(first.getFullYear(), first.getMonth(), first.getDate() + AVAIL_DAYS - 1);
   return target >= first && target <= last;
+}
+
+function isSameLocalDate(a, b) {
+  return a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate();
+}
+
+function isSameDayValue(value, now) {
+  if (!isValidYmd(value)) return false;
+  return isSameLocalDate(parseYmd(String(value)), now || new Date());
+}
+
+function courseMinutes(course) {
+  return String(course || '').indexOf('30分') >= 0 ? 30 : 60;
+}
+
+function sameDayNotBefore(now) {
+  var base = now || new Date();
+  return new Date(base.getTime() + SAME_DAY_MIN_LEAD_HOURS * 60 * 60 * 1000);
+}
+
+function isRequestedPartWithinLead(dateValue, partValue, course, now) {
+  var current = now || new Date();
+  if (!isSameDayValue(dateValue, current)) return true;
+  var partName = extractPartName(partValue);
+  var t = PART_TIMES[partName];
+  if (!t) return false;
+  var day = parseYmd(String(dateValue));
+  var latestStart = new Date(
+    day.getFullYear(), day.getMonth(), day.getDate(), t.endH, t.endM
+  ).getTime() - courseMinutes(course) * 60000;
+  return latestStart >= sameDayNotBefore(current).getTime();
 }
 
 function isAllowedPartLabel(value) {
@@ -595,11 +691,12 @@ function createTentativeEvent(data, sheet, rowIndex) {
   if (!slot) throw new Error('時間帯を判定できませんでした');
 
   var d = parseYmd(data.date1);
-  var minutes = data.course.indexOf('30分') >= 0 ? 30 : 60;
+  var minutes = courseMinutes(data.course);
+  var notBefore = isSameDayValue(data.date1) ? sameDayNotBefore() : null;
 
   // 同じ部に既に予約があっても重ならないよう、空いている最初の時刻に置く。
   // 固定Meet URLでも、予約どうしが同じ時間に重ならないのでバッティングを避けられる。
-  var start = findFreeSlotStart(cal, d, partName, minutes);
+  var start = findFreeSlotStart(cal, d, partName, minutes, null, null, notBefore);
   if (!start) {
     throw new Error('送信直前に第一希望の枠が埋まりました。日程調整が必要です');
   }
@@ -635,6 +732,7 @@ function createTentativeEvent(data, sheet, rowIndex) {
 // ==========================================================
 function buildOwnerMessage(data, repeat, context) {
   context = context || {};
+  var sameDay = isSameDayValue(data.date1);
   var repeatLine = '';
   if (repeat) {
     repeatLine = '🔁 リピーター（' + (repeat.count + 1) + '回目';
@@ -643,7 +741,9 @@ function buildOwnerMessage(data, repeat, context) {
     }
     repeatLine += '）\n';
   }
-  return '【新規予約】フォームから予約が入りました\n' +
+  return (sameDay
+      ? '🔥【当日希望・至急確認】本日の予約リクエストです\n今すぐ対応可否を判断してください\n'
+      : '【新規予約】フォームから予約が入りました\n') +
     repeatLine +
     '────────────\n' +
     'お名前: ' + data.name + '\n' +
@@ -654,7 +754,7 @@ function buildOwnerMessage(data, repeat, context) {
     (context.tentativeWhen ? '仮押さえ時刻: ' + context.tentativeWhen + '\n' : '') +
     '────────────\n' +
     '＜やること＞\n' +
-    '① 下の予約シートを開く\n' +
+    (sameDay ? '① 仮押さえ時刻と現在時刻をすぐ確認する\n' : '① 下の予約シートを開く\n') +
     '② ' + (context.row ? context.row + '行目の' : '') + '相談内容と日時を確認する\n' +
     '③ 「対応状況」を選ぶ\n' +
     '　確定＝第一希望／確定2＝第二希望\n' +
@@ -702,7 +802,8 @@ function notifyOwnerEmail(data, row, repeat, results) {
   var body = buildOwnerEmailBody(data, row, repeat, sheetUrl, results, context);
   MailApp.sendEmail({
     to: CONFIG.NOTIFY_EMAIL,
-    subject: '【要対応・予約】' + formatChoice(data.date1, data.part1) + ' ' + data.course + '（' + data.name + '様）' +
+    subject: (isSameDayValue(data.date1) ? '【至急・当日予約】' : '【要対応・予約】') +
+      formatChoice(data.date1, data.part1) + ' ' + data.course + '（' + data.name + '様）' +
       (repeat ? '🔁' : ''),
     body: body,
     htmlBody: buildOwnerEmailHtml(data, row, repeat, sheetUrl, results, context),
@@ -712,7 +813,10 @@ function notifyOwnerEmail(data, row, repeat, results) {
 
 function buildOwnerEmailBody(data, row, repeat, sheetUrl, results, context) {
   var repeatText = repeat ? 'はい（今回が' + (repeat.count + 1) + '回目）' : 'いいえ';
-  return '新しい予約が入りました。内容を確認して対応してください。\n\n' +
+  var sameDay = isSameDayValue(data.date1);
+  return (sameDay
+      ? '【至急】本日の予約希望です。今すぐ対応可否を確認してください。\n\n'
+      : '新しい予約が入りました。内容を確認して対応してください。\n\n') +
     '【予約内容】\n' +
     'お名前: ' + data.name + '\n' +
     'メール: ' + data.email + '\n' +
@@ -733,7 +837,7 @@ function buildOwnerEmailBody(data, row, repeat, sheetUrl, results, context) {
     'お客様への受付確認メール: ' + taskResultText(results.customerEmail) + '\n\n' +
     '【次にすること】\n' +
     '1. 予約シートの' + row + '行目を開く\n' +
-    '2. 相談内容・カレンダー・希望日時を確認する\n' +
+    '2. ' + (sameDay ? '当日対応できるか、' : '') + '相談内容・カレンダー・希望日時を確認する\n' +
     '3. 「対応状況」で次のどれかを選ぶ\n' +
     '   ・確定: 第一希望で案内\n' +
     '   ・確定2: 第二希望で案内\n' +
@@ -753,10 +857,14 @@ function buildOwnerEmailHtml(data, row, repeat, sheetUrl, results, context) {
   function nl(value) { return e(value).replace(/\n/g, '<br>'); }
   var repeatText = repeat ? 'はい（今回が' + (repeat.count + 1) + '回目）' : 'いいえ';
   var isInPerson = String(data.course).indexOf('対面') >= 0;
+  var sameDay = isSameDayValue(data.date1);
   var action4 = isInPerson
     ? '<li><strong>Gmail下書き</strong>に待ち合わせ場所を記入して送信し、シートを「案内済み」にする</li>'
     : '<li>「確定」または「確定2」で、お客様への確定案内メールが自動送信されます</li>';
   return '<div style="font-family:-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;color:#2f2f2f;line-height:1.7;max-width:720px">' +
+    (sameDay
+      ? '<div style="background:#fff0ed;border:2px solid #c44735;color:#8b2116;padding:12px 14px;margin-bottom:16px"><strong>至急: 本日の予約希望です。今すぐ対応可否を確認してください。</strong></div>'
+      : '') +
     '<h2 style="font-size:20px;margin:0 0 16px">新しい予約が入りました</h2>' +
     '<p><a href="' + e(sheetUrl) + '" style="display:inline-block;background:#6f7758;color:#fff;padding:12px 18px;text-decoration:none">予約シートの' + row + '行目を開く</a></p>' +
     '<h3 style="border-bottom:1px solid #bbb;padding-bottom:6px">予約内容</h3>' +
@@ -781,7 +889,7 @@ function buildOwnerEmailHtml(data, row, repeat, sheetUrl, results, context) {
     '<li>LINE通知: ' + e(taskResultText(results.line)) + '</li>' +
     '<li>お客様への受付確認メール: ' + e(taskResultText(results.customerEmail)) + '</li></ul>' +
     '<h3 style="border-bottom:1px solid #bbb;padding-bottom:6px">次にすること</h3>' +
-    '<ol><li>相談内容・カレンダー・希望日時を確認</li>' +
+    '<ol><li>' + (sameDay ? '<strong>当日対応できるか、</strong>' : '') + '相談内容・カレンダー・希望日時を確認</li>' +
     '<li>シートの「対応状況」で <strong>確定／確定2／別日提案／お断り</strong> のいずれかを選ぶ</li>' +
     action4 + '</ol>' +
     '<p style="color:#666;font-size:13px">未対応のまま ' + CONFIG.REMIND_AFTER_HOURS + ' 時間経つとLINEへ再通知します。</p>' +
@@ -797,6 +905,7 @@ function ownerEmailRow(label, value, esc) {
 // 自動返信（お客様向け）
 // ==========================================================
 function sendAutoReply(data) {
+  var sameDay = isSameDayValue(data.date1);
   var body =
     data.name + ' 様\n\n' +
     'この度は「' + CONFIG.SHOP_NAME + '」にご予約のお申し込みをいただき、\n' +
@@ -807,9 +916,11 @@ function sendAutoReply(data) {
     '第二希望: ' + (data.date2 ? formatChoice(data.date2, data.part2) : 'なし') + '\n' +
     'お支払い: ' + (data.payMethod || '未選択') + '\n' +
     '────────────────\n\n' +
-    '空き状況を確認のうえ、通常24時間以内に、このメールアドレス宛に\n' +
-    '予約確定のご連絡をお送りします。いましばらくお待ちください。\n\n' +
+    (sameDay
+      ? '本日のご希望のため、対応できるか至急確認しています。\nご案内できる場合は、予約確定のメールをお送りします。\n\n'
+      : '空き状況を確認のうえ、通常24時間以内に、このメールアドレス宛に\n予約確定のご連絡をお送りします。いましばらくお待ちください。\n\n') +
     '※ このメールの時点では予約は確定していません\n' +
+    (sameDay ? '※ 確定メールが届くまでは、ご来店・お支払い・Meetへの参加はお待ちください\n' : '') +
     '※ お支払い方法・当日のご案内は、確定のご連絡の際にお伝えします\n' +
     '※ お心当たりのない場合は、このメールは破棄してください\n\n' +
     '────────────────\n' +
@@ -820,7 +931,8 @@ function sendAutoReply(data) {
   MailApp.sendEmail({
     to: data.email,
     replyTo: primaryEmail(),
-    subject: '【' + CONFIG.SHOP_NAME + '】ご予約を受け付けました（確定前）',
+    subject: '【' + CONFIG.SHOP_NAME + '】' +
+      (sameDay ? '当日予約のご希望を受け付けました（確定前）' : 'ご予約を受け付けました（確定前）'),
     body: body,
     name: CONFIG.SHOP_NAME
   });

@@ -7,6 +7,8 @@ const sentMail = [];
 const lineRequests = [];
 const calendarEvents = [];
 const propertyStore = { SPREADSHEET_ID: 'test-sheet' };
+const cacheStore = new Map();
+let calendarGetEventsCount = 0;
 
 function pad(value) {
   return String(value).padStart(2, '0');
@@ -102,7 +104,10 @@ const spreadsheet = {
 };
 
 const calendar = {
-  getEvents: () => [],
+  getEvents: () => {
+    calendarGetEventsCount += 1;
+    return [];
+  },
   getEventById(id) {
     return calendarEvents.find((event) => event.getId() === id) || null;
   },
@@ -178,6 +183,13 @@ const context = {
       releaseLock() {}
     })
   },
+  CacheService: {
+    getScriptCache: () => ({
+      get: (key) => cacheStore.get(key) || null,
+      put: (key, value) => cacheStore.set(key, value),
+      remove: (key) => cacheStore.delete(key)
+    })
+  },
   MailApp: {
     sendEmail(options) {
       sentMail.push(options);
@@ -241,6 +253,7 @@ const responseBody = JSON.parse(response.text);
 
 assert.equal(responseBody.status, 'ok', responseBody.message);
 assert.equal(responseBody.confirmationEmailSent, true);
+assert.equal(responseBody.sameDayRequest, false);
 assert.equal(calendarEvents.length, 1);
 assert.match(calendarEvents[0].getTitle(), /^【仮#2】予約テスト様/);
 assert.equal(lineRequests.length, 1);
@@ -266,6 +279,36 @@ assert.equal(context.validateReservation({ ...request, course: '無料鑑定' })
 assert.equal(context.validateReservation({ ...request, part1: '深夜の部（0:00〜2:00）' }), '第一希望の時間帯を選択してください');
 assert.equal(context.validateReservation({ ...request, date1: '2020-01-01' }), '第一希望日をご確認ください');
 assert.equal(context.primaryEmail(), 'uranai.rokkon@gmail.com');
+
+context.clearAvailabilityCache();
+const countBeforeAvailability = calendarGetEventsCount;
+const availability = context.getAvailability();
+assert.equal(availability.length, 11);
+assert.equal(availability[0].sameDay, true);
+assert.equal(calendarGetEventsCount, countBeforeAvailability + 1, '対象期間の予定を1回だけ取得する');
+context.getAvailability();
+assert.equal(calendarGetEventsCount, countBeforeAvailability + 1, '2回目はキャッシュを利用する');
+
+const today = new Date();
+today.setHours(10, 0, 0, 0);
+const todayYmd = formatDate(today, 'yyyy-MM-dd');
+assert.equal(
+  context.isRequestedPartWithinLead(todayYmd, '昼の部（14:00〜16:30）', request.course, today),
+  true
+);
+today.setHours(13, 30, 0, 0);
+assert.equal(
+  context.isRequestedPartWithinLead(todayYmd, '昼の部（14:00〜16:30）', request.course, today),
+  false
+);
+
+const urgentLine = context.buildOwnerMessage({ ...request, date1: formatDate(new Date(), 'yyyy-MM-dd') });
+assert.match(urgentLine, /当日希望・至急確認/);
+const mailCountBeforeUrgent = sentMail.length;
+context.sendAutoReply({ ...request, date1: formatDate(new Date(), 'yyyy-MM-dd') });
+assert.equal(sentMail.length, mailCountBeforeUrgent + 1);
+assert.match(sentMail.at(-1).subject, /当日予約のご希望/);
+assert.match(sentMail.at(-1).body, /確定メールが届くまでは/);
 
 lineStatus = 401;
 assert.throws(

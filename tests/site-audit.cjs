@@ -64,6 +64,12 @@ assert.match(reserve, /オンライン30分（5,000円）/);
 assert.match(reserve, /オンライン60分（10,000円）/);
 assert.match(reserve, /対面・栄 60分（10,000円）/);
 assert.match(reserve, /id="privacyConsent"/);
+assert.match(reserve, /開始3時間前まで/);
+assert.match(reserve, /id="sameDayNotice"/);
+assert.ok(
+  reserve.indexOf('id="message"') < reserve.indexOf('id="date1"'),
+  'reserve.html: schedule fields should appear after the questions'
+);
 
 for (const file of globSync('blog/*.html')) {
   const $ = cheerio.load(fs.readFileSync(file, 'utf8'));
@@ -77,5 +83,6 @@ for (const page of ['beginner.html', 'about.html', 'pricing.html', 'reserve.html
 
 const reserveJs = fs.readFileSync('js/reserve.js', 'utf8');
 assert.match(reserveJs, /const RESERVE_ENDPOINT = 'https:\/\/script\.google\.com\/macros\/s\//);
+assert.doesNotMatch(reserveJs, /availability&_t=/);
 
 console.log(`site audit: ok (${htmlFiles.length} HTML files)`);

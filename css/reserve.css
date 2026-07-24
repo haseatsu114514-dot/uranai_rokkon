@@ -181,6 +181,16 @@
     line-height: 1.7;
 }
 
+.same-day-notice {
+    margin-top: 12px;
+    padding: 12px 14px;
+    border: 1px solid rgba(180, 80, 70, 0.5);
+    background: rgba(180, 80, 70, 0.08);
+    color: #8f3c34;
+    font-size: 0.8rem;
+    line-height: 1.8;
+}
+
 /* ----- コース選択（ラジオカード） ----- */
 .course-options {
     display: grid;
