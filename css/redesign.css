@@ -35,6 +35,26 @@
     margin-bottom: 2rem;
 }
 
+/* ヒーロー直下のファクトチップ（静かな事実表示） */
+.rk-hero-facts {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.6rem;
+    margin: 0 0 2rem;
+}
+
+.rk-hero-fact {
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    color: rgba(255, 255, 255, 0.94);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    background: rgba(0, 0, 0, 0.18);
+    padding: 0.3rem 1.05rem;
+    border-radius: 2rem;
+    white-space: nowrap;
+}
+
 /* ---------- セクション共通 ---------- */
 .rk-section {
     padding: 5rem 5vw;
@@ -86,6 +106,20 @@
     border: 1px solid var(--color-border);
     padding: 2rem 1.6rem;
     position: relative;
+}
+
+/* カード共通の静かなホバー */
+.rk-value-card,
+.rk-entry-card,
+.rk-ts-card {
+    transition: transform 0.35s var(--ease-premium), box-shadow 0.35s ease;
+}
+
+.rk-value-card:hover,
+.rk-entry-card:hover,
+.rk-ts-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 30px rgba(59, 58, 57, 0.08);
 }
 
 .rk-value-phase {
@@ -724,6 +758,16 @@
         font-size: 0.88rem;
     }
 
+    .rk-hero-eyebrow {
+        font-size: 0.7rem;
+        letter-spacing: 0.2em;
+    }
+
+    .rk-hero-fact {
+        font-size: 0.72rem;
+        padding: 0.25rem 0.85rem;
+    }
+
     .rk-case-box {
         padding: 2rem 1.5rem;
     }
@@ -759,5 +803,17 @@
 
     .rk-timeline li::before {
         left: calc(-1.5rem - 4.5px);
+    }
+}
+
+@media (max-width: 480px) {
+    /* 3語を1行ずつ縦に積んで読ませる */
+    .rk-hero-words .rk-word {
+        display: block;
+        line-height: 1.6;
+    }
+
+    .rk-hero-words {
+        font-size: 1.9rem;
     }
 }
