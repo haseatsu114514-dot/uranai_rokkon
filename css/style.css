@@ -192,6 +192,10 @@ body::after { top: 2rem; right: 2rem; border-left: none; border-bottom: none; }
     height: 40px;
     cursor: pointer;
     padding: 8px;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
 }
 
 .menu-toggle span {

@@ -11,9 +11,15 @@ const GAS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbwSF2hFdG_ggXXze
 (function () {
   'use strict';
 
-  window.toggleMenu = function () {
+  window.toggleMenu = function (toggle) {
     var w = document.querySelector('.nav-wrapper');
-    if (w) w.classList.toggle('active');
+    if (!w) return;
+    var isOpen = w.classList.toggle('active');
+    var btn = toggle || document.querySelector('.menu-toggle');
+    if (btn) {
+      btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      btn.setAttribute('aria-label', isOpen ? 'メニューを閉じる' : 'メニューを開く');
+    }
   };
 
   /* ----- 1. スクロールフェードイン（Intersection Observer） ----- */

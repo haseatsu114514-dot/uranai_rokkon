@@ -191,6 +191,15 @@ const RESERVE_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxKDhJg8_LhjfD
     errorBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
+  function escapeHtml(value) {
+    return String(value || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
   function validate(data) {
     var errors = [];
     if (!data.name) errors.push('お名前を入力してください');
@@ -204,6 +213,8 @@ const RESERVE_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxKDhJg8_LhjfD
     if (!data.date1) errors.push('第一希望日を選択してください');
     if (!data.part1) errors.push('第一希望の時間帯を選択してください');
     if (data.date2 && !data.part2) errors.push('第二希望の時間帯を選択してください');
+    var privacy = document.getElementById('privacyConsent');
+    if (privacy && !privacy.checked) errors.push('プライバシーポリシーをご確認のうえ、同意してください');
     return errors;
   }
 
@@ -290,21 +301,36 @@ const RESERVE_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxKDhJg8_LhjfD
           var lead = document.querySelector('.reserve-form-lead');
           if (lead) lead.hidden = true;
           showGcalLink(data);
+          if (json.confirmationEmailSent === false) {
+            var successText = document.getElementById('formSuccessText');
+            if (successText) {
+              successText.innerHTML =
+                'ご予約内容は記録されましたが、受付確認メールを送信できませんでした。<br>' +
+                '迷惑メールフォルダをご確認のうえ、届かない場合は<br>' +
+                '<a href="mailto:uranai.rokkon@gmail.com" class="text-link">uranai.rokkon@gmail.com</a> までお問い合わせください。';
+            }
+          }
           successBox.hidden = false;
           successBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
           if (typeof gtag === 'function') {
             gtag('event', 'reservation_form_submit', { course: data.course });
           }
         } else {
-          throw new Error((json && json.message) || 'invalid response');
+          var responseError = new Error((json && json.message) || 'invalid response');
+          responseError.userMessage = json && json.message;
+          throw responseError;
         }
       })
       .catch(function (err) {
         console.error('予約フォーム送信エラー:', err);
-        showError(
-          '送信に失敗しました。お手数ですが、時間をおいて再度お試しいただくか、' +
-          '<a href="mailto:uranai.rokkon@gmail.com">メール</a> でご予約ください。'
-        );
+        if (err && err.userMessage) {
+          showError(escapeHtml(err.userMessage));
+        } else {
+          showError(
+            '送信に失敗しました。お手数ですが、時間をおいて再度お試しいただくか、' +
+            '<a href="mailto:uranai.rokkon@gmail.com">メール</a> でご予約ください。'
+          );
+        }
       })
       .finally(function () {
         submitBtn.disabled = false;

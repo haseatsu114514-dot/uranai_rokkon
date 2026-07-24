@@ -158,8 +158,8 @@ node scripts/update_blog.js
 - オンラインのMeet案内は `buildMeetGuide`（URL＋ステップ式の入り方）を確定案内・前日リマインドの両メールで共用
 - 自動運用: 毎日17時に翌日の確定済み予約へ前日リマインドメール、毎月1日に先月の件数まとめをLINEへ送信（時間トリガー、`setup()` が登録）
 - 予約完了画面に「希望日時をカレンダーに追加」ボタン（Google カレンダーの TEMPLATE リンク、`js/reserve.js` の `buildGcalUrl`）
-- 希望日時の選択肢は GAS の空き状況API（`?action=availability`）でカレンダーから自動計算され、**空きのある日時だけが表示される**（10日先まで・30分刻み・前後30分バッファ・当日は開始5時間前まで。LINE予約ボットと同じルール）。取得失敗時は全日時表示にフォールバック
-- ウェブアプリ URL は `js/reserve.js` の `RESERVE_ENDPOINT` に設定する（空のままだとフォームは「準備中」表示になり LINE へ誘導される）
+- 希望日時の選択肢は GAS の空き状況API（`?action=availability`）でカレンダーから自動計算され、**翌日から10日分の空きがある日時だけが表示される**（30分刻み・前後30分バッファ）。取得失敗時は同じ日付範囲を全日時表示にフォールバックするが、POST時に再検証する
+- ウェブアプリ URL は `js/reserve.js` の `RESERVE_ENDPOINT` に設定する（空のままだとフォームは「準備中」表示になりメール予約へ誘導される）
 - セットアップ手順・トラブル対処は `docs/reservation-form-setup.md` を参照
 - 全ページのヘッダー「ご予約」ボタンとスマホ追従ボタンは `reserve.html` に向いている
 
@@ -195,9 +195,9 @@ node scripts/update_blog.js
 | 口コミ | testimonials.html |
 | Q&A | faq.html |
 | ブログ | blog.html |
-| SHOP | https://uranairokkon.base.shop |
+| ご予約 | reserve.html |
 
-ヘッダーの最後に SHOP ボタン（BASEへのリンク）がある。
+SHOP・レポート商品は休止中のため、ヘッダーやページ導線には出さない。
 
 ---
 

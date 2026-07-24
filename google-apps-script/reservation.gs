@@ -64,6 +64,9 @@ var CONFIG = {
   REMIND_AFTER_HOURS: 3
 };
 
+// 本番反映状況を ?action=health で確認するための識別子（秘密情報は返さない）
+var SYSTEM_VERSION = '2026-07-25-notification-audit';
+
 // ===== 空き状況の計算ルール =====
 // 前日予約制: 当日は表示せず、翌日以降のみ受け付ける（当日・緊急はメール問い合わせ）
 var LEAD_DAYS = 1;              // 何日先から予約可にするか（1 = 翌日から）
@@ -74,7 +77,8 @@ var BUFFER_MIN = 30;            // 既存予定の前後30分は空ける
 var SHEET_HEADERS = [
   '受付日時', 'お名前', '性別', '生年月日', '出生時間・出生地', 'メール', 'コース',
   '第一希望', '第二希望', 'テーマ', 'ご相談内容', '支払い希望',
-  '対応状況', 'リマインド', '確定日時', '前日リマインド'
+  '対応状況', 'リマインド', '確定日時', '前日リマインド',
+  'カレンダーイベントID', '仮予約日時', 'システム処理結果'
 ];
 
 // 列番号（1始まり）
@@ -87,6 +91,9 @@ var COL_STATUS = 13;
 var COL_REMINDED = 14;
 var COL_CONFIRMED = 15;   // 確定した日時（承認フローが自動記入する。手入力不要）
 var COL_DAYBEFORE = 16;   // 前日リマインドの送信記録（自動記入）
+var COL_EVENT_ID = 17;    // 仮予約イベントを名前ではなく一意に特定する
+var COL_TENTATIVE = 18;   // カレンダーに確保した実際の開始・終了時刻
+var COL_SYSTEM_RESULT = 19; // LINE・管理者メール・自動返信などの成否
 
 // 承認フローで使う「対応状況」の値（プルダウンで選ぶ）
 var STATUS_CONFIRM_1 = '確定';        // 第一希望で確定 → 確定案内を自動送信/下書き作成
@@ -94,7 +101,7 @@ var STATUS_CONFIRM_2 = '確定2';       // 第二希望で確定（あとは同�
 var STATUS_RESCHEDULE = '別日提案';   // 希望日が取れない → 空き日時リスト入りの調整メールを自動送信
 var STATUS_DECLINE = 'お断り';        // ご案内できない → お断りメールを自動送信
 
-// プルダウンに出す選択肢（下3つは手動運用向け: 選んでも自動処理はされない）
+// プルダウンに出す選択肢（下3つは手動運用向け。「案内済み」ではカレンダー名だけ整える）
 var STATUS_DROPDOWN = [
   STATUS_CONFIRM_1, STATUS_CONFIRM_2, STATUS_RESCHEDULE, STATUS_DECLINE,
   '保留', '対応済み', '案内済み'
@@ -105,6 +112,15 @@ var PART_TIMES = {
   '夕の部': { startH: 16, startM: 30, endH: 19, endM: 0 },
   '夜の部': { startH: 19, startM: 0, endH: 22, endM: 0 }
 };
+
+var ALLOWED_COURSES = [
+  'オンライン30分（5,000円）',
+  'オンライン60分（10,000円）',
+  '対面・栄 60分（10,000円）'
+];
+var ALLOWED_SEXES = ['女性', '男性', 'その他・回答しない'];
+var ALLOWED_GENRES = ['', '恋愛・復縁', '出会い・婚活', '仕事', '人生・家族', 'その他'];
+var ALLOWED_PAY_METHODS = ['PayPay', '銀行振込', '現地払い（対面）'];
 
 // ==========================================================
 // 受付（ウェブアプリ）
@@ -123,21 +139,66 @@ function doPost(e) {
       return jsonResponse({ status: 'error', message: error });
     }
 
-    // リピーター判定（新しい行を追加する前に過去の予約を探す）
+    // 同時送信で同じ空き枠を二重に確保しないよう、記録と仮予約だけ直列化する
+    var lock = LockService.getScriptLock();
+    if (!lock.tryLock(10000)) {
+      return jsonResponse({
+        status: 'error',
+        message: 'ただいま予約が集中しています。少し時間をおいて再度お試しください。'
+      });
+    }
+
     var repeat = null;
-    try { repeat = findRepeaterInfo(data.email); } catch (err) { console.error(err); }
+    var row;
+    var sheet;
+    var calendarResult;
+    try {
+      // リピーター判定（新しい行を追加する前に過去の予約を探す）
+      try { repeat = findRepeaterInfo(data.email); } catch (repeatErr) { console.error(repeatErr); }
+      sheet = getSheet();
+      row = recordToSheet(data, sheet);
+      calendarResult = attemptTask('カレンダー仮予約', function () {
+        return createTentativeEvent(data, sheet, row);
+      });
+    } finally {
+      lock.releaseLock();
+    }
 
-    var row = recordToSheet(data);
+    // お客様への受付確認を先に送り、その結果も管理者通知に載せる
+    var customerEmailResult = attemptTask('お客様への受付確認メール', function () {
+      sendAutoReply(data);
+      return '送信済み';
+    });
+    var lineResult = attemptTask('LINE通知', function () {
+      notifyOwnerLine(buildOwnerMessage(data, repeat, {
+        row: row,
+        tentativeWhen: calendarResult.ok && calendarResult.value ? calendarResult.value.when : ''
+      }));
+      return '送信済み';
+    });
 
-    // 通知・カレンダーは失敗しても受付自体は成功扱いにする
-    safely(function () { createTentativeEvent(data); });
-    safely(function () { notifyOwnerLine(buildOwnerMessage(data, repeat)); });
-    safely(function () { notifyOwnerEmail(data, row, repeat); });
-    safely(function () { sendAutoReply(data); });
+    var results = {
+      calendar: calendarResult,
+      customerEmail: customerEmailResult,
+      line: lineResult
+    };
+    var ownerEmailResult = attemptTask('管理者メール', function () {
+      notifyOwnerEmail(data, row, repeat, results);
+      return '送信済み';
+    });
+    results.ownerEmail = ownerEmailResult;
+    writeSystemResult(sheet, row, results);
 
-    return jsonResponse({ status: 'ok' });
+    return jsonResponse({
+      status: 'ok',
+      confirmationEmailSent: customerEmailResult.ok
+    });
   } catch (err) {
-    return jsonResponse({ status: 'error', message: String(err) });
+    console.error('doPost error:', err);
+    return jsonResponse({
+      status: 'error',
+      message: '予約の受付処理でエラーが発生しました。お手数ですが時間をおいて再度お試しください。'
+    });
   }
 }
 
@@ -150,6 +211,19 @@ function doGet(e) {
     } catch (err) {
       return jsonResponse({ status: 'error', message: String(err) });
     }
+  }
+  if (action === 'health') {
+    return jsonResponse({
+      status: 'ok',
+      service: 'reservation',
+      version: SYSTEM_VERSION,
+      configured: {
+        line: !!(CONFIG.LINE_CHANNEL_ACCESS_TOKEN && CONFIG.LINE_OWNER_USER_ID),
+        meet: !!CONFIG.MEET_URL,
+        payPay: !!CONFIG.PAY_PAYPAY_ID,
+        bank: !!CONFIG.PAY_BANK_TEXT
+      }
+    });
   }
   return jsonResponse({ status: 'ok', service: 'reservation' });
 }
@@ -190,7 +264,7 @@ function hasFreeSlot(cal, day, partName, minutes) {
  * その日のその部で、既存予約とバッティングしない「最初の空き開始時刻」を返す。
  * 空きがなければ null。Meet室の重複を防ぐため、仮予約の配置にも使う。
  */
-function findFreeSlotStart(cal, day, partName, minutes) {
+function findFreeSlotStart(cal, day, partName, minutes, ignoredEventId) {
   var t = PART_TIMES[partName];
   if (!t) return null;
   var partStart = new Date(day.getFullYear(), day.getMonth(), day.getDate(), t.startH, t.startM);
@@ -202,7 +276,9 @@ function findFreeSlotStart(cal, day, partName, minutes) {
     new Date(partEnd.getTime() + BUFFER_MIN * 60000)
   );
   var busy = events
-    .filter(function (ev) { return !ev.isAllDayEvent(); })
+    .filter(function (ev) {
+      return !ev.isAllDayEvent() && (!ignoredEventId || ev.getId() !== ignoredEventId);
+    })
     .map(function (ev) {
       return {
         s: ev.getStartTime().getTime() - BUFFER_MIN * 60000,
@@ -234,19 +310,95 @@ function safely(fn) {
   try { fn(); } catch (err) { console.error(err); }
 }
 
+function attemptTask(label, fn) {
+  try {
+    return { ok: true, label: label, value: fn() };
+  } catch (err) {
+    console.error(label + ' error:', err);
+    return { ok: false, label: label, error: String(err) };
+  }
+}
+
+function taskResultText(result) {
+  if (!result) return '未実行';
+  return result.ok ? '成功' : '失敗（' + safeErrorText(result.error) + '）';
+}
+
+function safeErrorText(value) {
+  return String(value || '原因不明').replace(/[\r\n]+/g, ' ').slice(0, 180);
+}
+
+function writeSystemResult(sheet, row, results) {
+  if (!sheet || !row) return;
+  var stamp = Utilities.formatDate(new Date(), 'Asia/Tokyo', 'M/d HH:mm');
+  var text = [
+    'カレンダー:' + taskResultText(results.calendar),
+    'LINE:' + taskResultText(results.line),
+    '管理者メール:' + taskResultText(results.ownerEmail),
+    '受付確認メール:' + taskResultText(results.customerEmail)
+  ].join(' / ');
+  try {
+    sheet.getRange(row, COL_SYSTEM_RESULT).setValue(stamp + ' ' + text);
+  } catch (err) {
+    console.error('システム処理結果の記録に失敗:', err);
+  }
+}
+
 function validateReservation(data) {
-  if (!data.name || String(data.name).length > 50) return 'お名前をご確認ください';
-  if (!data.sex) return '性別を選択してください';
-  if (!data.birthdate || !/^\d{4}-\d{2}-\d{2}$/.test(data.birthdate)) return '生年月日をご確認ください';
+  var name = String(data.name || '').trim();
+  if (!name || name.length > 50 || /[\r\n]/.test(name)) return 'お名前をご確認ください';
+  if (ALLOWED_SEXES.indexOf(String(data.sex || '')) < 0) return '性別を選択してください';
+  if (!isValidYmd(data.birthdate)) return '生年月日をご確認ください';
+  var birth = parseYmd(data.birthdate);
+  var now = new Date();
+  if (birth.getFullYear() < 1920 || birth > now) return '生年月日をご確認ください';
   var email = String(data.email || '');
-  if (!email || email.length > 100 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+  if (!email || email.length > 100 || /[\r\n]/.test(email) || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return 'メールアドレスをご確認ください';
   }
-  if (!data.course) return 'コースを選択してください';
-  if (!data.date1 || !/^\d{4}-\d{2}-\d{2}$/.test(data.date1)) return '第一希望日をご確認ください';
-  if (!data.part1) return '第一希望の時間帯を選択してください';
+  if (ALLOWED_COURSES.indexOf(String(data.course || '')) < 0) return 'コースを選択してください';
+  if (!isValidYmd(data.date1) || !isReservationDateAllowed(data.date1)) return '第一希望日をご確認ください';
+  if (!isAllowedPartLabel(data.part1)) return '第一希望の時間帯を選択してください';
+  if (data.date2 || data.part2) {
+    if (!isValidYmd(data.date2) || !isReservationDateAllowed(data.date2)) return '第二希望日をご確認ください';
+    if (!isAllowedPartLabel(data.part2)) return '第二希望の時間帯を選択してください';
+  }
+  if (ALLOWED_GENRES.indexOf(String(data.genre || '')) < 0) return 'ご相談テーマをご確認ください';
+  if (data.birthtime && String(data.birthtime).length > 100) return '出生時間・出生地が長すぎます';
   if (data.message && String(data.message).length > 1000) return 'ご相談内容が長すぎます';
+  var isInPerson = String(data.course).indexOf('対面') >= 0;
+  var payMethod = String(data.payMethod || '');
+  if (isInPerson) {
+    if (payMethod !== '現地払い（対面）') return 'お支払い方法をご確認ください';
+  } else if (ALLOWED_PAY_METHODS.indexOf(payMethod) < 0 || payMethod === '現地払い（対面）') {
+    return 'お支払い方法を選択してください';
+  }
   return null;
+}
+
+function isValidYmd(value) {
+  var s = String(value || '');
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
+  var d = parseYmd(s);
+  return !isNaN(d.getTime()) && Utilities.formatDate(d, 'Asia/Tokyo', 'yyyy-MM-dd') === s;
+}
+
+function isReservationDateAllowed(value) {
+  var target = parseYmd(String(value));
+  var now = new Date();
+  var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  var first = new Date(today.getFullYear(), today.getMonth(), today.getDate() + LEAD_DAYS);
+  var last = new Date(first.getFullYear(), first.getMonth(), first.getDate() + AVAIL_DAYS - 1);
+  return target >= first && target <= last;
+}
+
+function isAllowedPartLabel(value) {
+  var partName = extractPartName(value);
+  return !!PART_TIMES[partName] && String(value) === partLabel(partName);
+}
+
+function extractPartName(value) {
+  return String(value || '').replace(/（.*$/, '');
 }
 
 // ==========================================================
@@ -371,8 +523,8 @@ function setup() {
   console.log('次は「デプロイ」→「新しいデプロイ」→ ウェブアプリ（アクセス: 全員）です');
 }
 
-function recordToSheet(data) {
-  var sheet = getSheet();
+function recordToSheet(data, sheet) {
+  sheet = sheet || getSheet();
   sheet.appendRow([
     new Date(),
     data.name,
@@ -389,7 +541,10 @@ function recordToSheet(data) {
     '', // 対応状況（確定したら「対応済み」と記入する）
     '', // リマインド
     '', // 確定日時（承認フローが自動記入）
-    ''  // 前日リマインド（自動記入）
+    '', // 前日リマインド（自動記入）
+    '', // カレンダーイベントID
+    '', // 仮予約日時
+    ''  // システム処理結果
   ]);
   return sheet.getLastRow();
 }
@@ -431,13 +586,13 @@ function parseYmd(dateStr) {
 // ==========================================================
 // カレンダー仮予約
 // ==========================================================
-function createTentativeEvent(data) {
+function createTentativeEvent(data, sheet, rowIndex) {
   var cal = getCalendar();
-  if (!cal) return;
+  if (!cal) throw new Error('予約カレンダーを取得できませんでした');
 
-  var partName = String(data.part1).replace(/（.*$/, ''); // 「昼の部（14:00〜16:30）」→「昼の部」
+  var partName = extractPartName(data.part1); // 「昼の部（14:00〜16:30）」→「昼の部」
   var slot = PART_TIMES[partName];
-  if (!slot) return;
+  if (!slot) throw new Error('時間帯を判定できませんでした');
 
   var d = parseYmd(data.date1);
   var minutes = data.course.indexOf('30分') >= 0 ? 30 : 60;
@@ -445,21 +600,18 @@ function createTentativeEvent(data) {
   // 同じ部に既に予約があっても重ならないよう、空いている最初の時刻に置く。
   // 固定Meet URLでも、予約どうしが同じ時間に重ならないのでバッティングを避けられる。
   var start = findFreeSlotStart(cal, d, partName, minutes);
-  var autoPlaced = !!start;
   if (!start) {
-    // 直前に埋まる等で空きが見つからない場合は部の開始時刻に置く（オーナーが後で調整）
-    start = new Date(d.getFullYear(), d.getMonth(), d.getDate(), slot.startH, slot.startM);
+    throw new Error('送信直前に第一希望の枠が埋まりました。日程調整が必要です');
   }
   var end = new Date(start.getTime() + minutes * 60000);
 
-  cal.createEvent(
-    '【仮】' + data.name + '様 ' + data.course,
+  var event = cal.createEvent(
+    '【仮#' + rowIndex + '】' + data.name + '様 ' + data.course,
     start, end,
     {
       description:
-        (autoPlaced
-          ? 'フォーム予約（未確定）。空き時刻に自動配置しました（調整可）。\n'
-          : 'フォーム予約（未確定）。時間帯内で要調整（空き枠が見つからず部の先頭に配置）。\n') +
+        'フォーム予約（未確定）。空き時刻に自動配置しました（調整可）。\n' +
+        '予約シート: ' + rowIndex + '行目\n' +
         'メール: ' + data.email + '\n' +
         '性別: ' + (data.sex || '未入力') + '\n' +
         '生年月日: ' + (data.birthdate || '未入力') + '\n' +
@@ -470,12 +622,19 @@ function createTentativeEvent(data) {
         '支払い希望: ' + (data.payMethod || '未選択')
     }
   );
+  var when = formatExactWhen(start, end);
+  if (sheet) {
+    sheet.getRange(rowIndex, COL_EVENT_ID).setValue(event.getId());
+    sheet.getRange(rowIndex, COL_TENTATIVE).setValue(when);
+  }
+  return { eventId: event.getId(), when: when };
 }
 
 // ==========================================================
 // 通知（鑑定師向け）
 // ==========================================================
-function buildOwnerMessage(data, repeat) {
+function buildOwnerMessage(data, repeat, context) {
+  context = context || {};
   var repeatLine = '';
   if (repeat) {
     repeatLine = '🔁 リピーター（' + (repeat.count + 1) + '回目';
@@ -488,25 +647,25 @@ function buildOwnerMessage(data, repeat) {
     repeatLine +
     '────────────\n' +
     'お名前: ' + data.name + '\n' +
-    '性別: ' + (data.sex || '未入力') + '\n' +
-    '生年月日: ' + (data.birthdate || '未入力') + '\n' +
-    '出生時間・出生地: ' + (data.birthtime || '未入力') + '\n' +
     'コース: ' + data.course + '\n' +
     '第一希望: ' + formatChoice(data.date1, data.part1) + '\n' +
     '第二希望: ' + (data.date2 ? formatChoice(data.date2, data.part2) : 'なし') + '\n' +
     'テーマ: ' + (data.genre || '未選択') + '\n' +
-    '支払い希望: ' + (data.payMethod || '未選択') + '\n' +
-    'メール: ' + data.email + '\n' +
+    (context.tentativeWhen ? '仮押さえ時刻: ' + context.tentativeWhen + '\n' : '') +
     '────────────\n' +
     '＜やること＞\n' +
     '① 下の予約シートを開く\n' +
-    '② 日時を確認して「対応状況」を選ぶ\n' +
-    '　 確定／確定2＝確定案内を送る（オンラインは自動送信）\n' +
-    '　 別日提案＝空き日時を案内　お断り＝お断りメール';
+    '② ' + (context.row ? context.row + '行目の' : '') + '相談内容と日時を確認する\n' +
+    '③ 「対応状況」を選ぶ\n' +
+    '　確定＝第一希望／確定2＝第二希望\n' +
+    '　別日提案＝空き日時を案内／お断り＝お断りメール\n' +
+    '※オンラインの確定案内は自動送信、対面はGmail下書きを確認して送信';
 }
 
 function notifyOwnerLine(text) {
-  if (!CONFIG.LINE_CHANNEL_ACCESS_TOKEN || !CONFIG.LINE_OWNER_USER_ID) return;
+  if (!CONFIG.LINE_CHANNEL_ACCESS_TOKEN || !CONFIG.LINE_OWNER_USER_ID) {
+    throw new Error('LINE通知のScript Propertiesが未設定です');
+  }
 
   // すべてのLINE通知の末尾に予約シートへのリンクを付ける（タップで開けるように）
   var link = '';
@@ -516,7 +675,7 @@ function notifyOwnerLine(text) {
     // シートが取れなくても通知自体は送る
   }
 
-  UrlFetchApp.fetch('https://api.line.me/v2/bot/message/push', {
+  var response = UrlFetchApp.fetch('https://api.line.me/v2/bot/message/push', {
     method: 'post',
     contentType: 'application/json',
     headers: { Authorization: 'Bearer ' + CONFIG.LINE_CHANNEL_ACCESS_TOKEN },
@@ -526,20 +685,112 @@ function notifyOwnerLine(text) {
     }),
     muteHttpExceptions: true
   });
+  var code = response.getResponseCode();
+  if (code < 200 || code >= 300) {
+    throw new Error('LINE API HTTP ' + code + ': ' + safeErrorText(response.getContentText()));
+  }
+  return true;
 }
 
-function notifyOwnerEmail(data, row, repeat) {
+function notifyOwnerEmail(data, row, repeat, results) {
   var sheetUrl = getSheet().getParent().getUrl();
+  var context = {
+    row: row,
+    tentativeWhen: results.calendar && results.calendar.ok && results.calendar.value
+      ? results.calendar.value.when : ''
+  };
+  var body = buildOwnerEmailBody(data, row, repeat, sheetUrl, results, context);
   MailApp.sendEmail({
     to: CONFIG.NOTIFY_EMAIL,
-    subject: '【予約】' + formatChoice(data.date1, data.part1) + ' ' + data.course + '（' + data.name + '様）' +
+    subject: '【要対応・予約】' + formatChoice(data.date1, data.part1) + ' ' + data.course + '（' + data.name + '様）' +
       (repeat ? '🔁' : ''),
-    body: buildOwnerMessage(data, repeat) +
-      '\n\n予約シート（' + row + '行目）:\n' + sheetUrl +
-      '\n\n対応が終わったら「対応状況」列に「対応済み」と記入してください。' +
-      '\n（未記入のままだと ' + CONFIG.REMIND_AFTER_HOURS + ' 時間後にLINEへ再通知されます）',
+    body: body,
+    htmlBody: buildOwnerEmailHtml(data, row, repeat, sheetUrl, results, context),
     name: CONFIG.SHOP_NAME + ' 予約システム'
   });
+}
+
+function buildOwnerEmailBody(data, row, repeat, sheetUrl, results, context) {
+  var repeatText = repeat ? 'はい（今回が' + (repeat.count + 1) + '回目）' : 'いいえ';
+  return '新しい予約が入りました。内容を確認して対応してください。\n\n' +
+    '【予約内容】\n' +
+    'お名前: ' + data.name + '\n' +
+    'メール: ' + data.email + '\n' +
+    'リピーター: ' + repeatText + '\n' +
+    '性別: ' + data.sex + '\n' +
+    '生年月日: ' + data.birthdate + '\n' +
+    '出生時間・出生地: ' + (data.birthtime || '記載なし') + '\n' +
+    'コース: ' + data.course + '\n' +
+    '第一希望: ' + formatChoice(data.date1, data.part1) + '\n' +
+    '第二希望: ' + (data.date2 ? formatChoice(data.date2, data.part2) : 'なし') + '\n' +
+    '仮押さえ時刻: ' + (context.tentativeWhen || '未確保（要確認）') + '\n' +
+    'テーマ: ' + (data.genre || '未選択') + '\n' +
+    'ご相談内容:\n' + (data.message || '記載なし') + '\n' +
+    '支払い希望: ' + (data.payMethod || '未選択') + '\n\n' +
+    '【システム処理結果】\n' +
+    'カレンダー仮予約: ' + taskResultText(results.calendar) + '\n' +
+    'LINE通知: ' + taskResultText(results.line) + '\n' +
+    'お客様への受付確認メール: ' + taskResultText(results.customerEmail) + '\n\n' +
+    '【次にすること】\n' +
+    '1. 予約シートの' + row + '行目を開く\n' +
+    '2. 相談内容・カレンダー・希望日時を確認する\n' +
+    '3. 「対応状況」で次のどれかを選ぶ\n' +
+    '   ・確定: 第一希望で案内\n' +
+    '   ・確定2: 第二希望で案内\n' +
+    '   ・別日提案: 現在の空き日時を自動メール\n' +
+    '   ・お断り: お断りメール\n' +
+    '4. 対面予約の場合だけ、作成されたGmail下書きに待ち合わせ場所を記入して送信する\n\n' +
+    '予約シート:\n' + sheetUrl + '\n\n' +
+    '未対応のまま ' + CONFIG.REMIND_AFTER_HOURS + ' 時間経つとLINEへ再通知します。';
+}
+
+function buildOwnerEmailHtml(data, row, repeat, sheetUrl, results, context) {
+  function e(value) {
+    return String(value == null ? '' : value)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+  function nl(value) { return e(value).replace(/\n/g, '<br>'); }
+  var repeatText = repeat ? 'はい（今回が' + (repeat.count + 1) + '回目）' : 'いいえ';
+  var isInPerson = String(data.course).indexOf('対面') >= 0;
+  var action4 = isInPerson
+    ? '<li><strong>Gmail下書き</strong>に待ち合わせ場所を記入して送信し、シートを「案内済み」にする</li>'
+    : '<li>「確定」または「確定2」で、お客様への確定案内メールが自動送信されます</li>';
+  return '<div style="font-family:-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;color:#2f2f2f;line-height:1.7;max-width:720px">' +
+    '<h2 style="font-size:20px;margin:0 0 16px">新しい予約が入りました</h2>' +
+    '<p><a href="' + e(sheetUrl) + '" style="display:inline-block;background:#6f7758;color:#fff;padding:12px 18px;text-decoration:none">予約シートの' + row + '行目を開く</a></p>' +
+    '<h3 style="border-bottom:1px solid #bbb;padding-bottom:6px">予約内容</h3>' +
+    '<table style="border-collapse:collapse;width:100%">' +
+    ownerEmailRow('お名前', data.name, e) +
+    ownerEmailRow('メール', data.email, e) +
+    ownerEmailRow('リピーター', repeatText, e) +
+    ownerEmailRow('性別', data.sex, e) +
+    ownerEmailRow('生年月日', data.birthdate, e) +
+    ownerEmailRow('出生時間・出生地', data.birthtime || '記載なし', e) +
+    ownerEmailRow('コース', data.course, e) +
+    ownerEmailRow('第一希望', formatChoice(data.date1, data.part1), e) +
+    ownerEmailRow('第二希望', data.date2 ? formatChoice(data.date2, data.part2) : 'なし', e) +
+    ownerEmailRow('仮押さえ時刻', context.tentativeWhen || '未確保（要確認）', e) +
+    ownerEmailRow('テーマ', data.genre || '未選択', e) +
+    ownerEmailRow('支払い希望', data.payMethod || '未選択', e) +
+    '</table>' +
+    '<h3 style="border-bottom:1px solid #bbb;padding-bottom:6px">ご相談内容</h3>' +
+    '<div style="background:#f5f3ed;padding:14px;white-space:normal">' + nl(data.message || '記載なし') + '</div>' +
+    '<h3 style="border-bottom:1px solid #bbb;padding-bottom:6px">システム処理結果</h3>' +
+    '<ul><li>カレンダー仮予約: ' + e(taskResultText(results.calendar)) + '</li>' +
+    '<li>LINE通知: ' + e(taskResultText(results.line)) + '</li>' +
+    '<li>お客様への受付確認メール: ' + e(taskResultText(results.customerEmail)) + '</li></ul>' +
+    '<h3 style="border-bottom:1px solid #bbb;padding-bottom:6px">次にすること</h3>' +
+    '<ol><li>相談内容・カレンダー・希望日時を確認</li>' +
+    '<li>シートの「対応状況」で <strong>確定／確定2／別日提案／お断り</strong> のいずれかを選ぶ</li>' +
+    action4 + '</ol>' +
+    '<p style="color:#666;font-size:13px">未対応のまま ' + CONFIG.REMIND_AFTER_HOURS + ' 時間経つとLINEへ再通知します。</p>' +
+    '</div>';
+}
+
+function ownerEmailRow(label, value, esc) {
+  return '<tr><th style="text-align:left;vertical-align:top;background:#f5f3ed;border:1px solid #ddd;padding:8px;width:150px">' +
+    esc(label) + '</th><td style="border:1px solid #ddd;padding:8px">' + esc(value) + '</td></tr>';
 }
 
 // ==========================================================
@@ -564,7 +815,7 @@ function sendAutoReply(data) {
     '────────────────\n' +
     CONFIG.SHOP_NAME + '\n' +
     'https://uranai-rokkon.com/\n' +
-    'お問い合わせ: ' + CONFIG.NOTIFY_EMAIL + '\n';
+    'お問い合わせ: ' + primaryEmail() + '\n';
 
   MailApp.sendEmail({
     to: data.email,
@@ -603,6 +854,11 @@ function onEditApproval(e) {
     if (e.range.getColumn() !== COL_STATUS) return;
     if (e.range.getRow() < 2) return;
     var value = String(e.range.getValue() || '').trim();
+    if (value === '案内済み') {
+      var manualRow = e.range.getRow();
+      safely(function () { renameTentativeEvent(sheet, manualRow, ''); });
+      return;
+    }
     if (!isActionStatus(value)) return;
     processApproval(sheet, e.range.getRow());
   } catch (err) {
@@ -668,7 +924,7 @@ function processApproval(sheet, rowIndex) {
         name: CONFIG.SHOP_NAME
       });
       sheet.getRange(rowIndex, COL_STATUS).setValue('お断り済 ' + stamp);
-      safely(function () { deleteTentativeEvent(r.name); });
+      safely(function () { deleteTentativeEvent(sheet, rowIndex, r.name); });
       safely(function () {
         notifyOwnerLine('【お断りメール 送信完了】\n' + r.name + '様（' + r.choice1 + '）');
       });
@@ -691,7 +947,7 @@ function processApproval(sheet, rowIndex) {
         name: CONFIG.SHOP_NAME
       });
       sheet.getRange(rowIndex, COL_STATUS).setValue('別日提案済 ' + stamp);
-      safely(function () { deleteTentativeEvent(r.name); });
+      safely(function () { deleteTentativeEvent(sheet, rowIndex, r.name); });
       safely(function () {
         notifyOwnerLine(
           '【別日提案メール 送信完了】\n' + r.name + '様\n\n' +
@@ -707,6 +963,16 @@ function processApproval(sheet, rowIndex) {
   if (!when) { fail(useSecond ? '第二希望が空欄です（「確定」で第一希望、「確定2」で第二希望が使われます）' : '第一希望が空欄です'); return; }
 
   var isInPerson = r.course.indexOf('対面') >= 0;
+
+  // 希望の「時間帯」から、カレンダー上の実際の開始・終了時刻を確保する。
+  // 第二希望で確定する場合は、第一希望に置いた仮予約イベントを移動する。
+  try {
+    var exactSlot = prepareExactSlot(sheet, rowIndex, r, useSecond);
+    when = exactSlot.when;
+  } catch (slotErr) {
+    fail('確定時刻を確保できませんでした: ' + String(slotErr));
+    return;
+  }
 
   // ----- 対面: Gmailに下書きを作成（自動送信しない） -----
   if (isInPerson) {
@@ -751,7 +1017,7 @@ function processApproval(sheet, rowIndex) {
     });
     sheet.getRange(rowIndex, COL_STATUS).setValue('案内済み ' + stamp);
     sheet.getRange(rowIndex, COL_CONFIRMED).setValue(when);
-    safely(function () { renameTentativeEvent(r.name); });
+    safely(function () { renameTentativeEvent(sheet, rowIndex, r.name); });
     safely(function () {
       notifyOwnerLine(
         '【確定案内 送信完了】オンライン\n' +
@@ -888,31 +1154,115 @@ function buildDeclineBody(r) {
     'お問い合わせ: ' + primaryEmail() + '\n';
 }
 
-/** カレンダーの【仮】イベントを削除する（別日提案・お断り用。見つからなければ何もしない） */
-function deleteTentativeEvent(name) {
-  var cal = getCalendar();
-  if (!cal) return;
-  var now = new Date();
-  var until = new Date(now.getTime() + 60 * 24 * 3600 * 1000);
-  cal.getEvents(now, until).forEach(function (ev) {
-    if (ev.getTitle().indexOf('【仮】' + name + '様') === 0) {
-      ev.deleteEvent();
-    }
-  });
+function formatExactWhen(start, end) {
+  var days = ['日', '月', '火', '水', '木', '金', '土'];
+  return Utilities.formatDate(start, 'Asia/Tokyo', 'M/d') +
+    '(' + days[start.getDay()] + ') ' +
+    Utilities.formatDate(start, 'Asia/Tokyo', 'HH:mm') + '〜' +
+    Utilities.formatDate(end, 'Asia/Tokyo', 'HH:mm');
 }
 
-/** カレンダーの【仮】イベントを【確定】に改名する（見つからなくても何もしない） */
-function renameTentativeEvent(name) {
+/** シートの「M/d(曜) 時間帯」から、直近の該当日を復元する */
+function parseChoiceDate(choice) {
+  var m = String(choice || '').match(/^(\d{1,2})\/(\d{1,2})/);
+  if (!m) throw new Error('希望日の形式を読み取れません: ' + choice);
+  var now = new Date();
+  var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  var d = new Date(now.getFullYear(), Number(m[1]) - 1, Number(m[2]));
+  // 年末に翌年1月を選んだケース
+  if (d < new Date(today.getTime() - 24 * 3600 * 1000)) {
+    d = new Date(now.getFullYear() + 1, Number(m[1]) - 1, Number(m[2]));
+  }
+  return d;
+}
+
+function extractPartNameFromChoice(choice) {
+  var names = Object.keys(PART_TIMES);
+  for (var i = 0; i < names.length; i++) {
+    if (String(choice).indexOf(names[i]) >= 0) return names[i];
+  }
+  throw new Error('希望時間帯を読み取れません: ' + choice);
+}
+
+function findStoredTentativeEvent(sheet, rowIndex, name) {
   var cal = getCalendar();
-  if (!cal) return;
+  if (!cal) return null;
+  var eventId = String(sheet.getRange(rowIndex, COL_EVENT_ID).getValue() || '');
+  if (eventId) {
+    try {
+      var stored = cal.getEventById(eventId);
+      if (stored) return stored;
+    } catch (err) {
+      console.error('保存済みイベントIDの取得に失敗:', err);
+    }
+  }
+
+  // 旧バージョンで作られた行はIDがないため、タイトルから1件だけ探す
   var now = new Date();
   var until = new Date(now.getTime() + 60 * 24 * 3600 * 1000);
-  cal.getEvents(now, until).forEach(function (ev) {
-    var title = ev.getTitle();
-    if (title.indexOf('【仮】' + name + '様') === 0) {
-      ev.setTitle(title.replace('【仮】', '【確定】'));
+  var exactPrefix = '【仮#' + rowIndex + '】';
+  var legacyPrefix = name ? '【仮】' + name + '様' : '';
+  var events = cal.getEvents(new Date(now.getTime() - 24 * 3600 * 1000), until);
+  for (var i = 0; i < events.length; i++) {
+    var title = events[i].getTitle();
+    if (title.indexOf(exactPrefix) === 0 || (legacyPrefix && title.indexOf(legacyPrefix) === 0)) {
+      sheet.getRange(rowIndex, COL_EVENT_ID).setValue(events[i].getId());
+      return events[i];
     }
-  });
+  }
+  return null;
+}
+
+/**
+ * 第一/第二希望の時間帯に、重複しない実時刻を確保する。
+ * 既存の仮予約イベントがあれば同じイベントを移動する。
+ */
+function prepareExactSlot(sheet, rowIndex, r, useSecond) {
+  var cal = getCalendar();
+  if (!cal) throw new Error('予約カレンダーを取得できません');
+  var choice = useSecond ? r.choice2 : r.choice1;
+  var day = parseChoiceDate(choice);
+  var partName = extractPartNameFromChoice(choice);
+  var minutes = String(r.course).indexOf('30分') >= 0 ? 30 : 60;
+  var current = findStoredTentativeEvent(sheet, rowIndex, r.name);
+  var ignoredId = current ? current.getId() : '';
+  var start = findFreeSlotStart(cal, day, partName, minutes, ignoredId);
+  if (!start) throw new Error('選択した時間帯に空きがありません');
+  var end = new Date(start.getTime() + minutes * 60000);
+
+  if (current) {
+    current.setTime(start, end);
+    current.setTitle('【仮#' + rowIndex + '】' + r.name + '様 ' + r.course);
+  } else {
+    current = cal.createEvent(
+      '【仮#' + rowIndex + '】' + r.name + '様 ' + r.course,
+      start,
+      end,
+      { description: '予約シート ' + rowIndex + '行目。確定処理時に仮予約イベントを再作成しました。' }
+    );
+  }
+
+  var when = formatExactWhen(start, end);
+  sheet.getRange(rowIndex, COL_EVENT_ID).setValue(current.getId());
+  sheet.getRange(rowIndex, COL_TENTATIVE).setValue(when);
+  return { event: current, when: when };
+}
+
+/** カレンダーの【仮】イベントを削除する（別日提案・お断り用） */
+function deleteTentativeEvent(sheet, rowIndex, name) {
+  var event = findStoredTentativeEvent(sheet, rowIndex, name);
+  if (!event) return;
+  event.deleteEvent();
+  sheet.getRange(rowIndex, COL_EVENT_ID).setValue('');
+  sheet.getRange(rowIndex, COL_TENTATIVE).setValue('');
+}
+
+/** カレンダーの【仮】イベントを【確定】に改名する */
+function renameTentativeEvent(sheet, rowIndex, name) {
+  var event = findStoredTentativeEvent(sheet, rowIndex, name);
+  if (!event) return;
+  var title = event.getTitle();
+  event.setTitle(title.replace(/^【仮(?:#\d+)?】/, '【確定】'));
 }
 
 // ==========================================================
@@ -1105,7 +1455,7 @@ function sendMonthlySummary() {
       var course = String(row[COL_COURSE - 1] || '');
       if (course.indexOf('対面') >= 0) inPerson++; else online++;
       var status = String(row[COL_STATUS - 1] || '');
-      if (status.indexOf('案内済み') === 0 || status.indexOf('下書き作成済') === 0) confirmed++;
+      if (status.indexOf('案内済み') === 0) confirmed++;
       else if (status.indexOf('お断り済') === 0) declined++;
       else others++;
     });
@@ -1170,12 +1520,57 @@ function maskSecrets(obj) {
 // 動作テスト（手動実行用）
 // ==========================================================
 function testNotify() {
-  notifyOwnerLine('【テスト】予約システムからのLINE通知テストです。届いていれば設定OK。');
+  var line = attemptTask('LINE通知テスト', function () {
+    notifyOwnerLine('【テスト】予約システムからのLINE通知テストです。届いていれば設定OK。');
+    return '送信済み';
+  });
+  var mail = attemptTask('メール通知テスト', function () {
+    MailApp.sendEmail({
+      to: CONFIG.NOTIFY_EMAIL,
+      subject: '【テスト】予約システムのメール通知テスト',
+      body: '届いていれば設定OKです。\n\nLINE通知テスト: ' + taskResultText(line),
+      name: CONFIG.SHOP_NAME + ' 予約システム'
+    });
+    return '送信済み';
+  });
+  console.log('LINE: ' + taskResultText(line) + ' / メール: ' + taskResultText(mail));
+}
+
+/**
+ * 管理者向け詳細メールの見た目だけを確認する。
+ * 予約台帳・カレンダー・お客様メールには何も作らない。
+ */
+function testOwnerEmailPreview() {
+  var tomorrow = new Date(Date.now() + 24 * 3600 * 1000);
+  var ymd = Utilities.formatDate(tomorrow, 'Asia/Tokyo', 'yyyy-MM-dd');
+  var sample = {
+    name: 'テスト予約',
+    sex: 'その他・回答しない',
+    birthdate: '1990-01-01',
+    birthtime: '8時30分ごろ・名古屋市',
+    email: primaryEmail(),
+    course: 'オンライン30分（5,000円）',
+    date1: ymd,
+    part1: partLabel('昼の部'),
+    date2: '',
+    part2: '',
+    genre: '仕事',
+    message: 'これは管理者向け予約通知メールの表示確認用サンプルです。',
+    payMethod: 'PayPay'
+  };
+  var sheetUrl = getSheet().getParent().getUrl();
+  var sampleResults = {
+    calendar: { ok: true, value: { when: formatChoice(ymd, '14:00〜14:30') } },
+    line: { ok: true, value: 'テストでは送信しません' },
+    customerEmail: { ok: true, value: 'テストでは送信しません' }
+  };
+  var context = { row: 2, tentativeWhen: formatChoice(ymd, '14:00〜14:30') };
   MailApp.sendEmail({
     to: CONFIG.NOTIFY_EMAIL,
-    subject: '【テスト】予約システムのメール通知テスト',
-    body: '届いていれば設定OKです。',
+    subject: '【表示確認】予約通知メールのプレビュー',
+    body: buildOwnerEmailBody(sample, 2, null, sheetUrl, sampleResults, context),
+    htmlBody: buildOwnerEmailHtml(sample, 2, null, sheetUrl, sampleResults, context),
     name: CONFIG.SHOP_NAME + ' 予約システム'
   });
-  console.log('テスト通知を送信しました');
+  console.log('管理者メールのプレビューを送信しました');
 }

@@ -361,13 +361,13 @@ function generateArticlePage(item, content, categorySlug, displayCategory, excer
                     <a href="../faq.html">Q&A</a>
                     <a href="../blog.html">ブログ</a>
                 </nav>
-                <span class="contact-btn" style="opacity: 0.5; cursor: default;">SHOP（準備中）</span>
+                <a href="../reserve.html" class="contact-btn">ご予約</a>
             </div>
-            <div class="menu-toggle" onclick="toggleMenu();" aria-label="メニュー">
+            <button type="button" class="menu-toggle" onclick="toggleMenu(this);" aria-label="メニューを開く" aria-expanded="false">
                 <span></span>
                 <span></span>
                 <span></span>
-            </div>
+            </button>
         </div>
     </header>
 

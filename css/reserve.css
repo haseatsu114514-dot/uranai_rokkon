@@ -314,6 +314,31 @@
     margin-bottom: 24px;
 }
 
+.privacy-consent {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 0.78rem;
+    color: #666;
+    line-height: 1.8;
+    margin-bottom: 24px;
+    cursor: pointer;
+}
+
+.privacy-consent input {
+    flex: 0 0 auto;
+    width: 17px;
+    height: 17px;
+    margin-top: 5px;
+    accent-color: var(--color-gold);
+}
+
+.privacy-consent a {
+    color: var(--color-primary);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
 .form-error {
     background: rgba(180, 80, 70, 0.08);
     border: 1px solid rgba(180, 80, 70, 0.4);

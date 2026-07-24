@@ -64,11 +64,11 @@
                 <a href="reserve.html" class="contact-btn">ご予約</a>
                 <!-- <span class="contact-btn" style="opacity: 0.5; cursor: default;">SHOP（準備中）</span> -->
             </div>
-            <div class="menu-toggle" onclick="toggleMenu();" aria-label="メニュー">
+            <button type="button" class="menu-toggle" onclick="toggleMenu(this);" aria-label="メニューを開く" aria-expanded="false">
                 <span></span>
                 <span></span>
                 <span></span>
-            </div>
+            </button>
         </div>
     </header>
 
@@ -77,8 +77,10 @@
 
     <!-- メインコンテンツ -->
     <main class="main-content">
-
-
+        <div class="page-header">
+            <h1 class="page-title">ブログ</h1>
+            <p class="page-subtitle">四柱推命や、選択と時期を整理するための読みもの</p>
+        </div>
 
         <!-- ブログ一覧 -->
         <section class="blog-section">
@@ -617,6 +619,17 @@
     <!-- フッター -->
     <footer class="footer">
         <div class="footer-inner">
+            <nav class="footer-nav">
+                <a href="index.html">TOP</a>
+                <a href="beginner.html">はじめて</a>
+                <a href="about.html">占い師</a>
+                <a href="pricing.html">料金案内</a>
+                <a href="testimonials.html">口コミ</a>
+                <a href="faq.html">Q&amp;A</a>
+                <a href="blog.html">ブログ</a>
+                <a href="reserve.html">ご予約</a>
+                <a href="privacy.html">プライバシー</a>
+            </nav>
             <div class="footer-info">
                 <p class="footer-hours">鑑定営業時間：14:00〜22:00（最終受付 21:00）/ 予約フォーム24時間受付</p>
                 <p class="footer-contact">お問い合わせ：uranai.rokkon@gmail.com</p>

@@ -10,7 +10,7 @@
 
 | 項目 | 内容 |
 |------|------|
-| ページ | index / beginner / about / pricing / testimonials / faq / blog / reserve |
+| ページ | index / beginner / about / pricing / testimonials / faq / blog / reserve / privacy |
 | ブログ | Note (https://note.com/rokkon_uranai) のRSSを GitHub Actions が毎時取得し `blog/` と `blog.html` を自動生成（`scripts/update_blog.js`） |
 | 予約 | `reserve.html` のフォーム → Google Apps Script（`google-apps-script/reservation.gs`）。カレンダー連携で空き日時のみ表示 |
 | 予約状況表示 | トップページに GAS + Google Calendar 連携で昼・夕・夜の部を表示（`js/main.js`） |
@@ -40,3 +40,4 @@ node scripts/update_blog.js
 - 料金（オンライン30分 5,000円 / 60分 10,000円 / 延長15分 2,000円）はサイト上で変更しない
 - 実績の「No.1」表記は対象期間・母集団が確認できるまで掲載しない
 - 口コミの元データは `docs/archive/` に保存（表示は厳選したもののみ）
+- `docs/事業戦略/` と `docs/BASE商品登録用テキスト.md` には過去案（1,500件、旧料金、No.1表記など）が残っているため、公開サイトの現行仕様として流用しない

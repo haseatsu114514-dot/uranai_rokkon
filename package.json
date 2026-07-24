@@ -1,4 +1,10 @@
 {
+  "scripts": {
+    "check": "npm run check:syntax && npm run check:site && npm run check:reservation",
+    "check:syntax": "node --check js/main.js && node --check js/reserve.js && node --check js/calendar.js && node --check js/blog-feed.js && node --check scripts/update_blog.js && node --check < google-apps-script/reservation.gs",
+    "check:site": "node tests/site-audit.cjs",
+    "check:reservation": "node tests/reservation.test.cjs"
+  },
   "dependencies": {
     "axios": "^1.13.5",
     "cheerio": "^1.2.0",

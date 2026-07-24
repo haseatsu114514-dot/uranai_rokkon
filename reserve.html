@@ -80,11 +80,11 @@
                 </nav>
                 <a href="reserve.html" class="contact-btn">ご予約</a>
             </div>
-            <div class="menu-toggle" onclick="toggleMenu();" aria-label="メニュー">
+            <button type="button" class="menu-toggle" onclick="toggleMenu(this);" aria-label="メニューを開く" aria-expanded="false">
                 <span></span>
                 <span></span>
                 <span></span>
-            </div>
+            </button>
         </div>
     </header>
 
@@ -257,9 +257,11 @@
                     <!-- スパム対策（画面には表示されません） -->
                     <input type="text" name="website" id="website" class="hp-field" tabindex="-1" autocomplete="off">
 
-                    <p class="form-privacy-note">
-                        ※ ご入力いただいた内容は、ご予約・鑑定のご連絡以外には使用しません。
-                    </p>
+                    <label class="privacy-consent">
+                        <input type="checkbox" name="privacyConsent" id="privacyConsent" required>
+                        <span><a href="privacy.html" target="_blank" rel="noopener">プライバシーポリシー</a>を確認し、
+                            予約受付・鑑定準備のために入力内容が利用されることに同意します。</span>
+                    </label>
 
                     <div class="form-error" id="formError" hidden></div>
 
@@ -270,7 +272,7 @@
                 <div class="form-success" id="formSuccess" hidden>
                     <div class="form-success-mark">✓</div>
                     <h3 class="form-success-title">ご予約を受け付けました</h3>
-                    <p class="form-success-text">
+                    <p class="form-success-text" id="formSuccessText">
                         受付確認のメールを自動でお送りしています。<br>
                         空き状況を確認のうえ、通常24時間以内に予約確定のご連絡をいたします。<br><br>
                         メールが届かない場合は、迷惑メールフォルダをご確認いただくか、<br>
@@ -341,6 +343,7 @@
                 <a href="faq.html">Q&A</a>
                 <a href="blog.html">ブログ</a>
                 <a href="reserve.html">ご予約</a>
+                <a href="privacy.html">プライバシー</a>
             </nav>
             <div class="footer-info">
                 <p class="footer-hours">鑑定営業時間：14:00〜22:00（最終受付 21:00）/ 予約フォーム24時間受付</p>
