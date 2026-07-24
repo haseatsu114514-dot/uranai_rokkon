@@ -213,7 +213,8 @@ body::after { top: 2rem; right: 2rem; border-left: none; border-bottom: none; }
     transform: translateX(-50%) translateY(100px);
     width: 90%;
     max-width: 400px;
-    background: rgba(6, 199, 85, 0.95);
+    background: rgba(59, 58, 57, 0.95);
+    border: 1px solid rgba(184, 191, 168, 0.5);
     backdrop-filter: blur(8px);
     color: #fff;
     padding: 14px;
@@ -232,7 +233,7 @@ body::after { top: 2rem; right: 2rem; border-left: none; border-bottom: none; }
 }
 
 .sticky-reservation-btn:hover {
-    box-shadow: 0 8px 25px rgba(0, 199, 85, 0.5);
+    box-shadow: 0 8px 25px rgba(59, 58, 57, 0.45);
     transform: translateX(-50%) translateY(-3px);
     opacity: 1;
 }
@@ -244,7 +245,7 @@ body::after { top: 2rem; right: 2rem; border-left: none; border-bottom: none; }
 
 @keyframes sticky-btn-pulse {
     0%, 100% { box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); }
-    50% { box-shadow: 0 4px 20px rgba(6, 199, 85, 0.5), 0 0 40px rgba(6, 199, 85, 0.3); }
+    50% { box-shadow: 0 4px 20px rgba(143, 151, 121, 0.55), 0 0 40px rgba(143, 151, 121, 0.3); }
 }
 
 @media (max-width: 768px) {
