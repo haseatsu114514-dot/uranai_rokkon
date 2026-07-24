@@ -1,66 +1,42 @@
 # uranai_rokkon
 
-占いサイト用リポジトリ
+「占い処 六根清浄」公式サイトのリポジトリ。
 
-## 概要
-このリポジトリは「占いサイト（uranai_rokkon）」のソースコードを管理します。  
-（ここに短いプロジェクト説明を書いてください — 例: ユーザーが生年月日で占い結果を受け取れる Web アプリ）
+- 本番: https://uranai-rokkon.com/ （GitHub Pages / `main` ブランチ / `CNAME` でカスタムドメイン）
+- 静的サイト（HTML + CSS + Vanilla JS）。ビルド不要
+- ブランドコンセプト: **「出会う場所。選ぶ相手。動く時期。」** — 相性とタイミングを、次の一手に変える四柱推命
 
-## 目次
-- [特徴](#特徴)
-- [デモ](#デモ)
-- [動作環境](#動作環境)
-- [インストール方法](#インストール方法)
-- [使い方](#使い方)
-- [開発・貢献](#開発・貢献)
-- [ライセンス](#ライセンス)
-- [作者](#作者)
+## 構成の概要
 
-## 特徴
-- シンプルな占いロジック
-- モバイル対応の UI
-- 必要に応じて占い結果を共有可能
+| 項目 | 内容 |
+|------|------|
+| ページ | index / beginner / about / pricing / testimonials / faq / blog / reserve |
+| ブログ | Note (https://note.com/rokkon_uranai) のRSSを GitHub Actions が毎時取得し `blog/` と `blog.html` を自動生成（`scripts/update_blog.js`） |
+| 予約 | `reserve.html` のフォーム → Google Apps Script（`google-apps-script/reservation.gs`）。カレンダー連携で空き日時のみ表示 |
+| 予約状況表示 | トップページに GAS + Google Calendar 連携で昼・夕・夜の部を表示（`js/main.js`） |
+| スタイル | `css/style.css`（茶の湯テーマ共通）+ `css/redesign.css`（2026リデザイン共通コンポーネント）+ ページ別CSS |
 
-## デモ
-（デモ公開 URL があればここに記載してください）
+## ローカル確認
 
-## 動作環境
-- Node.js >= 14.x（例）
-- npm または yarn
-- ブラウザ: Chrome / Firefox / Safari 等
+```bash
+cd uranai_rokkon
+python3 -m http.server 8000
+# → http://localhost:8000
+```
 
-## インストール方法
-1. リポジトリをクローン
-   ```bash
-   git clone https://github.com/haseatsu114514-dot/uranai_rokkon.git
-   cd uranai_rokkon
-   ```
-2. 依存関係をインストール
-   ```bash
-   npm install
-   # または
-   yarn install
-   ```
-3. 開発サーバ起動
-   ```bash
-   npm run dev
-   # または
-   yarn dev
-   ```
+ブログ自動更新をローカルで試す場合:
 
-## 使い方
-1. ブラウザで http://localhost:3000 を開く
-2. 生年月日や名前を入力して「占う」ボタンを押す
+```bash
+npm install
+node scripts/update_blog.js
+```
 
-（ここにスクリーンショットやコマンド例を追記してください）
+## 運用・編集ガイド
 
-## 開発・貢献
-バグ報告や機能追加の提案は Issue を立ててください。プルリク歓迎です。
+詳細な運用ルール（お知らせの更新、料金・実績表記のポリシー、壊してはいけない機能）は `CLAUDE.md` を参照してください。
 
-## ライセンス
-ライセンスを明記してください（例: MIT License）。未定なら `LICENSE` ファイルを追加するか、ここに追記してください。
+## 注意
 
-## 作者
-haseatsu114514-dot
-
-test
+- 料金（オンライン30分 5,000円 / 60分 10,000円 / 延長15分 2,000円）はサイト上で変更しない
+- 実績の「No.1」表記は対象期間・母集団が確認できるまで掲載しない
+- 口コミの元データは `docs/archive/` に保存（表示は厳選したもののみ）

@@ -14,13 +14,13 @@
 
         gtag('config', 'G-T47H5DSFTR');
     </script>
-    <title>Q&A - 名古屋(栄)・オンラインの占い処 六根清浄</title>
-    <meta name="description" content="名古屋(栄)の対面鑑定、オンライン占いに関するQ&A。「当日は何が必要？」「場所はどこ？」など、よくあるご質問にお答えします。">
+    <title>Q&A - 占い処 六根清浄 | 信じていなくても大丈夫？出生時間が不明でも？</title>
+    <meta name="description" content="占い処 六根清浄のQ&A。「占いを信じていなくても受けられる？」「出生時間・相手の生年月日が不明でも大丈夫？」「未来を保証するもの？」など、鑑定前の疑問にお答えします。">
 
     <!-- OGP -->
     <meta property="og:type" content="article">
     <meta property="og:title" content="Q&A - 占い処 六根清浄">
-    <meta property="og:description" content="対面鑑定・オンライン占いに関するQ&Aにお答えします。">
+    <meta property="og:description" content="占いを信じていなくても受けられる？出生時間が不明でも大丈夫？鑑定前の疑問にお答えします。">
     <meta property="og:url" content="https://uranai-rokkon.com/faq.html">
     <meta property="og:image" content="https://uranai-rokkon.com/images/otya.png">
 
@@ -34,9 +34,10 @@
         rel="stylesheet">
 
     <!-- CSS -->
-    <link rel="stylesheet" href="css/style.css?v=20260611b">
-    <link rel="stylesheet" href="css/faq.css">
-    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/style.css?v=20260724a">
+    <link rel="stylesheet" href="css/faq.css?v=20260724a">
+    <link rel="stylesheet" href="css/redesign.css?v=20260724a">
+    <link rel="stylesheet" href="css/animations.css?v=20260724a">
 
     <!-- JSON-LD (Breadcrumb) -->
     <script type="application/ld+json">
@@ -54,6 +55,64 @@
         "name": "Q&A",
         "item": "https://uranai-rokkon.com/faq.html"
       }]
+    }
+    </script>
+
+    <!-- JSON-LD (FAQPage) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "占いを信じていなくても受けられますか？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "はい。当店の鑑定は、未来を信じてもらうためのものではなく、迷っている選択を整理するための判断材料を出す時間です。信じるかどうかは、持ち帰った内容が役に立ったかどうかで、後から判断していただければ十分です。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "生まれた時間がわからなくても占えますか？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "はい、可能です。生まれた時間がわかるとより細かく見られますが、わからなくても四柱推命で十分に鑑定できます。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "相手の生年月日がわからなくても相性は見られますか？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "相手の方の生年月日があるとより具体的に見られますが、不明でも、あなたの命式から惹かれやすい相手の傾向や距離の取り方、動く時期を整理できます。生まれ年だけでもわかることがあります。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "鑑定は未来を保証するものですか？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "いいえ。鑑定は傾向と時期の目安を整理する判断材料であり、未来を保証・断定するものではありません。最終的に決めるのはご本人です。その決断の材料を揃えるのが当店の役割です。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "相談できないテーマはありますか？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "医療・法律・投資など専門家が担うべき判断、ギャンブルや宝くじの的中予想はお受けできません。心身の不調が深刻な場合は、医療機関への相談を優先してください。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "個人情報は何に使われますか？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "ご入力いただいた情報は、ご予約のご連絡と鑑定の準備（命式の作成）のみに使用します。ご本人の許可なく第三者へ開示することはありません。"
+          }
+        }
+      ]
     }
     </script>
 </head>
@@ -79,7 +138,6 @@
 
                 </nav>
                 <a href="reserve.html" class="contact-btn">ご予約</a>
-                <!-- <span class="contact-btn" style="opacity: 0.5; cursor: default;">SHOP（準備中）</span> -->
             </div>
             <div class="menu-toggle" onclick="toggleMenu();" aria-label="メニュー">
                 <span></span>
@@ -97,6 +155,20 @@
         </div>
 
         <div class="container">
+
+            <div class="faq-item">
+                <div class="question">占いを信じていなくても受けられますか？</div>
+                <div class="answer-wrap">
+                    <div class="answer">
+                        <span class="answer-label">A.</span>はい。当店の鑑定は、未来を信じてもらうためのものではなく、<br>
+                        迷っている選択を整理するための<strong>判断材料</strong>を出す時間です。<br><br>
+                        信じるかどうかは、持ち帰った内容が役に立ったかどうかで、<br>
+                        後から判断していただければ十分です。<br>
+                        「半信半疑のまま来ました」という方は少なくありません。
+                    </div>
+                </div>
+            </div>
+
             <div class="faq-item">
                 <div class="question">占いは初めてですが、大丈夫ですか？</div>
                 <div class="answer-wrap">
@@ -112,14 +184,42 @@
                 <div class="question">生年月日で何がわかりますか？</div>
                 <div class="answer-wrap">
                     <div class="answer">
-                        <span class="answer-label">A.</span>四柱推命では、生年月日から以下のことがわかります。
+                        <span class="answer-label">A.</span>四柱推命では、生年月日から以下のようなことを整理できます。
                         <ul>
-                            <li>本質的な性格や才能</li>
-                            <li>向いている仕事や分野</li>
-                            <li>人との相性</li>
-                            <li>運勢の流れ（良い時期・悪い時期）</li>
-                            <li>今、取るべき行動 など</li>
+                            <li>性質の傾向、強みと苦手</li>
+                            <li>向いている仕事や働き方の傾向</li>
+                            <li>人との相性、距離感の取り方</li>
+                            <li>縁が生まれやすい場所・合う出会い方</li>
+                            <li>運気の流れ（動きやすい時期・待つ時期）</li>
                         </ul>
+                        断定ではなく、あくまで傾向として、根拠と一緒にお伝えします。
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="question">鑑定は未来を保証するものですか？</div>
+                <div class="answer-wrap">
+                    <div class="answer">
+                        <span class="answer-label">A.</span>いいえ。鑑定は傾向と時期の目安を整理する判断材料であり、<br>
+                        未来を保証・断定するものではありません。<br>
+                        「必ずこうなる」という言い方はしません。<br><br>
+                        最終的に決めるのはご本人です。<br>
+                        その決断の材料を、最後まで一緒に揃えるのが当店の役割です。
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="question">五行のタイプだけで判断するのですか？</div>
+                <div class="answer-wrap">
+                    <div class="answer">
+                        <span class="answer-label">A.</span>いいえ。ブログなどの無料の読み物では、<br>
+                        木・火・土・金・水の五行ごとの一般的な傾向を紹介していますが、<br>
+                        これはあくまで入口です。<br><br>
+                        鑑定では、命式全体と五行の強弱バランス、<br>
+                        惹かれやすい相手と長く続きやすい相手の違い、<br>
+                        現在の運気と動く時期までを、おひとりずつ個別に見ます。
                     </div>
                 </div>
             </div>
@@ -128,11 +228,65 @@
                 <div class="question">悪い結果が出たら怖いです。</div>
                 <div class="answer-wrap">
                     <div class="answer">
-                        <span class="answer-label">A.</span>必ず対処法をお伝えします。<br>
-                        また常に伝え方に注意を払って答えます。<br><br>
+                        <span class="answer-label">A.</span>不安をあおる伝え方はしません。<br>
+                        良くない時期の話をするときは、必ず対処までセットでお伝えします。<br><br>
                         悪い時期であれば、どう過ごせばいいか。<br>
-                        相性が悪い相手であれば、どう接すればうまくいくか。<br><br>
+                        相性が難しい相手であれば、どう距離を取ればいいか。<br><br>
                         具体的な対処法まで一緒に考えますので、ご安心ください。
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="question">生まれた時間がわからなくても占えますか？</div>
+                <div class="answer-wrap">
+                    <div class="answer">
+                        <span class="answer-label">A.</span>はい、可能です。<br>
+                        生まれた時間がわかるとより細かな鑑定（特に紫微斗数など）ができますが、<br>
+                        わからなくても四柱推命やタロットを用いて十分に鑑定できます。<br>
+                        もし母子手帳などでわかる場合は、当日お知らせください。
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="question">相手の生年月日がわからなくても相性は見られますか？</div>
+                <div class="answer-wrap">
+                    <div class="answer">
+                        <span class="answer-label">A.</span>相手の方の生年月日があるとより具体的に見られますが、<br>
+                        不明でも大丈夫です。<br><br>
+                        あなたの命式から、惹かれやすい相手の傾向、<br>
+                        距離感の取り方、動く時期を整理できます。<br>
+                        生まれ年だけでも、わかることがあります。
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="question">相談できないテーマはありますか？</div>
+                <div class="answer-wrap">
+                    <div class="answer">
+                        <span class="answer-label">A.</span>以下のテーマはお受けできません。
+                        <ul>
+                            <li>医療・健康状態の診断に関わる判断（受診の代わりになるもの）</li>
+                            <li>法律・訴訟に関わる判断</li>
+                            <li>投資・金融商品の推奨</li>
+                            <li>ギャンブル・宝くじの的中予想</li>
+                        </ul>
+                        心身の不調が深刻な場合は、医療機関への相談を優先してください。<br>
+                        鑑定は、専門家の判断に代わるものではありません。
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="question">鑑定のあとには何が残りますか？</div>
+                <div class="answer-wrap">
+                    <div class="answer">
+                        <span class="answer-label">A.</span>鑑定の最後に、「今回分かったこと」<br>
+                        「動く時期・待つ時期」「次にすること」を一緒に確認して終わります。<br><br>
+                        聞いて終わりではなく、次の行動が決まっている状態を目指しています。<br>
+                        録音・録画も自由ですので、後から何度でも見返せます。
                     </div>
                 </div>
             </div>
@@ -203,12 +357,12 @@
             </div>
 
             <div class="faq-item">
-                <div class="question">相談内容は誰にも知られませんか？</div>
+                <div class="question">個人情報は何に使われますか？</div>
                 <div class="answer-wrap">
                     <div class="answer">
-                        <span class="answer-label">A.</span>はい、守秘義務を厳守しております。<br>
-                        ご相談内容や個人情報を、<br>
-                        ご本人の許可なく第三者へ開示することはありません。<br><br>
+                        <span class="answer-label">A.</span>ご入力いただいた情報（お名前・生年月日・メールアドレス・ご相談内容）は、<br>
+                        ご予約のご連絡と、鑑定の準備（命式の作成）のみに使用します。<br><br>
+                        守秘義務を厳守し、ご本人の許可なく第三者へ開示することはありません。<br><br>
                         なお、第三者の発言やご本人の推測・憶測による事柄については、<br>
                         当方では責任を負いかねますので、ご了承ください。
                     </div>
@@ -220,8 +374,9 @@
                 <div class="answer-wrap">
                     <div class="answer">
                         <span class="answer-label">A.</span>はい、可能です。時間内であれば、何個でもご相談いただけます。<br><br>
-                        ただし、1つの悩みを深く掘り下げる方が、具体的な解決策が見つかりやすく<br>
-                        1テーマにつき15〜20分程は見積もって頂けると幸いです。
+                        ただし、1つの悩みを深く掘り下げる方が、具体的な整理につながりやすく、<br>
+                        1テーマにつき15〜20分程は見積もって頂けると幸いです。<br><br>
+                        複数のテーマや選択肢の比較をご希望の場合は、60分コースがおすすめです。
                     </div>
                 </div>
             </div>
@@ -263,27 +418,14 @@
             </div>
 
             <div class="faq-item">
-                <div class="question">生まれた時間がわからなくても占えますか？</div>
-                <div class="answer-wrap">
-                    <div class="answer">
-                        <span class="answer-label">A.</span>はい、可能です。<br>
-                        生まれた時間がわかるとより詳細な鑑定（特に紫微斗数など）が可能ですが、<br>
-                        わからなくても四柱推命やタロットを用いて十分に深い鑑定ができます。<br>
-                        もし母子手帳などでわかる場合は、当日お知らせください。
-                    </div>
-                </div>
-            </div>
-
-
-            <div class="faq-item">
                 <div class="question">どんな相談が多いですか？</div>
                 <div class="answer-wrap">
                     <div class="answer">
                         <span class="answer-label">A.</span>20代〜60代まで幅広くご相談いただいています。<br><br>
-                        一番多いのは恋愛です。「片想いの相手の本音」「アプリの彼は本気？」<br>
-                        「既読スルーされた」「復縁できる？」など具体的なご相談が中心です。<br><br>
-                        ほかにも「転職」「適職」「独立」などの仕事、<br>
-                        「人生の方向性を定めたい」という自己分析のようなご依頼も増えています。
+                        多いのは、「どう動けばよいか分からない」という相談です。<br>
+                        復縁の連絡の時期、アプリと紹介どちらが合うか、複数の候補の比較、<br>
+                        転職・独立の時期、引っ越し先の比較など、<br>
+                        <strong>選択と時期</strong>に関わるご相談が中心です。
                     </div>
                 </div>
             </div>
@@ -317,7 +459,7 @@
                 </a>
                 <a href="about.html" class="page-link-card">
                     <span class="page-link-title">占い師</span>
-                    <span class="page-link-desc">鑑定スタイル</span>
+                    <span class="page-link-desc">活動履歴</span>
                 </a>
                 <a href="pricing.html" class="page-link-card">
                     <span class="page-link-title">料金案内</span>
@@ -331,13 +473,6 @@
                     <span class="page-link-title">ブログ</span>
                     <span class="page-link-desc">コラム</span>
                 </a>
-                <!-- SHOP は現在休止中のため非表示
-                <div class="page-link-card animate-on-scroll animate-delay-6" target="_blank"
-                    style="opacity: 0.5; cursor: default;">
-                    <span class="page-link-title">SHOP</span>
-                    <span class="page-link-desc">SHOP（準備中）</span>
-                </div>
-                -->
 
 
             </div>
@@ -365,8 +500,8 @@
     </a>
 
     <!-- JS -->
-    <script src="js/main.js"></script>
-    <script src="js/faq.js"></script>
+    <script src="js/main.js?v=20260724a"></script>
+    <script src="js/faq.js?v=20260724a"></script>
 </body>
 
 </html>

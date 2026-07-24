@@ -14,14 +14,14 @@
 
         gtag('config', 'G-T47H5DSFTR');
     </script>
-    <title>占い処 六根清浄 | オンライン・名古屋(栄)の占い</title>
+    <title>占い処 六根清浄 | 出会う場所・選ぶ相手・動く時期を整理する四柱推命（名古屋・栄／オンライン）</title>
     <meta name="description"
-        content="名古屋市栄での対面鑑定と全国対応のオンライン占いを行う『六根清浄（ろっこんしょうじょう）』。好きな人の本音を読み、片想い・アプリ・既読スルーから仕事の迷いまで晴らします。予約フォームから24時間受付。">
+        content="四柱推命で「どこで出会うか」「どちらを選ぶか」「いつ動くか」を整理する占い処。名古屋・栄の対面と全国オンラインに対応。30分5,000円で、事前の命式分析から次の一手まで。予約フォームは24時間受付。">
 
     <!-- OGP (SNSシェア設定) -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="占い処 六根清浄 | オンライン・名古屋(栄)の占い">
-    <meta property="og:description" content="好きな人の本音、占いで読めます。相手の性格・弱点・心の開き方を分析し、あなただけの答えを出す。名古屋・オンライン対応。">
+    <meta property="og:title" content="占い処 六根清浄 | 出会う場所。選ぶ相手。動く時期。">
+    <meta property="og:description" content="相性とタイミングを、次の一手に変える四柱推命。名古屋・栄／オンライン対応。30分5,000円で、事前分析から次の一手まで。">
     <meta property="og:url" content="https://uranai-rokkon.com/">
     <meta property="og:image" content="https://uranai-rokkon.com/images/otya.png">
 
@@ -35,8 +35,9 @@
         rel="stylesheet">
 
     <!-- CSS -->
-    <link rel="stylesheet" href="css/style.css?v=20260611b">
-    <link rel="stylesheet" href="css/animations.css?v=20260611b">
+    <link rel="stylesheet" href="css/style.css?v=20260724a">
+    <link rel="stylesheet" href="css/redesign.css?v=20260724a">
+    <link rel="stylesheet" href="css/animations.css?v=20260724a">
 
     <!-- JSON-LD (構造化データ) -->
     <script type="application/ld+json">
@@ -45,7 +46,7 @@
       "@type": "LocalBusiness",
       "name": "占い処 六根清浄",
       "image": "https://uranai-rokkon.com/images/otya.png",
-      "description": "名古屋・栄での対面鑑定とオンライン占い。四柱推命、タロットなどで鑑定。",
+      "description": "名古屋・栄の対面とオンラインで四柱推命の鑑定を行う占い処。出会う場所・選ぶ相手・動く時期を整理する判断材料として。",
       "address": {
         "@type": "PostalAddress",
         "addressLocality": "Nagoya",
@@ -89,7 +90,6 @@
 
                 </nav>
                 <a href="reserve.html" class="contact-btn">ご予約</a>
-                <!-- <span class="contact-btn" style="opacity: 0.5; cursor: default;">SHOP（準備中）</span> -->
             </div>
             <div class="menu-toggle" onclick="toggleMenu();" aria-label="メニュー">
                 <span></span>
@@ -102,22 +102,19 @@
     <!-- スクロール進捗バー -->
     <div class="scroll-progress" id="scrollProgress"></div>
 
-    <!-- ヒーロー（コンパクト版） -->
+    <!-- ヒーロー -->
     <section class="hero">
         <div class="hero-bg">
             <img src="images/otya.jpg" alt="六根清浄の雰囲気" width="1920" height="1080" loading="eager" fetchpriority="high">
         </div>
         <div class="hero-overlay"></div>
         <div class="hero-content">
-            <h1 class="hero-title hero-reveal hero-reveal-title">占い処 六根清浄</h1>
-
-            <div class="trust-badge hero-reveal hero-reveal-badge">
-                名古屋(栄)の対面・オンライン占い
-            </div>
-
-            <p class="hero-subtitle hero-reveal hero-reveal-subtitle">
-                大事な決断ほど、1人で抱え込まなくていい。<br>
-                この先どうするか、一緒に考えます。
+            <p class="rk-hero-eyebrow hero-reveal hero-reveal-badge">占い処 六根清浄｜名古屋(栄)・オンラインの四柱推命</p>
+            <h1 class="rk-hero-words hero-reveal hero-reveal-title"><span class="rk-word">出会う場所。</span><span
+                    class="rk-word">選ぶ相手。</span><span class="rk-word">動く時期。</span></h1>
+            <p class="rk-hero-tagline hero-reveal hero-reveal-subtitle">
+                相性とタイミングを、次の一手に変える四柱推命。<br>
+                迷っている選択を、決められる状態まで整理します。
             </p>
 
             <a href="reserve.html" class="cta-main-btn hero-reveal hero-reveal-btn">ご予約はこちら<span
@@ -195,93 +192,262 @@
         </div>
     </section>
 
-    <!-- こんなお悩み -->
-    <section class="worries-section">
-        <div class="worries-inner">
-            <h2 class="section-title">こんなお悩み、ありませんか</h2>
-            <div class="worries-grid">
-                <div class="worry-card animate-on-scroll">
-                    <span class="worry-tag">恋愛・復縁</span>
-                    <p class="worry-text">好きな人の本音がわからない。復縁したいけれど、連絡していいのか迷っている。</p>
-                </div>
-                <div class="worry-card animate-on-scroll animate-delay-1">
-                    <span class="worry-tag">出会い・婚活</span>
-                    <p class="worry-text">アプリで会う相手を選びきれない。この人と進めていいのか、確信が持てない。</p>
-                </div>
-                <div class="worry-card animate-on-scroll animate-delay-2">
-                    <span class="worry-tag">仕事</span>
-                    <p class="worry-text">転職すべきか、今の場所で続けるべきか。自分に向いている働き方が知りたい。</p>
-                </div>
-                <div class="worry-card animate-on-scroll animate-delay-3">
-                    <span class="worry-tag">人生・家族</span>
-                    <p class="worry-text">家族との関係がしんどい。引越しや決断のタイミングを見極めたい。</p>
-                </div>
-            </div>
-            <p class="worries-lead animate-on-scroll">
-                六つの占術で多角的に読み解き、<br class="sp-only">
-                「で、どうすればいいか」まで一緒に考えます。
+    <!-- コンセプト -->
+    <section class="rk-section">
+        <div class="rk-section-inner animate-on-scroll">
+            <h2 class="section-title">相性とタイミングを、次の一手に</h2>
+            <p class="rk-lead-text">
+                四柱推命では、人によって相性の良い相手だけでなく、<br class="rk-pc-br">
+                その人と<strong>縁が生まれやすい場所</strong>も違うと考えます。<br>
+                あなたの五行と命式から、<br class="rk-pc-br">
+                <strong>「どこへ行くか」「複数の候補から誰を選ぶか」「いつ動くか」</strong>を<br class="rk-pc-br">
+                具体的に整理します。
+            </p>
+            <p class="rk-center-note">
+                当てて驚かせるための占いではなく、迷っている選択を決めるための判断材料として。<br>
+                占いを信じ切っていない方も、そのままお越しください。
             </p>
         </div>
     </section>
 
-    <!-- 六根清浄とは -->
-    <section class="about-section">
-        <div class="about-bg">
-            <img src="images/torii.jpeg" alt="神社の鳥居" loading="lazy">
-        </div>
-        <div class="about-overlay"></div>
-        <div class="about-content animate-on-scroll">
-            <img src="images/rogo.png" alt="六根清浄ロゴ" class="about-logo" loading="lazy">
-            <!-- @formatter:off --><!-- prettier-ignore -->
-            <div class="about-title-wrap"><h2 class="about-title"><ruby>六<rt>ろっ</rt></ruby><ruby>根<rt>こん</rt></ruby><ruby>清<rt>しょう</rt></ruby><ruby>浄<rt>じょう</rt></ruby>とは</h2></div>
-            <!-- @formatter:on -->
-            <div class="about-divider"></div>
-            <p class="about-text">
-                仏教用語で<span class="highlight">「六つの感覚を清める」</span><br>
-                <span class="highlight">「心のノイズを消し本質を見る」</span><br>
-                という意味。
-            </p>
-            <p class="about-text">
-                現在は<strong>オンライン・対面鑑定</strong>を中心に活動中。<br>
-                （対面は名古屋・栄周辺）<br>
-                ※東枇杷島に事務所準備中です。<br>
-                <br>
-                <span class="methods">四柱推命・紫微斗数・易<br>
-                    九星気学・タロット・オーラ視</span><br>
-                という六つの占術を使って。
-            </p>
-            <p class="about-text">
-                いろんな角度から見ることで、<br>
-                相手の本音を読み解き、<br>
-                あなたの<span class="highlight">迷いを晴らし</span>、<br>
-                <span class="highlight">進む道を照らします。</span>
-            </p>
-            <div class="about-bottom-line"></div>
+    <!-- 30分で持ち帰れるもの -->
+    <section class="rk-section rk-section-alt">
+        <div class="rk-section-wide">
+            <h2 class="section-title">30分 5,000円で、持ち帰れるもの</h2>
+            <p class="section-subtitle">「30分話せる」だけではありません。事前の分析から、次の一手まで。</p>
+            <div class="rk-value-grid">
+                <div class="rk-value-card animate-on-scroll">
+                    <span class="rk-value-phase">鑑定前</span>
+                    <div class="rk-value-title">命式の事前分析</div>
+                    <ul class="rk-value-list">
+                        <li>生年月日と相談内容を事前にお伺いします</li>
+                        <li>あなた（必要に応じて相手の方）の命式を準備</li>
+                        <li>今回見るべき相性・時期・比較項目を整理してから当日を迎えます</li>
+                    </ul>
+                </div>
+                <div class="rk-value-card animate-on-scroll animate-delay-1">
+                    <span class="rk-value-phase">鑑定中</span>
+                    <div class="rk-value-title">30分で選択を整理</div>
+                    <ul class="rk-value-list">
+                        <li>相談がこじれている理由をほどく</li>
+                        <li>あなたと相手の性質・反応しやすいパターン</li>
+                        <li>選択肢ごとの違いを同じ基準で比較</li>
+                        <li>今動くか、待つか</li>
+                    </ul>
+                </div>
+                <div class="rk-value-card animate-on-scroll animate-delay-2">
+                    <span class="rk-value-phase">鑑定後</span>
+                    <div class="rk-value-title">次の一手が決まっている</div>
+                    <ul class="rk-value-list">
+                        <li>最後に「分かったこと」「動く時期・待つ時期」「次にすること」を一緒に確認して終えます</li>
+                        <li>録音・録画は自由。何度でも見返せます</li>
+                    </ul>
+                </div>
+            </div>
+            <p class="rk-center-note">60分コースでは、複数の選択肢や中長期の流れまで扱えます。<a href="pricing.html" class="text-link">30分と60分の違いを見る</a></p>
         </div>
     </section>
 
-    <!-- 料金（サマリー） -->
-    <section class="price-summary-section">
-        <div class="price-summary-inner">
-            <h2 class="section-title">料金</h2>
-            <p class="section-subtitle">時間内は何度でもご質問いただけます。</p>
-            <div class="price-summary-cards">
-                <a href="pricing.html" class="price-summary-card animate-on-scroll">
-                    <span class="price-badge">一番人気</span>
-                    <span class="price-course">30分コース</span>
-                    <span class="price-amount">5,000<small>円（税込）</small></span>
-                    <span class="price-note">オンライン（Google Meet）</span>
-                </a>
-                <a href="pricing.html" class="price-summary-card animate-on-scroll animate-delay-1">
-                    <span class="price-badge alt">人生の転機に</span>
-                    <span class="price-course">60分コース</span>
-                    <span class="price-amount">10,000<small>円（税込）</small></span>
-                    <span class="price-note">対面（栄）・オンライン</span>
-                </a>
+    <!-- 主な入口 -->
+    <section class="rk-section">
+        <div class="rk-section-wide">
+            <h2 class="section-title">よくある、3つの相談</h2>
+            <p class="section-subtitle">どれかひとつに絞れなくても大丈夫です。話しながら整理します。</p>
+            <div class="rk-entry-grid">
+                <div class="rk-entry-card animate-on-scroll">
+                    <div class="rk-entry-num">01</div>
+                    <div class="rk-entry-title">運命の人と、<br>どこで出会うか</div>
+                    <p class="rk-entry-text">
+                        五行や命式によって、合う出会い方も、縁が生まれやすい場所も違います。「出会いがない」の原因が、努力ではなく場所のズレにあることは珍しくありません。
+                    </p>
+                    <div class="rk-entry-examples">
+                        <span>アプリが向く人</span><span>紹介に縁がある人</span><span>趣味の集まり</span><span>落ち着いた場所に縁がある人</span>
+                    </div>
+                </div>
+                <div class="rk-entry-card animate-on-scroll animate-delay-1">
+                    <div class="rk-entry-num">02</div>
+                    <div class="rk-entry-title">AとB、<br>どちらを選ぶか</div>
+                    <p class="rk-entry-text">
+                        「Aが正解」と断定するのではなく、Aを選んだ場合・Bを選んだ場合に起きやすいことを、同じ基準で比較します。短期的に惹かれる相手と、長く続きやすい相手は、しばしば別だからです。
+                    </p>
+                    <div class="rk-entry-examples">
+                        <span>気になる相手A・B・C</span><span>転職先A・B</span><span>残る・転職・独立</span><span>引っ越し先の比較</span>
+                    </div>
+                </div>
+                <div class="rk-entry-card animate-on-scroll animate-delay-2">
+                    <div class="rk-entry-num">03</div>
+                    <div class="rk-entry-title">今動くか、<br>待つか</div>
+                    <p class="rk-entry-text">
+                        未来を保証するものではありません。そのうえで、動きやすい時期と、準備や観察に回したほうがよい時期を整理します。「いつ」の目安が決まると、迷っている時間は短くなります。
+                    </p>
+                    <div class="rk-entry-examples">
+                        <span>連絡する</span><span>告白する</span><span>婚活を始める</span><span>転職・独立</span><span>重要な話し合い</span>
+                    </div>
+                </div>
             </div>
-            <p class="price-summary-foot">
-                ※ 延長は15分ごとに +2,000円　<a href="pricing.html" class="text-link">料金の詳細を見る</a>
+        </div>
+    </section>
+
+    <!-- 鑑定例 -->
+    <section class="rk-section rk-section-alt">
+        <div class="rk-section-inner">
+            <h2 class="section-title">鑑定で整理すること（例）</h2>
+            <p class="section-subtitle">「当たるかどうか」より、「何を決められるか」をご覧ください。</p>
+            <div class="rk-case-box animate-on-scroll">
+                <span class="rk-case-tag">説明用の例</span>
+                <p class="rk-case-consult">ご相談：「別れた相手に、もう一度連絡するべきか」</p>
+                <div class="rk-case-cols">
+                    <div>
+                        <div class="rk-case-col-title">鑑定で整理すること</div>
+                        <ul class="rk-case-list">
+                            <li>二人の距離感の取り方の違い</li>
+                            <li>相手が反応しにくくなる状況</li>
+                            <li>連絡を避けたほうがよい時期</li>
+                            <li>最初の連絡で伝えないほうがよいこと</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <div class="rk-case-col-title">鑑定後に決めること</div>
+                        <ul class="rk-case-list">
+                            <li>いつまで待つか</li>
+                            <li>どんな内容を送るか</li>
+                            <li>連絡の頻度</li>
+                            <li>復縁を迫るか、近況確認にとどめるか</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="rk-case-more">
+                <p class="rk-case-more-title">ほかにも、こんなテーマを扱います</p>
+                <div class="rk-chip-grid animate-on-scroll">
+                    <span class="rk-chip">運命の人と出会いやすい場所</span>
+                    <span class="rk-chip">アプリと紹介、どちらが合うか</span>
+                    <span class="rk-chip">複数の交際候補の比較</span>
+                    <span class="rk-chip">転職先AとBの比較</span>
+                    <span class="rk-chip">独立するか、会社員を続けるか</span>
+                    <span class="rk-chip">引っ越し先の比較</span>
+                    <span class="rk-chip">告白・連絡・転職の時期</span>
+                </div>
+            </div>
+            <p class="rk-center-note">※ 上記は説明用の例です。実在のご相談ではありません。</p>
+        </div>
+    </section>
+
+    <!-- 30分と60分の違い -->
+    <section class="rk-section">
+        <div class="rk-section-inner">
+            <h2 class="section-title">30分と60分の違い</h2>
+            <p class="section-subtitle">料金は時間の長さではなく、扱える範囲の違いです。</p>
+            <div class="rk-compare-wrap animate-on-scroll">
+                <table class="rk-compare">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>30分コース</th>
+                            <th>60分コース</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th>料金</th>
+                            <td><span class="rk-compare-price">5,000円<small>（税込）</small></span></td>
+                            <td><span class="rk-compare-price">10,000円<small>（税込）</small></span></td>
+                        </tr>
+                        <tr>
+                            <th>向いている使い方</th>
+                            <td>テーマをひとつ、具体化する</td>
+                            <td>複数の選択肢や中長期の流れを、比較して深掘りする</td>
+                        </tr>
+                        <tr>
+                            <th>扱う範囲</th>
+                            <td>出会い方・選択肢の比較・時期のいずれかを絞って。ご本人＋必要に応じて相手おひとり</td>
+                            <td>相性と時期の両方。複数テーマ・複数の相手や選択肢もまとめて</td>
+                        </tr>
+                        <tr>
+                            <th>形式</th>
+                            <td>オンライン（Google Meet）のみ</td>
+                            <td>オンライン／対面（名古屋・栄）</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="rk-center-note">
+                延長は15分ごとに +2,000円。時間内は何度でもご質問いただけます。<br>
+                <a href="pricing.html" class="text-link">料金案内の詳細を見る</a>
             </p>
+        </div>
+    </section>
+
+    <!-- 四柱推命の仕組みと歴史 -->
+    <section class="rk-section rk-section-alt">
+        <div class="rk-section-inner">
+            <h2 class="section-title">四柱推命という道具</h2>
+            <div class="rk-method-box animate-on-scroll">
+                <div class="rk-method-title">仕組み</div>
+                <p class="rk-method-text">
+                    四柱推命は、生まれた年・月・日・時という四つの時間を、十干と十二支の組み合わせ（命式）に置き換え、人の性質や時期の変化を読む方法です。木・火・土・金・水の五行のバランスから、性質の傾向、惹かれやすい相手、縁が生まれやすい環境、動きやすい時期を整理していきます。
+                </p>
+            </div>
+            <div class="rk-method-box animate-on-scroll">
+                <div class="rk-method-title">短い歴史</div>
+                <p class="rk-method-text">
+                    その原型は、中国・唐代の李虚中に結び付けられる、生まれた年・月・日を使った推命法にさかのぼるとされます。宋代には、生まれた時間を加えた四柱八字の形へ発展し、徐子平の名と結び付いた「子平術」として体系化されたと伝えられています。成立の過程には諸説があります。
+                </p>
+                <p class="rk-fine-print">
+                    長い歴史があるから必ず正しい、ということではありません。六根清浄では、未来を断定するためではなく、自分と相手の違いや、行動する時期を整理するための補助線として使います。
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 鑑定者 -->
+    <section class="rk-section">
+        <div class="rk-section-inner">
+            <h2 class="section-title">鑑定するのは</h2>
+            <div class="rk-profile-digest animate-on-scroll">
+                <img src="images/atsuki_hero.jpg" alt="占い処 六根清浄 代表 長谷川貴紀" class="rk-profile-photo" loading="lazy">
+                <div class="rk-profile-body">
+                    <div class="rk-profile-name">長谷川 貴紀<span>占い処 六根清浄 代表</span></div>
+                    <p class="rk-profile-text">
+                        占い館・チャット占いでの活動を含め、これまでに1,500件以上の相談を受けてきました。恋愛・人間関係・転職・引っ越しなど、「どう動けばよいか分からない」という相談が中心です。名古屋・栄の占い館やチャット占いで対面・オンライン双方の経験を積み、現在は独立して六根清浄として鑑定を行っています。
+                    </p>
+                    <p class="rk-profile-note">※ 件数は占い館・チャット占い時代を含みます。</p>
+                    <a href="about.html" class="outline-btn">活動履歴・プロフィールを見る</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- お客様の声（抜粋） -->
+    <section class="voices-section">
+        <div class="voices-inner">
+            <h2 class="section-title">鑑定を受けた方の声</h2>
+            <div class="voices-grid">
+                <figure class="voice-card animate-on-scroll">
+                    <span class="voice-tag">復縁・連絡の時期</span>
+                    <blockquote class="voice-quote">
+                        「彼、今運気落ちてるから◯月以降にこういう内容で連絡して」って超具体的で。言われた通りにしたら長文返信きて泣きました。
+                    </blockquote>
+                    <figcaption class="voice-author">みなみさん（26歳・女性）</figcaption>
+                </figure>
+                <figure class="voice-card animate-on-scroll animate-delay-1">
+                    <span class="voice-tag">仕事・適性の整理</span>
+                    <blockquote class="voice-quote">
+                        私が素質的に苦手なことを無理に頑張ってたことが分かりました。向いてる分野を教えてもらって転職活動したら、すぐ内定もらえて。
+                    </blockquote>
+                    <figcaption class="voice-author">川田さん（27歳・女性）</figcaption>
+                </figure>
+                <figure class="voice-card animate-on-scroll animate-delay-2">
+                    <span class="voice-tag">仕事・選択肢の整理</span>
+                    <blockquote class="voice-quote">
+                        先生は人生経験が豊富で、選択肢を真剣に考えてくれました。利用できそうな制度とかすごく具体的に教えてくれて。おかげで冷静に判断できて。
+                    </blockquote>
+                    <figcaption class="voice-author">Y.Nさん（42歳・女性）</figcaption>
+                </figure>
+            </div>
+            <div class="voices-more">
+                <a href="testimonials.html" class="outline-btn">口コミをもっと見る</a>
+            </div>
         </div>
     </section>
 
@@ -352,43 +518,10 @@
         </div>
     </section>
 
-    <!-- お客様の声（抜粋） -->
-    <section class="voices-section">
-        <div class="voices-inner">
-            <h2 class="section-title">お客様の声</h2>
-            <div class="voices-grid">
-                <figure class="voice-card animate-on-scroll">
-                    <span class="voice-tag">恋愛・復縁</span>
-                    <blockquote class="voice-quote">
-                        「彼、今運気落ちてるから◯月以降にこういう内容で連絡して」って超具体的で。言われた通りにしたら長文返信きて泣きました。今は復縁して同棲してます。
-                    </blockquote>
-                    <figcaption class="voice-author">みなみさん（26歳・女性）</figcaption>
-                </figure>
-                <figure class="voice-card animate-on-scroll animate-delay-1">
-                    <span class="voice-tag">仕事</span>
-                    <blockquote class="voice-quote">
-                        私が素質的に苦手なことを無理に頑張ってたことが分かりました。向いてる分野を教えてもらって転職活動したら、すぐ内定もらえて。
-                    </blockquote>
-                    <figcaption class="voice-author">川田さん（27歳・女性）</figcaption>
-                </figure>
-                <figure class="voice-card animate-on-scroll animate-delay-2">
-                    <span class="voice-tag">結婚・婚活</span>
-                    <blockquote class="voice-quote">
-                        「今年は縁がない年。来年の春から動いて」って。言われた通りにしたら3人目で今の彼に出会えて、しかも言われてた特徴そのままの人。
-                    </blockquote>
-                    <figcaption class="voice-author">さくらさん（33歳・女性）</figcaption>
-                </figure>
-            </div>
-            <div class="voices-more">
-                <a href="testimonials.html" class="outline-btn">口コミをもっと見る</a>
-            </div>
-        </div>
-    </section>
-
     <!-- 最終CTA -->
     <section class="final-cta-section">
         <div class="final-cta-inner animate-on-scroll">
-            <h2 class="final-cta-title">ひとりで抱え込まず、まずは30分から</h2>
+            <h2 class="final-cta-title">テーマをひとつ、30分で整理しませんか</h2>
             <p class="final-cta-text">
                 ご予約はフォームから24時間受付。<br>
                 空きのある日時から選ぶだけ、お申し込みは約3分です。
@@ -401,6 +534,17 @@
         </div>
     </section>
 
+    <!-- 屋号の由来（短縮版） -->
+    <section class="rk-origin">
+        <img src="images/rogo.png" alt="六根清浄ロゴ" class="rk-origin-logo" loading="lazy">
+        <div class="rk-origin-title">六根清浄</div>
+        <p class="rk-origin-text">
+            ろっこんしょうじょう——仏教で「六つの感覚を清め、心のノイズを消して本質を見る」という言葉です。<br>
+            迷いの多い決断ほど、静かな場所で整理したい。屋号には、そんな鑑定でありたいという意味を込めています。
+        </p>
+        <a href="about.html" class="text-link">屋号の由来と鑑定の考え方</a>
+    </section>
+
     <!-- ページ導線 -->
     <section class="page-links">
         <div class="page-links-inner">
@@ -410,7 +554,7 @@
             </a>
             <a href="about.html" class="page-link-card">
                 <span class="page-link-title">占い師</span>
-                <span class="page-link-desc">鑑定スタイル</span>
+                <span class="page-link-desc">活動履歴</span>
             </a>
             <a href="pricing.html" class="page-link-card">
                 <span class="page-link-title">料金案内</span>
